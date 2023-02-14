@@ -4,7 +4,10 @@
   "description": "A simple way to monitor OpenSSF Scorecard at organization level",
   "main": "src/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "FORCE_COLOR=3 jest  --verbose",
+    "test:update": "FORCE_COLOR=3 jest --verbose --u",
+    "test:coverage": "FORCE_COLOR=3 jest --verbose  --coverage",
+    "test:watch": "FORCE_COLOR=3 jest --verbose  --watchAll"
   },
   "repository": {
     "type": "git",
