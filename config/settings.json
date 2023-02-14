@@ -1,0 +1,8 @@
+{
+    "reporting": {
+        "createIssue": true,
+        "createOutputReport": true,
+        "outputReportFormats": ["md"],
+        "outputFileName": "openssf-security-report"
+    }
+}
