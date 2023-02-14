@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "A simple way to monitor OpenSSF Scorecard at organization level",
   "main": "src/index.js",
+  "private": true,
   "scripts": {
     "test": "FORCE_COLOR=3 jest  --verbose",
     "test:update": "FORCE_COLOR=3 jest --verbose --u",
