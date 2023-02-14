@@ -24,6 +24,9 @@
     "debug": "4.3.4",
     "got": "12.5.3"
   },
+  "engines": {
+    "node": ">=18.0.0"
+  },
   "devDependencies": {
     "@commitlint/cli": "17.4.2",
     "@commitlint/config-conventional": "17.4.2",
