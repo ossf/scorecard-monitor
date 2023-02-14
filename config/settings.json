@@ -4,5 +4,6 @@
         "createOutputReport": true,
         "outputReportFormats": ["md"],
         "outputFileName": "openssf-security-report"
-    }
+    },
+    "maxRequestInParallel": 2
 }
