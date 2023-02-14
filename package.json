@@ -1,0 +1,27 @@
+{
+  "name": "openssf-scorecard-monitor",
+  "version": "1.0.0",
+  "description": "A simple way to monitor OpenSSF Scorecard at organization level",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/UlisesGascon/openssf-scorecard-monitor.git"
+  },
+  "keywords": [
+    "openssf-scorecard",
+    "maintainers"
+  ],
+  "author": "Ulises Gascon",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/UlisesGascon/openssf-scorecard-monitor/issues"
+  },
+  "homepage": "https://github.com/UlisesGascon/openssf-scorecard-monitor#readme",
+  "dependencies": {
+    "debug": "4.3.4",
+    "got": "12.5.3"
+  }
+}
