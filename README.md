@@ -69,3 +69,29 @@ jobs:
 - `issue-title`: Defines the issue title
 - `github-token`: The token usage to create the issue and push the code
 - `max-request-in-parallel`: Defines the total HTTP Request that can be done in parallel
+
+
+## Other
+
+### Database structure
+
+Just for reference, the database will store the current value and previous values with the date:
+
+```json
+{
+  "github.com": {
+    "UlisesGascon": {
+      "check-my-headers": {
+        "previous": [ {
+          "score": 6.7,
+          "date": "2022-08-21"
+        }],
+        "current": {
+          "score": 4.4,
+          "date": "2022-11-28"
+        }
+      }
+    }
+  }
+}
+```
