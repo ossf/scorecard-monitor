@@ -44,6 +44,8 @@ const generateScores = async ({ scope, database: currentDatabase, maxRequestInPa
     scores.push(...chunkScores)
   }
 
+  core.info(`All the scores are already collected`)
+
   const reportContent = await generateReportContent(scores)
   const issueContent = await generateIssueContent(scores)
 
