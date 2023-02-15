@@ -1,0 +1,17 @@
+Hello! 
+
+There are changes in your OpenSSF Scorecard report. 
+
+Please review the following changes and take action if necessary.
+
+## Summary
+
+There are changes in the following repositories:
+
+<%_ if (scores.length) { -%>
+| Repository | Score | Difference | Report Link |
+| -- | -- | -- | -- |
+<%_ } -%>
+<%_ scores.forEach( score => { -%>
+| [<%= score.org %>/<%= score.repo %>](https://<%= score.platform %>/<%= score.org %>/<%= score.repo %>) | <%= score.score %> | <%= score.currentDiff || 0 %> | [Full Report](https://deps.dev/project/github/<%= score.org.toLowerCase() %>%2F<%= score.repo.toLowerCase() %>) |
+<%_ }); -%> 
