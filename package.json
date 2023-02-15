@@ -37,6 +37,7 @@
   "homepage": "https://github.com/UlisesGascon/openssf-scorecard-monitor#readme",
   "dependencies": {
     "debug": "4.3.4",
+    "ejs": "3.1.8",
     "got": "11.8.6"
   },
   "engines": {
