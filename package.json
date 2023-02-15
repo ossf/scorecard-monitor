@@ -5,6 +5,7 @@
   "main": "src/index.js",
   "private": true,
   "scripts": {
+    "build": "ncc build src/action.js -o dist",
     "test": "FORCE_COLOR=3 jest  --verbose",
     "test:update": "FORCE_COLOR=3 jest --verbose --u",
     "test:coverage": "FORCE_COLOR=3 jest --verbose  --coverage",
