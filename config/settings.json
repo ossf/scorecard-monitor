@@ -1,0 +1,15 @@
+{
+    "notification": {
+        "issueLocation": {
+            "repo": "my-cool-org",
+            "org": "my-fantastic-repo"
+        },
+        "createIssue": true
+    },
+    "reporting": {
+        "createOutputReport": true,
+        "outputReportFormats": ["md"],
+        "outputFileName": "openssf-security-report"
+    },
+    "maxRequestInParallel": 2
+}
