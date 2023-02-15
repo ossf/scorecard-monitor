@@ -1,24 +1,24 @@
-const debug = require('debug')('openssf-scorecard-monitor')
+const core = require('@actions/core')
 const { spliceIntoChunks, getProjectScore, generateIssueContent, generateReportContent, getScore, saveScore } = require('./utils')
 const generateScores = async ({ scope, database: currentDatabase, maxRequestInParallel }) => {
   // @TODO: Improve deep clone logic
   const database = JSON.parse(JSON.stringify(currentDatabase))
   const platform = 'github.com'
   const projects = scope[platform]
-  debug('Total projects in scope', projects.length)
+  core.info('Total projects in scope', projects.length)
 
   const chunks = spliceIntoChunks(projects, maxRequestInParallel)
-  debug('Total chunks', chunks.length)
+  core.info('Total chunks', chunks.length)
 
   const scores = []
 
   for (let index = 0; index < chunks.length; index++) {
     const chunk = chunks[index]
-    debug('Processing chunk %s/%s', index + 1, chunks.length)
+    core.info('Processing chunk %s/%s', index + 1, chunks.length)
 
     const chunkScores = await Promise.all(chunk.map(async ({ org, repo }) => {
       const { score, date } = await getProjectScore({ platform, org, repo })
-      debug('Got project score for %s/%s/%s: %s (%s)', platform, org, repo, score, date)
+      core.info('Got project score for %s/%s/%s: %s (%s)', platform, org, repo, score, date)
 
       const storedScore = getScore({ database, platform, org, repo })
 
