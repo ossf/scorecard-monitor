@@ -48,14 +48,14 @@ const { maxRequestInParallel, reporting } = require('../config/settings.json')
 
   console.log('scores', scores)
   // Generate the report
-  const { createOutputReport, outputReportFormats, outputFileName} = reporting
-  if(createOutputReport) {
-    await generateReport({outputReportFormats, outputFileName, scores})
+  const { createOutputReport, outputReportFormats, outputFileName } = reporting
+  if (createOutputReport) {
+    await generateReport({ outputReportFormats, outputFileName, scores })
   }
 
   // Save database state
   await updateDatabase()
 
   // Commit the changes
-  await commitChanges({outputFileName, outputReportFormats})
+  await commitChanges({ outputFileName, outputReportFormats })
 })()

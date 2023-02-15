@@ -4,9 +4,8 @@ const ejs = require('ejs')
 const db = require('../data/database')
 const { writeFile, readFile } = require('fs').promises
 const { join } = require('path')
-const { promisify } = require('util');
-const exec = promisify(require('child_process').exec);
-
+const { promisify } = require('util')
+const exec = promisify(require('child_process').exec)
 
 const updateDatabase = async () => {
   debug('Updating database')
@@ -61,19 +60,19 @@ const saveScore = ({ platform, org, repo, score, date }) => {
 }
 
 const generateReport = async ({ outputReportFormats, outputFileName, scores }) => {
-  if(!outputReportFormats.includes('md')) {
+  if (!outputReportFormats.includes('md')) {
     debug('No markdown report requested')
-    return;
+    return
   }
   const destinationFile = join(process.cwd(), `${outputFileName}.md`)
   const template = await readFile(join(process.cwd(), 'templates/report.ejs'), 'utf8')
-  const content = ejs.render(template, { scores });
+  const content = ejs.render(template, { scores })
   await writeFile(destinationFile, content)
 }
 
-const commitChanges = async ({outputFileName, outputReportFormats=[]}) => {
+const commitChanges = async ({ outputFileName, outputReportFormats = [] }) => {
   let gitFileCommand = 'git add data/database.json'
-  if(outputReportFormats.includes('md')) {
+  if (outputReportFormats.includes('md')) {
     gitFileCommand += ` && git add ${outputFileName}.md`
   }
   debug('Committing changes')
