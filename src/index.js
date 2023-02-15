@@ -1,5 +1,5 @@
 const debug = require('debug')('openssf-scorecard-monitor')
-const { generateReport, getProjectScore, updateDatabase, saveScore, getScore, spliceIntoChunks } = require('./utils')
+const { commitChanges, generateReport, getProjectScore, updateDatabase, saveScore, getScore, spliceIntoChunks } = require('./utils')
 const scope = require('../config/scope.json')
 const { maxRequestInParallel, reporting } = require('../config/settings.json')
 
@@ -57,4 +57,5 @@ const { maxRequestInParallel, reporting } = require('../config/settings.json')
   await updateDatabase()
 
   // Commit the changes
+  await commitChanges({outputFileName, outputReportFormats})
 })()

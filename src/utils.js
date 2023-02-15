@@ -4,6 +4,9 @@ const ejs = require('ejs')
 const db = require('../data/database')
 const { writeFile, readFile } = require('fs').promises
 const { join } = require('path')
+const { promisify } = require('util');
+const exec = promisify(require('child_process').exec);
+
 
 const updateDatabase = async () => {
   debug('Updating database')
@@ -68,11 +71,23 @@ const generateReport = async ({ outputReportFormats, outputFileName, scores }) =
   await writeFile(destinationFile, content)
 }
 
+const commitChanges = async ({outputFileName, outputReportFormats=[]}) => {
+  let gitFileCommand = 'git add data/database.json'
+  if(outputReportFormats.includes('md')) {
+    gitFileCommand += ` && git add ${outputFileName}.md`
+  }
+  debug('Committing changes')
+  await exec(gitFileCommand)
+  await exec('git commit -m "Update scorecard"')
+  debug('Changes committed')
+}
+
 module.exports = {
   getProjectScore,
   saveScore,
   getScore,
   spliceIntoChunks,
   generateReport,
-  updateDatabase
+  updateDatabase,
+  commitChanges
 }
