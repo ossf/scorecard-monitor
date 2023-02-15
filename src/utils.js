@@ -1,7 +1,9 @@
 const got = require('got')
 const debug = require('debug')('openssf-scorecard-monitor')
+const ejs = require('ejs')
 const db = require('../data/database')
-const { writeFile } = require('fs').promises
+const { writeFile, readFile } = require('fs').promises
+const { join } = require('path')
 
 const updateDatabase = async () => {
   debug('Updating database')
@@ -55,10 +57,22 @@ const saveScore = ({ platform, org, repo, score, date }) => {
   repoRef.current = { score, date }
 }
 
+const generateReport = async ({ outputReportFormats, outputFileName, scores }) => {
+  if(!outputReportFormats.includes('md')) {
+    debug('No markdown report requested')
+    return;
+  }
+  const destinationFile = join(process.cwd(), `${outputFileName}.md`)
+  const template = await readFile(join(process.cwd(), 'templates/report.md.ejs'), 'utf8')
+  const content = ejs.render(template, { scores });
+  await writeFile(destinationFile, content)
+}
+
 module.exports = {
   getProjectScore,
   saveScore,
   getScore,
   spliceIntoChunks,
+  generateReport,
   updateDatabase
 }

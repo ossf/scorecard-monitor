@@ -1,7 +1,7 @@
 const debug = require('debug')('openssf-scorecard-monitor')
-const { getProjectScore, updateDatabase, saveScore, getScore, spliceIntoChunks } = require('./utils')
+const { generateReport, getProjectScore, updateDatabase, saveScore, getScore, spliceIntoChunks } = require('./utils')
 const scope = require('../config/scope.json')
-const { maxRequestInParallel } = require('../config/settings.json')
+const { maxRequestInParallel, reporting } = require('../config/settings.json')
 
 ;(async () => {
   const platform = 'github.com'
@@ -48,6 +48,10 @@ const { maxRequestInParallel } = require('../config/settings.json')
 
   console.log('scores', scores)
   // Generate the report
+  const { createOutputReport, outputReportFormats, outputFileName} = reporting
+  if(createOutputReport) {
+    await generateReport({outputReportFormats, outputFileName, scores})
+  }
 
   // Save database state
   await updateDatabase()
