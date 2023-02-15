@@ -20,6 +20,9 @@
   "standard": {
     "env": [
       "jest"
+    ],
+    "ignore": [
+      "dist/**"
     ]
   },
   "repository": {
