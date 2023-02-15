@@ -1,6 +1,12 @@
 {
+    "notification": {
+        "issueLocation": {
+            "repo": "my-cool-org",
+            "org": "my-fantastic-repo"
+        },
+        "createIssue": true
+    },
     "reporting": {
-        "createIssue": true,
         "createOutputReport": true,
         "outputReportFormats": ["md"],
         "outputFileName": "openssf-security-report"
