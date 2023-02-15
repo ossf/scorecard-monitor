@@ -66,7 +66,7 @@ const generateReport = async ({ outputReportFormats, outputFileName, scores }) =
     return;
   }
   const destinationFile = join(process.cwd(), `${outputFileName}.md`)
-  const template = await readFile(join(process.cwd(), 'templates/report.md.ejs'), 'utf8')
+  const template = await readFile(join(process.cwd(), 'templates/report.ejs'), 'utf8')
   const content = ejs.render(template, { scores });
   await writeFile(destinationFile, content)
 }
