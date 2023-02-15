@@ -32,10 +32,10 @@ const softAssign = (obj, keyPath, value) => {
 }
 
 const getProjectScore = async ({ platform, org, repo }) => {
-  core.info('Getting project score for %s/%s/%s', platform, org, repo)
+  core.info(`Getting project score for ${platform}/${org}/${repo}', platform, org, repo`)
   const response = await got(`https://api.securityscorecards.dev/projects/${platform}/${org}/${repo}`)
   const { score, date } = JSON.parse(response.body)
-  core.info('Got project score for %s/%s/%s: %s (%s)', platform, org, repo, score, date)
+  core.info(`Got project score for ${platform}/${org}/${repo}: ${score} (${date})`)
   return { platform, org, repo, score, date }
 }
 
