@@ -1,0 +1,11 @@
+# OpenSSF Scorecard Report
+
+## Summary
+
+<%_ if (scores.length) { -%>
+| Repository | Score | Date | Difference | Report Link |
+| -- | -- | -- | -- | -- |
+<%_ } -%>
+<%_ scores.forEach( score => { -%>
+| [<%= score.org %>/<%= score.repo %>](https://<%= score.platform %>/<%= score.org %>/<%= score.repo %>) | <%= score.score %> | <%= score.date %> | <%= score.currentDiff || 0 %> | [Full Report](https://deps.dev/project/github/<%= score.org.toLowerCase() %>%2F<%= score.repo.toLowerCase() %>) |
+<%_ }); -%> 

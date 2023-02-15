@@ -5,6 +5,7 @@
   "main": "src/index.js",
   "private": true,
   "scripts": {
+    "build": "ncc build src/action.js -o dist",
     "test": "FORCE_COLOR=3 jest  --verbose",
     "test:update": "FORCE_COLOR=3 jest --verbose --u",
     "test:coverage": "FORCE_COLOR=3 jest --verbose  --coverage",
@@ -19,6 +20,9 @@
   "standard": {
     "env": [
       "jest"
+    ],
+    "ignore": [
+      "dist/**"
     ]
   },
   "repository": {
@@ -36,13 +40,17 @@
   },
   "homepage": "https://github.com/UlisesGascon/openssf-scorecard-monitor#readme",
   "dependencies": {
+    "@actions/core": "1.10.0",
+    "@actions/exec": "1.1.1",
+    "@actions/github": "5.1.1",
     "@octokit/rest": "19.0.7",
+    "@vercel/ncc": "0.36.1",
     "debug": "4.3.4",
     "ejs": "3.1.8",
     "got": "11.8.6"
   },
   "engines": {
-    "node": ">=18.0.0"
+    "node": ">=16.0.0"
   },
   "devDependencies": {
     "@commitlint/cli": "17.4.2",

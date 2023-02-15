@@ -1,16 +1,11 @@
 const got = require('got')
 const debug = require('debug')('openssf-scorecard-monitor')
 const ejs = require('ejs')
-const db = require('../data/database')
-const { writeFile, readFile } = require('fs').promises
+const { readFile } = require('fs').promises
 const { join } = require('path')
-const { promisify } = require('util')
-const exec = promisify(require('child_process').exec)
 
-const updateDatabase = async () => {
-  debug('Updating database')
-  await writeFile('./data/database.json', JSON.stringify(db, null, 2))
-  debug('Database updated')
+const isDifferentContent = (oldContent, newContent) => {
+  return JSON.stringify(oldContent) !== JSON.stringify(newContent)
 }
 
 function spliceIntoChunks (arr, chunkSize) {
@@ -44,14 +39,14 @@ const getProjectScore = async ({ platform, org, repo }) => {
   return { platform, org, repo, score, date }
 }
 
-const getScore = ({ platform, org, repo }) => {
-  const { current } = db?.[platform]?.[org]?.[repo] || {}
+const getScore = ({ database, platform, org, repo }) => {
+  const { current } = database?.[platform]?.[org]?.[repo] || {}
   return current || null
 }
 
-const saveScore = ({ platform, org, repo, score, date }) => {
-  softAssign(db, [platform, org, repo, 'previous'], [])
-  const repoRef = db[platform][org][repo]
+const saveScore = ({ database, platform, org, repo, score, date }) => {
+  softAssign(database, [platform, org, repo, 'previous'], [])
+  const repoRef = database[platform][org][repo]
 
   if (repoRef.current) {
     repoRef.previous.push(repoRef.current)
@@ -59,34 +54,26 @@ const saveScore = ({ platform, org, repo, score, date }) => {
   repoRef.current = { score, date }
 }
 
-const generateReport = async ({ outputReportFormats, outputFileName, scores }) => {
-  if (!outputReportFormats.includes('md')) {
-    debug('No markdown report requested')
-    return
-  }
-  const destinationFile = join(process.cwd(), `${outputFileName}.md`)
+const generateReportContent = async (scores) => {
   const template = await readFile(join(process.cwd(), 'templates/report.ejs'), 'utf8')
-  const content = ejs.render(template, { scores })
-  await writeFile(destinationFile, content)
+  return ejs.render(template, { scores })
 }
 
-const commitChanges = async ({ outputFileName, outputReportFormats = [] }) => {
-  let gitFileCommand = 'git add data/database.json'
-  if (outputReportFormats.includes('md')) {
-    gitFileCommand += ` && git add ${outputFileName}.md`
+const generateIssueContent = async (scores) => {
+  const scoresInScope = scores.filter(({ currentDiff }) => currentDiff)
+  if (!scoresInScope.length) {
+    return null
   }
-  debug('Committing changes')
-  await exec(gitFileCommand)
-  await exec('git commit -m "Update scorecard"')
-  debug('Changes committed')
+  const template = await readFile(join(process.cwd(), 'templates/issue.ejs'), 'utf8')
+  return ejs.render(template, { scores: scoresInScope })
 }
 
 module.exports = {
   getProjectScore,
+  isDifferentContent,
   saveScore,
   getScore,
   spliceIntoChunks,
-  generateReport,
-  updateDatabase,
-  commitChanges
+  generateReportContent,
+  generateIssueContent
 }
