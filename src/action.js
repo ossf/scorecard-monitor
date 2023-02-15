@@ -49,7 +49,7 @@ async function run () {
 
   // PROCESS
   core.info("Generating scores...")
-  const { reportContent, issueContent, newDatabaseState } = await generateScores({ scope, database, maxRequestInParallel })
+  const { reportContent, issueContent, database: newDatabaseState } = await generateScores({ scope, database, maxRequestInParallel })
 
   // @TODO: If no changes to database, skip the rest of the process
   core.info("Checking database changes...")
