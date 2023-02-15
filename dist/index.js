@@ -20354,7 +20354,7 @@ async function run () {
     // @see: https://github.com/actions-js/push/blob/master/start.sh#L43
     core.info("Pushing changes to database and report")
     const remoteRepo = `https://${process.env.INPUT_GITHUB_ACTOR}:${githubToken}@github.com/${process.env.INPUT_REPOSITORY}.git`
-    await exec.exec(`git push "${remoteRepo}"`)
+    await exec.exec(`git push ${remoteRepo}`)
   }
 
   // Issue creation
