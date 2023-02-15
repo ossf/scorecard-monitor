@@ -1,33 +1,31 @@
 const debug = require('debug')('openssf-scorecard-monitor')
-const { commitChanges, generateReport, getProjectScore, updateDatabase, saveScore, getScore, spliceIntoChunks } = require('./utils')
-const scope = require('../config/scope.json')
-const { maxRequestInParallel, reporting } = require('../config/settings.json')
-
-;(async () => {
+const { spliceIntoChunks, getProjectScore, generateIssueContent, generateReportContent, getScore, saveScore } = require('./utils')
+const generateScores = async ({ scope, database, maxRequestInParallel }) => {
+  // @TODO: Improve deep clone logic
+  const newDatabaseState = JSON.parse(JSON.stringify(database))
   const platform = 'github.com'
   const projects = scope[platform]
-  console.log('projects', projects)
   debug('Total projects in scope', projects.length)
 
   const chunks = spliceIntoChunks(projects, maxRequestInParallel)
   debug('Total chunks', chunks.length)
 
   const scores = []
+
   for (let index = 0; index < chunks.length; index++) {
     const chunk = chunks[index]
     debug('Processing chunk %s/%s', index + 1, chunks.length)
 
     const chunkScores = await Promise.all(chunk.map(async ({ org, repo }) => {
-      // -- EACH REPO --
       const { score, date } = await getProjectScore({ platform, org, repo })
-      console.log('Got project score for %s/%s/%s: %s (%s)', platform, org, repo, score, date)
+      debug('Got project score for %s/%s/%s: %s (%s)', platform, org, repo, score, date)
 
-      const storedScore = getScore({ platform, org, repo })
+      const storedScore = getScore({ newDatabaseState, platform, org, repo })
 
       const scoreData = { platform, org, repo, score, date }
       // If no stored score then record if score is different then:
       if (!storedScore || storedScore.score !== score) {
-        saveScore({ platform, org, repo, score, date })
+        saveScore({ newDatabaseState, platform, org, repo, score, date })
       }
 
       // Add previous score and date if available to the report
@@ -46,16 +44,12 @@ const { maxRequestInParallel, reporting } = require('../config/settings.json')
     scores.push(...chunkScores)
   }
 
-  console.log('scores', scores)
-  // Generate the report
-  const { createOutputReport, outputReportFormats, outputFileName } = reporting
-  if (createOutputReport) {
-    await generateReport({ outputReportFormats, outputFileName, scores })
-  }
+  const reportContent = await generateReportContent(scores)
+  const issueContent = await generateIssueContent(scores)
 
-  // Save database state
-  await updateDatabase()
+  return { reportContent, issueContent, newDatabaseState }
+}
 
-  // Commit the changes
-  await commitChanges({ outputFileName, outputReportFormats })
-})()
+module.exports = {
+  generateScores
+}
