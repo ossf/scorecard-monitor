@@ -1,0 +1,7 @@
+name: 'OpenSSF Scorecard Monitor'
+description: 'Monitor OpenSSF Scorecard Evolution over time'
+author: 'Ulises Gascon'
+
+runs:
+  using: 'node16'
+  main: 'dist/index.js'
