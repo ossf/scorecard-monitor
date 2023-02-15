@@ -1,31 +1,31 @@
-const debug = require('debug')('openssf-scorecard-monitor')
+const core = require('@actions/core')
 const { spliceIntoChunks, getProjectScore, generateIssueContent, generateReportContent, getScore, saveScore } = require('./utils')
-const generateScores = async ({ scope, database, maxRequestInParallel }) => {
+const generateScores = async ({ scope, database: currentDatabase, maxRequestInParallel }) => {
   // @TODO: Improve deep clone logic
-  const newDatabaseState = JSON.parse(JSON.stringify(database))
+  const database = JSON.parse(JSON.stringify(currentDatabase))
   const platform = 'github.com'
   const projects = scope[platform]
-  debug('Total projects in scope', projects.length)
+  core.debug(`Total projects in scope: ${projects.length}`)
 
   const chunks = spliceIntoChunks(projects, maxRequestInParallel)
-  debug('Total chunks', chunks.length)
+  core.debug(`Total chunks: ${chunks.length}`)
 
   const scores = []
 
   for (let index = 0; index < chunks.length; index++) {
     const chunk = chunks[index]
-    debug('Processing chunk %s/%s', index + 1, chunks.length)
+    core.debug(`Processing chunk ${index+1}/${chunks.length}`)
 
     const chunkScores = await Promise.all(chunk.map(async ({ org, repo }) => {
       const { score, date } = await getProjectScore({ platform, org, repo })
-      debug('Got project score for %s/%s/%s: %s (%s)', platform, org, repo, score, date)
+      core.debug(`Got project score for ${platform}/${org}/${repo}: ${score} (${date})`)
 
-      const storedScore = getScore({ newDatabaseState, platform, org, repo })
+      const storedScore = getScore({ database, platform, org, repo })
 
       const scoreData = { platform, org, repo, score, date }
       // If no stored score then record if score is different then:
       if (!storedScore || storedScore.score !== score) {
-        saveScore({ newDatabaseState, platform, org, repo, score, date })
+        saveScore({ database, platform, org, repo, score, date })
       }
 
       // Add previous score and date if available to the report
@@ -44,10 +44,12 @@ const generateScores = async ({ scope, database, maxRequestInParallel }) => {
     scores.push(...chunkScores)
   }
 
+  core.debug(`All the scores are already collected`)
+
   const reportContent = await generateReportContent(scores)
   const issueContent = await generateIssueContent(scores)
 
-  return { reportContent, issueContent, newDatabaseState }
+  return { reportContent, issueContent, database }
 }
 
 module.exports = {

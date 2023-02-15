@@ -1,5 +1,5 @@
 const got = require('got')
-const debug = require('debug')('openssf-scorecard-monitor')
+const core = require('@actions/core')
 const ejs = require('ejs')
 const { readFile } = require('fs').promises
 const { join } = require('path')
@@ -32,10 +32,10 @@ const softAssign = (obj, keyPath, value) => {
 }
 
 const getProjectScore = async ({ platform, org, repo }) => {
-  debug('Getting project score for %s/%s/%s', platform, org, repo)
+  core.debug(`Getting project score for ${platform}/${org}/${repo}`)
   const response = await got(`https://api.securityscorecards.dev/projects/${platform}/${org}/${repo}`)
   const { score, date } = JSON.parse(response.body)
-  debug('Got project score for %s/%s/%s: %s (%s)', platform, org, repo, score, date)
+  core.debug(`Got project score for ${platform}/${org}/${repo}: ${score} (${date})`)
   return { platform, org, repo, score, date }
 }
 
@@ -55,11 +55,13 @@ const saveScore = ({ database, platform, org, repo, score, date }) => {
 }
 
 const generateReportContent = async (scores) => {
+  core.debug('Generating report content')
   const template = await readFile(join(process.cwd(), 'templates/report.ejs'), 'utf8')
   return ejs.render(template, { scores })
 }
 
 const generateIssueContent = async (scores) => {
+  core.debug('Generating issue content')
   const scoresInScope = scores.filter(({ currentDiff }) => currentDiff)
   if (!scoresInScope.length) {
     return null
