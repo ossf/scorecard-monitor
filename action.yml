@@ -2,6 +2,38 @@ name: 'OpenSSF Scorecard Monitor'
 description: 'Monitor OpenSSF Scorecard Evolution over time'
 author: 'Ulises Gascon'
 
+inputs:
+  scope:
+    description: 'File that includes the list of repositories to monitor'
+    required: true
+  database:
+    description: 'File that stores the state of the scorecard'
+    required: true
+  report:
+    description: 'File that stores the report of the scorecard'
+    required: true
+  auto-commit:
+    description: 'Automatically commit the changes to the repository'
+    required: false
+  auto-push:
+    description: 'Automatically push the changes to the repository'
+    required: false
+  generate-issue:
+    description: 'Automatically generate an issue with the discrepancies'
+    required: false
+  issue-title:
+    description: 'Title of the issue to be generated'
+    required: false
+    default: "OpenSSF Scorecard Report Updated!"
+  github-token:
+    description: 'Token to access the repository'
+    required: true
+  max-request-in-parallel:
+    description: 'Maximum number of HTTP requests to be executed in parallel'
+    required: false
+    default: "10"
+  
+  
 runs:
   using: 'node16'
   main: 'dist/index.js'
