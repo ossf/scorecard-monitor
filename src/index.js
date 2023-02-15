@@ -14,7 +14,7 @@ const generateScores = async ({ scope, database: currentDatabase, maxRequestInPa
 
   for (let index = 0; index < chunks.length; index++) {
     const chunk = chunks[index]
-    core.debug(`Processing chunk ${index+1}/${chunks.length}`)
+    core.debug(`Processing chunk ${index + 1}/${chunks.length}`)
 
     const chunkScores = await Promise.all(chunk.map(async ({ org, repo }) => {
       const { score, date } = await getProjectScore({ platform, org, repo })
@@ -44,7 +44,7 @@ const generateScores = async ({ scope, database: currentDatabase, maxRequestInPa
     scores.push(...chunkScores)
   }
 
-  core.debug(`All the scores are already collected`)
+  core.debug('All the scores are already collected')
 
   const reportContent = await generateReportContent(scores)
   const issueContent = await generateIssueContent(scores)
