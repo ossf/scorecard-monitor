@@ -21454,7 +21454,7 @@ const exec = __nccwpck_require__(1514)
 const { readFile, writeFile, stat } = (__nccwpck_require__(7147).promises)
 
 const { isDifferentContent } = __nccwpck_require__(1608)
-const { processReport } = __nccwpck_require__(4351)
+const { generateScores } = __nccwpck_require__(4351)
 
 async function run () {
   let octokit
@@ -21495,7 +21495,7 @@ async function run () {
   }
 
   // PROCESS
-  const { reportContent, issueContent, newDatabaseState } = await processReport({ scope, database, maxRequestInParallel })
+  const { reportContent, issueContent, newDatabaseState } = await generateScores({ scope, database, maxRequestInParallel })
 
   // @TODO: If no changes to database, skip the rest of the process
   const hasChanges = isDifferentContent(database, newDatabaseState)
