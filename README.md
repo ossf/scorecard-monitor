@@ -78,7 +78,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: ulisesGascon/openssf-scorecard-monitor@v1
+      - name: OpenSSF Scorecard Monitor
+        uses: UlisesGascon/openssf-scorecard-monitor@v1.0.1
         with:
           scope: reporting/scope.json
           database: reporting/database.json
