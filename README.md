@@ -1,8 +1,41 @@
-# openssf-scorecard-monitor
+# OpenSSF Scorecard Monitor
 
-A simple way to monitor OpenSSF Scorecard at organization level
+**Simplify OpenSSF Scorecard tracking in your organization with automated markdown and JSON reports, plus optional GitHub issue alerts.**
 
-## Setup
+## 🔮 About
+
+If you're feeling overwhelmed by an avalanche of repository scorecards in your organization, you can breathe easy: Automation is here to make your life easier! It will streamline the process of keeping track of them all by providing a comprehensive report in Markdown and a local database in JSON with all the scores. Furthermore, to stay on top of any changes in the scores, you can choose to get notifications through Github Issues.
+
+## 📺 Tutorial
+
+_soon_
+
+## ❤️ Awesome Features
+
+- Reporting in Markdown with simply information and comparative against the prior score. [Demo](https://github.com/UlisesGascon/openssf-scorecard-monitor-demo/blob/main/reporting/openssf-scorecard-report.md)
+- The reporting data is stored in json format (including previous records). [Demo](https://github.com/UlisesGascon/openssf-scorecard-monitor-demo/blob/main/reporting/database.json)
+- Generate an issue with the last changes in the scores, including links to the full report. [Demo](https://github.com/UlisesGascon/openssf-scorecard-monitor-demo/issues/2)
+- Easy to add/remove new repositories in scope from any github organization
+- Debug supported
+- Easy to use and great test coverage (soon)
+
+### 🎉 Demo
+
+Here is a [demo repository](https://github.com/UlisesGascon/openssf-scorecard-monitor-demo) that is using this Action
+
+**Sample Report**
+
+![sample report](.github/img/report.png)
+
+**Sample Issue**
+
+![sample issue](.github/img/issue.png)
+
+
+## :shipit: Used By
+
+_Soon_
+## ☕️ Setup
 
 Create a folder in your project (for example: `security-reporting`) and include the scope as follow:
 
@@ -26,7 +59,7 @@ File: `reporting/scope.json`
 Note: You must follow this structure, and only `github.com` projects are included
 
 
-## Usage
+## 📡 Usage
 
 ```yml
 name: "OpenSSF Scoring"
@@ -71,7 +104,7 @@ jobs:
 - `max-request-in-parallel`: Defines the total HTTP Request that can be done in parallel
 
 
-## Other
+## 🍿 Other
 
 ### Database structure
 
