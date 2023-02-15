@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.0.1](https://github.com/ulisesGascon/openssf-scorecard-monitor/compare/v1.0.0...v1.0.1) (2023-02-15)
+
+
+### Other
+
+* added github action branding  ([831364a](https://github.com/ulisesGascon/openssf-scorecard-monitor/commits/831364aaf4654af1bbc4747fcbc414539b9d7a74))
+
 ## 1.0.0 (2023-02-15)
 
 
