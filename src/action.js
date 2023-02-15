@@ -42,7 +42,7 @@ async function run () {
     await stat(databasePath)
     database = await readFile(databasePath, 'utf8').then(content => JSON.parse(content))
   } catch (error) {
-    core.log('Database does not exist, creating new database')
+    core.info('Database does not exist, creating new database')
   }
 
   // PROCESS
@@ -52,7 +52,7 @@ async function run () {
   const hasChanges = isDifferentContent(database, newDatabaseState)
 
   if (!hasChanges) {
-    core.log('No changes to database, skipping the rest of the process')
+    core.info('No changes to database, skipping the rest of the process')
     return
   }
 
