@@ -20010,13 +20010,13 @@ const saveScore = ({ database, platform, org, repo, score, date }) => {
 }
 
 const generateReportContent = async (scores) => {
-  core.log('Generating report content')
+  core.info('Generating report content')
   const template = await readFile(__nccwpck_require__.ab + "report.ejs", 'utf8')
   return ejs.render(template, { scores })
 }
 
 const generateIssueContent = async (scores) => {
-  core.log('Generating issue content')
+  core.info('Generating issue content')
   const scoresInScope = scores.filter(({ currentDiff }) => currentDiff)
   if (!scoresInScope.length) {
     return null
