@@ -41,7 +41,7 @@ permissions:
   packages: none
 
 jobs:
-  test:
+  security-scoring:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
