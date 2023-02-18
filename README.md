@@ -37,7 +37,7 @@ Here is a [demo repository](https://github.com/UlisesGascon/openssf-scorecard-mo
 _Soon_
 ## ☕️ Setup
 
-Create a folder in your project (for example: `security-reporting`) and include the scope as follow:
+Create a folder in your project (for example: `reporting`) and include the scope as follow:
 
 File: `reporting/scope.json`
 
