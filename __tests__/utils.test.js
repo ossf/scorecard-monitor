@@ -59,9 +59,9 @@ describe('Utils', () => {
 
     it('Should return false for non-primite values', () => {
       expect(normalizeBoolean([])).toBe(false)
-      expect(normalizeBoolean(["hello"])).toBe(false)
+      expect(normalizeBoolean(['hello'])).toBe(false)
       expect(normalizeBoolean({})).toBe(false)
-      expect(normalizeBoolean({"hello": "world"})).toBe(false)
+      expect(normalizeBoolean({ hello: 'world' })).toBe(false)
       expect(normalizeBoolean(() => {})).toBe(false)
     })
 
@@ -69,12 +69,8 @@ describe('Utils', () => {
       expect(normalizeBoolean(true)).toBe(true)
       expect(normalizeBoolean(false)).toBe(false)
       expect(normalizeBoolean(null)).toBe(false)
-      expect(normalizeBoolean("")).toBe(false)
+      expect(normalizeBoolean('')).toBe(false)
       expect(normalizeBoolean(NaN)).toBe(false)
     })
-
-
-
   })
-
 })

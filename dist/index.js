@@ -20025,6 +20025,27 @@ const generateIssueContent = async (scores) => {
   return ejs.render(template, { scores: scoresInScope })
 }
 
+const normalizeBoolean = (value) => {
+  // Ignore non-primitive values
+  if (!['boolean', 'string', 'number'].includes(typeof value)) {
+    return false
+  }
+
+  const normalizedValue = !isNaN(parseInt(value)) ? parseInt(value) : value
+
+  // Add support for string values
+  if (typeof normalizedValue === 'string') {
+    return ['true', 'on', 'yes', 'y'].includes(normalizedValue.toLowerCase().trim())
+  }
+
+  // Add support for number values
+  if (typeof normalizedValue === 'number') {
+    return normalizedValue === 1
+  }
+
+  return Boolean(value)
+}
+
 module.exports = {
   getProjectScore,
   isDifferentContent,
@@ -20032,7 +20053,8 @@ module.exports = {
   getScore,
   spliceIntoChunks,
   generateReportContent,
-  generateIssueContent
+  generateIssueContent,
+  normalizeBoolean
 }
 
 
@@ -20277,7 +20299,7 @@ const exec = __nccwpck_require__(1514)
 
 const { readFile, writeFile, stat } = (__nccwpck_require__(7147).promises)
 
-const { isDifferentContent } = __nccwpck_require__(1608)
+const { isDifferentContent, normalizeBoolean } = __nccwpck_require__(1608)
 const { generateScores } = __nccwpck_require__(4351)
 
 async function run () {
@@ -20290,10 +20312,9 @@ async function run () {
   const reportPath = core.getInput('report', { required: true })
   // Options
   const maxRequestInParallel = parseInt(core.getInput('max-request-in-parallel') || 10)
-  // @TODO: Improve boolean handling
-  const generateIssue = core.getInput('generate-issue') || false
-  const autoPush = core.getInput('auto-push') || false
-  const autoCommit = core.getInput('auto-commit') || false
+  const generateIssue = normalizeBoolean(core.getInput('generate-issue'))
+  const autoPush = normalizeBoolean(core.getInput('auto-push'))
+  const autoCommit = normalizeBoolean(core.getInput('auto-commit'))
   const issueTitle = core.getInput('issue-title') || 'OpenSSF Scorecard Report Updated!'
   const githubToken = core.getInput('github-token')
 
@@ -20324,7 +20345,6 @@ async function run () {
   core.info('Generating scores...')
   const { reportContent, issueContent, database: newDatabaseState } = await generateScores({ scope, database, maxRequestInParallel })
 
-  // @TODO: If no changes to database, skip the rest of the process
   core.info('Checking database changes...')
   const hasChanges = isDifferentContent(database, newDatabaseState)
 
