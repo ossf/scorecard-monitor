@@ -4,7 +4,7 @@ const exec = require('@actions/exec')
 
 const { readFile, writeFile, stat } = require('fs').promises
 
-const { isDifferentContent } = require('./utils')
+const { isDifferentContent, normalizeBoolean } = require('./utils')
 const { generateScores } = require('./')
 
 async function run () {
@@ -17,10 +17,9 @@ async function run () {
   const reportPath = core.getInput('report', { required: true })
   // Options
   const maxRequestInParallel = parseInt(core.getInput('max-request-in-parallel') || 10)
-  // @TODO: Improve boolean handling
-  const generateIssue = core.getInput('generate-issue') || false
-  const autoPush = core.getInput('auto-push') || false
-  const autoCommit = core.getInput('auto-commit') || false
+  const generateIssue = normalizeBoolean(core.getInput('generate-issue'))
+  const autoPush = normalizeBoolean(core.getInput('auto-push'))
+  const autoCommit = normalizeBoolean(core.getInput('auto-commit'))
   const issueTitle = core.getInput('issue-title') || 'OpenSSF Scorecard Report Updated!'
   const githubToken = core.getInput('github-token')
 
