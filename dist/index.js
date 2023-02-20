@@ -16027,6 +16027,31 @@ exports.FetchError = FetchError;
 
 /***/ }),
 
+/***/ 6446:
+/***/ ((__unused_webpack_module, exports) => {
+
+"use strict";
+
+exports.__esModule = true;
+exports.normalizeBoolean = void 0;
+function normalizeBoolean(value) {
+    if (!['boolean', 'string', 'number'].includes(typeof value)) {
+        return false;
+    }
+    var normalizedValue = !isNaN(parseInt(value)) ? parseInt(value) : value;
+    if (typeof normalizedValue === 'string') {
+        return ['true', 'on', 'yes', 'y'].includes(normalizedValue.toLowerCase().trim());
+    }
+    if (typeof normalizedValue === 'number') {
+        return normalizedValue === 1;
+    }
+    return Boolean(value);
+}
+exports.normalizeBoolean = normalizeBoolean;
+//# sourceMappingURL=index.js.map
+
+/***/ }),
+
 /***/ 7952:
 /***/ ((module) => {
 
@@ -20025,27 +20050,6 @@ const generateIssueContent = async (scores) => {
   return ejs.render(template, { scores: scoresInScope })
 }
 
-const normalizeBoolean = (value) => {
-  // Ignore non-primitive values
-  if (!['boolean', 'string', 'number'].includes(typeof value)) {
-    return false
-  }
-
-  const normalizedValue = !isNaN(parseInt(value)) ? parseInt(value) : value
-
-  // Add support for string values
-  if (typeof normalizedValue === 'string') {
-    return ['true', 'on', 'yes', 'y'].includes(normalizedValue.toLowerCase().trim())
-  }
-
-  // Add support for number values
-  if (typeof normalizedValue === 'number') {
-    return normalizedValue === 1
-  }
-
-  return Boolean(value)
-}
-
 module.exports = {
   getProjectScore,
   isDifferentContent,
@@ -20053,8 +20057,7 @@ module.exports = {
   getScore,
   spliceIntoChunks,
   generateReportContent,
-  generateIssueContent,
-  normalizeBoolean
+  generateIssueContent
 }
 
 
@@ -20296,10 +20299,10 @@ var __webpack_exports__ = {};
 const core = __nccwpck_require__(2186)
 const github = __nccwpck_require__(5438)
 const exec = __nccwpck_require__(1514)
-
+const { normalizeBoolean } = __nccwpck_require__(6446)
 const { readFile, writeFile, stat } = (__nccwpck_require__(7147).promises)
 
-const { isDifferentContent, normalizeBoolean } = __nccwpck_require__(1608)
+const { isDifferentContent } = __nccwpck_require__(1608)
 const { generateScores } = __nccwpck_require__(4351)
 
 async function run () {
