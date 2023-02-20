@@ -16027,6 +16027,31 @@ exports.FetchError = FetchError;
 
 /***/ }),
 
+/***/ 6446:
+/***/ ((__unused_webpack_module, exports) => {
+
+"use strict";
+
+exports.__esModule = true;
+exports.normalizeBoolean = void 0;
+function normalizeBoolean(value) {
+    if (!['boolean', 'string', 'number'].includes(typeof value)) {
+        return false;
+    }
+    var normalizedValue = !isNaN(parseInt(value)) ? parseInt(value) : value;
+    if (typeof normalizedValue === 'string') {
+        return ['true', 'on', 'yes', 'y'].includes(normalizedValue.toLowerCase().trim());
+    }
+    if (typeof normalizedValue === 'number') {
+        return normalizedValue === 1;
+    }
+    return Boolean(value);
+}
+exports.normalizeBoolean = normalizeBoolean;
+//# sourceMappingURL=index.js.map
+
+/***/ }),
+
 /***/ 7952:
 /***/ ((module) => {
 
@@ -20274,7 +20299,7 @@ var __webpack_exports__ = {};
 const core = __nccwpck_require__(2186)
 const github = __nccwpck_require__(5438)
 const exec = __nccwpck_require__(1514)
-
+const { normalizeBoolean } = __nccwpck_require__(6446)
 const { readFile, writeFile, stat } = (__nccwpck_require__(7147).promises)
 
 const { isDifferentContent } = __nccwpck_require__(1608)
@@ -20290,10 +20315,9 @@ async function run () {
   const reportPath = core.getInput('report', { required: true })
   // Options
   const maxRequestInParallel = parseInt(core.getInput('max-request-in-parallel') || 10)
-  // @TODO: Improve boolean handling
-  const generateIssue = core.getInput('generate-issue') || false
-  const autoPush = core.getInput('auto-push') || false
-  const autoCommit = core.getInput('auto-commit') || false
+  const generateIssue = normalizeBoolean(core.getInput('generate-issue'))
+  const autoPush = normalizeBoolean(core.getInput('auto-push'))
+  const autoCommit = normalizeBoolean(core.getInput('auto-commit'))
   const issueTitle = core.getInput('issue-title') || 'OpenSSF Scorecard Report Updated!'
   const githubToken = core.getInput('github-token')
 
@@ -20324,7 +20348,6 @@ async function run () {
   core.info('Generating scores...')
   const { reportContent, issueContent, database: newDatabaseState } = await generateScores({ scope, database, maxRequestInParallel })
 
-  // @TODO: If no changes to database, skip the rest of the process
   core.info('Checking database changes...')
   const hasChanges = isDifferentContent(database, newDatabaseState)
 
