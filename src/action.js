@@ -1,10 +1,10 @@
 const core = require('@actions/core')
 const github = require('@actions/github')
 const exec = require('@actions/exec')
-
+const { normalizeBoolean } = require('normalize-boolean')
 const { readFile, writeFile, stat } = require('fs').promises
 
-const { isDifferentContent, normalizeBoolean } = require('./utils')
+const { isDifferentContent } = require('./utils')
 const { generateScores } = require('./')
 
 async function run () {
