@@ -6,6 +6,8 @@ const { normalizeBoolean } = require('normalize-boolean')
 const { readFile, writeFile, stat } = require('fs').promises
 
 const { isDifferent } = require('@ulisesgascon/is-different')
+const { updateOrCreateSegment } = require('@ulisesgascon/text-tags-manager')
+
 const { generateScores } = require('./')
 
 async function run () {
@@ -23,6 +25,9 @@ async function run () {
   const autoCommit = normalizeBoolean(core.getInput('auto-commit'))
   const issueTitle = core.getInput('issue-title') || 'OpenSSF Scorecard Report Updated!'
   const githubToken = core.getInput('github-token')
+  const reportTagsEnabled = normalizeBoolean(core.getInput('report-tags-enabled'))
+  const startTag = core.getInput('report-start-tag') || '<!-- OPENSSF-SCORECARD-MONITOR:START -->'
+  const endTag = core.getInput('report-end-tag') || '<!-- OPENSSF-SCORECARD-MONITOR:END -->'
 
   // Error Handling
   // @TODO: Validate Schemas
@@ -37,6 +42,7 @@ async function run () {
   core.info('Checking Scope...')
   const scope = await readFile(scopePath, 'utf8').then(content => JSON.parse(content))
   let database = {}
+  let originalReportContent = ''
 
   // Check if database exists
   try {
@@ -45,6 +51,17 @@ async function run () {
     database = await readFile(databasePath, 'utf8').then(content => JSON.parse(content))
   } catch (error) {
     core.info('Database does not exist, creating new database')
+  }
+
+  // Check if report exists as the content will be used to update the report with the tags
+  if (reportTagsEnabled) {
+    try {
+      core.info('Checking if report exists...')
+      await stat(reportPath)
+      originalReportContent = await readFile(reportPath, 'utf8')
+    } catch (error) {
+      core.info('Previous Report does not exist, ignoring previous content for tags...')
+    }
   }
 
   // PROCESS
@@ -62,7 +79,14 @@ async function run () {
   // Save changes
   core.info('Saving changes to database and report')
   await writeFile(databasePath, JSON.stringify(newDatabaseState, null, 2))
-  await writeFile(reportPath, reportContent)
+  await writeFile(reportPath, reportTagsEnabled
+    ? reportContent
+    : updateOrCreateSegment({
+      original: originalReportContent,
+      replacementSegment: reportContent,
+      startTag,
+      endTag
+    }))
 
   // Commit changes
   // @see: https://github.com/actions/checkout#push-a-commit-using-the-built-in-token

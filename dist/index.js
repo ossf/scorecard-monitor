@@ -6256,6 +6256,38 @@ exports.softAssign = softAssign;
 
 /***/ }),
 
+/***/ 7794:
+/***/ ((__unused_webpack_module, exports) => {
+
+"use strict";
+
+exports.__esModule = true;
+exports.updateOrCreateSegment = void 0;
+function updateOrCreateSegment(settings) {
+    var original = settings.original, replacementSegment = settings.replacementSegment, startTag = settings.startTag, endTag = settings.endTag;
+    if ([original, replacementSegment, startTag, endTag].some(function (prop) { return typeof prop !== 'string'; })) {
+        throw new Error('settings must be an object with the following properties as string values: original, replacementSegment, startTag, endTag');
+    }
+    var startTagIndex = original.indexOf(startTag);
+    var endTagIndex = original.indexOf(endTag);
+    if ((startTagIndex === -1 && endTagIndex > -1) || (endTagIndex === -1 && startTagIndex > -1)) {
+        throw new Error("Only one tag found in the content, expected to find both '".concat(startTag, "' and '").concat(endTag, "'"));
+    }
+    if (startTagIndex > endTagIndex) {
+        throw new Error("The tags are not in the correct order, expected to find '".concat(startTag, "' before '").concat(endTag, "'"));
+    }
+    if (startTagIndex === -1 && endTagIndex === -1) {
+        return "".concat(startTag, "\n").concat(replacementSegment, "\n").concat(endTag);
+    }
+    var contentBefore = original.slice(0, startTagIndex);
+    var contentAfter = original.slice(endTagIndex + endTag.length);
+    return "".concat(contentBefore).concat(startTag, "\n").concat(replacementSegment, "\n").concat(endTag).concat(contentAfter);
+}
+exports.updateOrCreateSegment = updateOrCreateSegment;
+//# sourceMappingURL=index.js.map
+
+/***/ }),
+
 /***/ 3682:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
@@ -20350,6 +20382,8 @@ const { normalizeBoolean } = __nccwpck_require__(6446)
 const { readFile, writeFile, stat } = (__nccwpck_require__(7147).promises)
 
 const { isDifferent } = __nccwpck_require__(9497)
+const { updateOrCreateSegment } = __nccwpck_require__(7794)
+
 const { generateScores } = __nccwpck_require__(4351)
 
 async function run () {
@@ -20367,6 +20401,9 @@ async function run () {
   const autoCommit = normalizeBoolean(core.getInput('auto-commit'))
   const issueTitle = core.getInput('issue-title') || 'OpenSSF Scorecard Report Updated!'
   const githubToken = core.getInput('github-token')
+  const reportTagsEnabled = normalizeBoolean(core.getInput('report-tags-enabled'))
+  const startTag = core.getInput('report-start-tag') || '<!-- OPENSSF-SCORECARD-MONITOR:START -->'
+  const endTag = core.getInput('report-end-tag') || '<!-- OPENSSF-SCORECARD-MONITOR:END -->'
 
   // Error Handling
   // @TODO: Validate Schemas
@@ -20381,6 +20418,7 @@ async function run () {
   core.info('Checking Scope...')
   const scope = await readFile(scopePath, 'utf8').then(content => JSON.parse(content))
   let database = {}
+  let originalReportContent = ''
 
   // Check if database exists
   try {
@@ -20389,6 +20427,17 @@ async function run () {
     database = await readFile(databasePath, 'utf8').then(content => JSON.parse(content))
   } catch (error) {
     core.info('Database does not exist, creating new database')
+  }
+
+  // Check if report exists as the content will be used to update the report with the tags
+  if (reportTagsEnabled) {
+    try {
+      core.info('Checking if report exists...')
+      await stat(reportPath)
+      originalReportContent = await readFile(reportPath, 'utf8')
+    } catch (error) {
+      core.info('Previous Report does not exist, ignoring previous content for tags...')
+    }
   }
 
   // PROCESS
@@ -20406,7 +20455,14 @@ async function run () {
   // Save changes
   core.info('Saving changes to database and report')
   await writeFile(databasePath, JSON.stringify(newDatabaseState, null, 2))
-  await writeFile(reportPath, reportContent)
+  await writeFile(reportPath, reportTagsEnabled
+    ? reportContent
+    : updateOrCreateSegment({
+      original: originalReportContent,
+      replacementSegment: reportContent,
+      startTag,
+      endTag
+    }))
 
   // Commit changes
   // @see: https://github.com/actions/checkout#push-a-commit-using-the-built-in-token
