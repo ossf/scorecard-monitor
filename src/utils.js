@@ -8,9 +8,9 @@ const { softAssign } = require('@ulisesgascon/soft-assign-deep-property')
 const getProjectScore = async ({ platform, org, repo }) => {
   core.debug(`Getting project score for ${platform}/${org}/${repo}`)
   const response = await got(`https://api.securityscorecards.dev/projects/${platform}/${org}/${repo}`)
-  const { score, date } = JSON.parse(response.body)
+  const { score, date, repo: { commit } = {} } = JSON.parse(response.body)
   core.debug(`Got project score for ${platform}/${org}/${repo}: ${score} (${date})`)
-  return { platform, org, repo, score, date }
+  return { platform, org, repo, score, date, commit }
 }
 
 const getScore = ({ database, platform, org, repo }) => {
@@ -18,14 +18,14 @@ const getScore = ({ database, platform, org, repo }) => {
   return current || null
 }
 
-const saveScore = ({ database, platform, org, repo, score, date }) => {
+const saveScore = ({ database, platform, org, repo, score, date, commit }) => {
   softAssign(database, [platform, org, repo, 'previous'], [])
   const repoRef = database[platform][org][repo]
 
   if (repoRef.current) {
     repoRef.previous.push(repoRef.current)
   }
-  repoRef.current = { score, date }
+  repoRef.current = { score, date, commit }
 }
 
 const generateReportContent = async (scores) => {
