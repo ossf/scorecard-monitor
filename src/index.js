@@ -19,15 +19,15 @@ const generateScores = async ({ scope, database: currentDatabase, maxRequestInPa
     core.debug(`Processing chunk ${index + 1}/${chunks.length}`)
 
     const chunkScores = await Promise.all(chunk.map(async ({ org, repo }) => {
-      const { score, date } = await getProjectScore({ platform, org, repo })
+      const { score, date, commit } = await getProjectScore({ platform, org, repo })
       core.debug(`Got project score for ${platform}/${org}/${repo}: ${score} (${date})`)
 
       const storedScore = getScore({ database, platform, org, repo })
 
-      const scoreData = { platform, org, repo, score, date }
+      const scoreData = { platform, org, repo, score, date, commit }
       // If no stored score then record if score is different then:
       if (!storedScore || storedScore.score !== score) {
-        saveScore({ database, platform, org, repo, score, date })
+        saveScore({ database, platform, org, repo, score, date, commit })
       }
 
       // Add previous score and date if available to the report
