@@ -25,6 +25,17 @@ inputs:
     description: 'Title of the issue to be generated'
     required: false
     default: "OpenSSF Scorecard Report Updated!"
+  report-tags-enabled:
+    description: 'Enable the use of tags in the report'
+    required: false
+  report-start-tag:
+    description: 'Start tag to be used in the report'
+    required: false
+    default: "<!-- OPENSSF-SCORECARD-MONITOR:START -->"
+  report-end-tag:
+    description: 'End tag to be used in the report'
+    required: false
+    default: "<!-- OPENSSF-SCORECARD-MONITOR:END -->"
   github-token:
     description: 'Token to access the repository'
     required: true

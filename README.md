@@ -103,6 +103,9 @@ jobs:
 - `issue-title`: Defines the issue title
 - `github-token`: The token usage to create the issue and push the code
 - `max-request-in-parallel`: Defines the total HTTP Request that can be done in parallel
+- `report-tags-enabled`: Defines if the markdown report must be created/updated around tags by default is disabled. This is useful if the report is going to be include in a file that has other content on it, like docusaurus docs site or similar.
+- `report-start-tag`: Defines the start tag, default `<!-- OPENSSF-SCORECARD-MONITOR:START -->`
+- `report-end-tag` Defines the closing tag, default `<!-- OPENSSF-SCORECARD-MONITOR:END -->`
 
 
 ### Outputs
