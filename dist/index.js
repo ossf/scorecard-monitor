@@ -6187,6 +6187,75 @@ module.exports["default"] = timer;
 
 /***/ }),
 
+/***/ 4478:
+/***/ ((__unused_webpack_module, exports) => {
+
+"use strict";
+
+exports.__esModule = true;
+exports.chunkArray = void 0;
+function chunkArray(arr, chunkSize) {
+    if (!Array.isArray(arr))
+        throw new Error('arr must be an array');
+    if (!Number.isInteger(chunkSize) && chunkSize >= 0)
+        throw new Error('chunkSize must be a positive integer');
+    var res = [];
+    for (var i = 0; i < arr.length; i += chunkSize) {
+        var chunk = arr.slice(i, i + chunkSize);
+        res.push(chunk);
+    }
+    return res;
+}
+exports.chunkArray = chunkArray;
+//# sourceMappingURL=index.js.map
+
+/***/ }),
+
+/***/ 9497:
+/***/ ((__unused_webpack_module, exports) => {
+
+"use strict";
+
+exports.__esModule = true;
+exports.isDifferent = void 0;
+function isDifferent(firstValue, secondValue) {
+    return JSON.stringify(firstValue) !== JSON.stringify(secondValue);
+}
+exports.isDifferent = isDifferent;
+//# sourceMappingURL=index.js.map
+
+/***/ }),
+
+/***/ 7348:
+/***/ ((__unused_webpack_module, exports) => {
+
+"use strict";
+
+exports.__esModule = true;
+exports.softAssign = void 0;
+var isObject = function (obj) {
+    return typeof obj === 'object' && !Array.isArray(obj) && obj !== null;
+};
+function softAssign(obj, keys, value) {
+    if (!isObject(obj))
+        throw new Error('obj must be an object');
+    if (!Array.isArray(keys) || (keys.length === 0))
+        throw new Error('keys must be an Array with at least one element');
+    var lastKeyIndex = keys.length - 1;
+    for (var i = 0; i < lastKeyIndex; ++i) {
+        var key = keys[i];
+        if (!(key in obj)) {
+            obj[key] = {};
+        }
+        obj = obj[key];
+    }
+    obj[keys[lastKeyIndex]] = obj[keys[lastKeyIndex]] !== undefined ? obj[keys[lastKeyIndex]] : value;
+}
+exports.softAssign = softAssign;
+//# sourceMappingURL=index.js.map
+
+/***/ }),
+
 /***/ 3682:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
@@ -19915,7 +19984,9 @@ function wrappy (fn, cb) {
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
 const core = __nccwpck_require__(2186)
-const { spliceIntoChunks, getProjectScore, generateIssueContent, generateReportContent, getScore, saveScore } = __nccwpck_require__(1608)
+const { getProjectScore, generateIssueContent, generateReportContent, getScore, saveScore } = __nccwpck_require__(1608)
+const { chunkArray } = __nccwpck_require__(4478)
+
 const generateScores = async ({ scope, database: currentDatabase, maxRequestInParallel }) => {
   // @TODO: Improve deep clone logic
   const database = JSON.parse(JSON.stringify(currentDatabase))
@@ -19923,7 +19994,7 @@ const generateScores = async ({ scope, database: currentDatabase, maxRequestInPa
   const projects = scope[platform]
   core.debug(`Total projects in scope: ${projects.length}`)
 
-  const chunks = spliceIntoChunks(projects, maxRequestInParallel)
+  const chunks = chunkArray(projects, maxRequestInParallel)
   core.debug(`Total chunks: ${chunks.length}`)
 
   const scores = []
@@ -19983,33 +20054,7 @@ const core = __nccwpck_require__(2186)
 const ejs = __nccwpck_require__(8431)
 const { readFile } = (__nccwpck_require__(7147).promises)
 const { join } = __nccwpck_require__(1017)
-
-const isDifferentContent = (oldContent, newContent) => {
-  return JSON.stringify(oldContent) !== JSON.stringify(newContent)
-}
-
-function spliceIntoChunks (arr, chunkSize) {
-  // @see: https://stackabuse.com/how-to-split-an-array-into-even-chunks-in-javascript/
-  const res = []
-  while (arr.length > 0) {
-    const chunk = arr.splice(0, chunkSize)
-    res.push(chunk)
-  }
-  return res
-}
-
-const softAssign = (obj, keyPath, value) => {
-  // @see: https://stackoverflow.com/a/5484764
-  const lastKeyIndex = keyPath.length - 1
-  for (let i = 0; i < lastKeyIndex; ++i) {
-    const key = keyPath[i]
-    if (!(key in obj)) {
-      obj[key] = {}
-    }
-    obj = obj[key]
-  }
-  obj[keyPath[lastKeyIndex]] = obj[keyPath[lastKeyIndex]] || value
-}
+const { softAssign } = __nccwpck_require__(7348)
 
 const getProjectScore = async ({ platform, org, repo }) => {
   core.debug(`Getting project score for ${platform}/${org}/${repo}`)
@@ -20052,10 +20097,8 @@ const generateIssueContent = async (scores) => {
 
 module.exports = {
   getProjectScore,
-  isDifferentContent,
   saveScore,
   getScore,
-  spliceIntoChunks,
   generateReportContent,
   generateIssueContent
 }
@@ -20300,9 +20343,10 @@ const core = __nccwpck_require__(2186)
 const github = __nccwpck_require__(5438)
 const exec = __nccwpck_require__(1514)
 const { normalizeBoolean } = __nccwpck_require__(6446)
+
 const { readFile, writeFile, stat } = (__nccwpck_require__(7147).promises)
 
-const { isDifferentContent } = __nccwpck_require__(1608)
+const { isDifferent } = __nccwpck_require__(9497)
 const { generateScores } = __nccwpck_require__(4351)
 
 async function run () {
@@ -20349,7 +20393,7 @@ async function run () {
   const { reportContent, issueContent, database: newDatabaseState } = await generateScores({ scope, database, maxRequestInParallel })
 
   core.info('Checking database changes...')
-  const hasChanges = isDifferentContent(database, newDatabaseState)
+  const hasChanges = isDifferent(database, newDatabaseState)
 
   if (!hasChanges) {
     core.info('No changes to database, skipping the rest of the process')

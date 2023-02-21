@@ -3,33 +3,7 @@ const core = require('@actions/core')
 const ejs = require('ejs')
 const { readFile } = require('fs').promises
 const { join } = require('path')
-
-const isDifferentContent = (oldContent, newContent) => {
-  return JSON.stringify(oldContent) !== JSON.stringify(newContent)
-}
-
-function spliceIntoChunks (arr, chunkSize) {
-  // @see: https://stackabuse.com/how-to-split-an-array-into-even-chunks-in-javascript/
-  const res = []
-  while (arr.length > 0) {
-    const chunk = arr.splice(0, chunkSize)
-    res.push(chunk)
-  }
-  return res
-}
-
-const softAssign = (obj, keyPath, value) => {
-  // @see: https://stackoverflow.com/a/5484764
-  const lastKeyIndex = keyPath.length - 1
-  for (let i = 0; i < lastKeyIndex; ++i) {
-    const key = keyPath[i]
-    if (!(key in obj)) {
-      obj[key] = {}
-    }
-    obj = obj[key]
-  }
-  obj[keyPath[lastKeyIndex]] = obj[keyPath[lastKeyIndex]] || value
-}
+const { softAssign } = require('@ulisesgascon/soft-assign-deep-property')
 
 const getProjectScore = async ({ platform, org, repo }) => {
   core.debug(`Getting project score for ${platform}/${org}/${repo}`)
@@ -72,10 +46,8 @@ const generateIssueContent = async (scores) => {
 
 module.exports = {
   getProjectScore,
-  isDifferentContent,
   saveScore,
   getScore,
-  spliceIntoChunks,
   generateReportContent,
   generateIssueContent
 }

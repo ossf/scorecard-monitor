@@ -1,5 +1,7 @@
 const core = require('@actions/core')
-const { spliceIntoChunks, getProjectScore, generateIssueContent, generateReportContent, getScore, saveScore } = require('./utils')
+const { getProjectScore, generateIssueContent, generateReportContent, getScore, saveScore } = require('./utils')
+const { chunkArray } = require('@ulisesgascon/array-to-chunks')
+
 const generateScores = async ({ scope, database: currentDatabase, maxRequestInParallel }) => {
   // @TODO: Improve deep clone logic
   const database = JSON.parse(JSON.stringify(currentDatabase))
@@ -7,7 +9,7 @@ const generateScores = async ({ scope, database: currentDatabase, maxRequestInPa
   const projects = scope[platform]
   core.debug(`Total projects in scope: ${projects.length}`)
 
-  const chunks = spliceIntoChunks(projects, maxRequestInParallel)
+  const chunks = chunkArray(projects, maxRequestInParallel)
   core.debug(`Total chunks: ${chunks.length}`)
 
   const scores = []
