@@ -2,9 +2,10 @@ const core = require('@actions/core')
 const github = require('@actions/github')
 const exec = require('@actions/exec')
 const { normalizeBoolean } = require('normalize-boolean')
+
 const { readFile, writeFile, stat } = require('fs').promises
 
-const { isDifferentContent } = require('./utils')
+const { isDifferent } = require('@ulisesgascon/is-different')
 const { generateScores } = require('./')
 
 async function run () {
@@ -51,7 +52,7 @@ async function run () {
   const { reportContent, issueContent, database: newDatabaseState } = await generateScores({ scope, database, maxRequestInParallel })
 
   core.info('Checking database changes...')
-  const hasChanges = isDifferentContent(database, newDatabaseState)
+  const hasChanges = isDifferent(database, newDatabaseState)
 
   if (!hasChanges) {
     core.info('No changes to database, skipping the rest of the process')

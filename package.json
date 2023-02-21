@@ -43,10 +43,13 @@
     "@actions/core": "1.10.0",
     "@actions/exec": "1.1.1",
     "@actions/github": "5.1.1",
+    "@ulisesgascon/array-to-chunks": "1.0.1",
+    "@ulisesgascon/is-different": "1.0.0",
+    "@ulisesgascon/soft-assign-deep-property": "1.0.0",
     "@vercel/ncc": "0.36.1",
     "ejs": "3.1.8",
     "got": "11.8.6",
-    "normalize-boolean": "^2.0.1"
+    "normalize-boolean": "2.0.1"
   },
   "engines": {
     "node": ">=16.0.0"
