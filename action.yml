@@ -33,7 +33,10 @@ inputs:
     required: false
     default: "10"
   
-  
+outputs:
+  scores:
+    description: 'Score data in JSON format'
+
 runs:
   using: 'node16'
   main: 'dist/index.js'
