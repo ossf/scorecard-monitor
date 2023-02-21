@@ -20036,6 +20036,9 @@ const generateScores = async ({ scope, database: currentDatabase, maxRequestInPa
   const reportContent = await generateReportContent(scores)
   const issueContent = await generateIssueContent(scores)
 
+  // SET OUTPUTS
+  core.setOutput('scores', scores)
+
   return { reportContent, issueContent, database }
 }
 

@@ -105,6 +105,10 @@ jobs:
 - `max-request-in-parallel`: Defines the total HTTP Request that can be done in parallel
 
 
+### Outputs
+
+- `scores`: Score data in JSON format
+
 ## 🍿 Other
 
 ### Database structure
