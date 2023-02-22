@@ -111,11 +111,10 @@ async function run () {
       endTag
     }))
 
-  if(autoScopeEnabled){
+  if (autoScopeEnabled) {
     core.info('Saving changes to scope...')
     await writeFile(scopePath, JSON.stringify(scope, null, 2))
   }
-
 
   // Commit changes
   // @see: https://github.com/actions/checkout#push-a-commit-using-the-built-in-token
@@ -125,7 +124,7 @@ async function run () {
     await exec.exec('git config user.email github-actions@github.com')
     await exec.exec(`git add ${databasePath}`)
     await exec.exec(`git add ${reportPath}`)
-    if(autoScopeEnabled){
+    if (autoScopeEnabled) {
       core.info('Committing changes to scope...')
       await exec.exec(`git add ${scopePath}`)
     }
