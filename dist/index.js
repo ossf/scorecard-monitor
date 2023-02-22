@@ -20019,12 +20019,117 @@ const core = __nccwpck_require__(2186)
 const { getProjectScore, generateIssueContent, generateReportContent, getScore, saveScore } = __nccwpck_require__(1608)
 const { chunkArray } = __nccwpck_require__(4478)
 
+const generateScope = async ({ octokit, orgs, scope, maxRequestInParallel }) => {
+  const platform = 'github.com'
+  const newScope = {}
+  newScope[platform] = { }
+  const organizationRepos = {}
+
+  // Collect all the repos for each org
+  for (let index = 0; index < orgs.length; index++) {
+    const org = orgs[index]
+    core.debug(`Processing org ${index + 1}/${orgs.length}: ${org}`)
+
+    // Check for Org or User and collect the first 100 repos
+    let entityType = 'org'
+    const repoList = []
+    try {
+      const { data: repos } = await octokit.listForOrg({ org, type: 'public', per_page: 100 })
+      core.debug(`Got ${repos.length} repos for org: ${org}`)
+    } catch (error) {
+      entityType = 'user'
+      const { data: repos } = await octokit.listForUser({ username: org, type: 'public', per_page: 100 })
+      core.debug(`Got ${repos.length} repos for user: ${org}`)
+      repoList.push(...repos.map(entity => entity.name))
+    }
+
+    // Check if the org or user has more than 100 repos and requires pagination management
+    if (repoList.length === 100) {
+      let page = 2
+      let hasMore = true
+      const entityInApi = {}
+      entityInApi[entityType === 'org' ? 'org' : 'username'] = org
+      while (hasMore) {
+        core.debug(`Getting page ${page} for ${entityType}: ${org}`)
+        const { data: repos, headers } = await octokit[entityType === 'org' ? 'listForOrg' : 'listForUser']({ ...entityInApi, type: 'public', per_page: 100, page })
+        core.debug(`Got ${repos.length} repos for ${entityType}: ${org}`)
+        repoList.push(...repos.map(entity => entity.name))
+        hasMore = headers.link.includes('rel="next"')
+        page += 1
+      }
+    }
+
+    organizationRepos[org] = repoList.map(({ name }) => name)
+
+    // Filter the repos that will be part of the scope
+    let newReposInScope = organizationRepos[org]
+
+    // Check if the org is already in scope and then filter the new repos
+    if (scope[platform][org]) {
+      // @TODO: Ensure that the included and excluded are covered by JSON Schemas
+      newReposInScope = organizationRepos[org].filter(repo => !scope[platform][org].includes(repo) && !scope[platform][org].excluded.includes(repo))
+    }
+
+    // Try the new repos against the API and filter the ones that have a score (and respect the http request limits)
+    core.debug(`Total new projects to check against the score API: ${newReposInScope.length}`)
+
+    const chunks = chunkArray(newReposInScope, maxRequestInParallel)
+    core.debug(`Total chunks: ${chunks.length}`)
+
+    const newReposInScopeWithScore = []
+    for (let index = 0; index < chunks.length; index++) {
+      const chunk = chunks[index]
+      core.debug(`Processing chunk ${index + 1}/${chunks.length}`)
+
+      await Promise.all(chunk.map(async ({ org, repo }) => {
+        try {
+          // The Scorecard API will return 404 if the repo is not available
+          await getProjectScore({ platform, org, repo })
+          core.debug(`Scorecard is eligible for ${platform}/${org}/${repo})`)
+          newReposInScopeWithScore.push(repo)
+        } catch (error) {
+          core.debug(`No Scorecard for ${platform}/${org}/${repo})`)
+        }
+        return Promise.resolve()
+      }))
+    }
+
+    // Add just the new repos to the scope
+    if (scope[platform][org]) {
+      newScope[platform][org] = {
+        included: [...scope[platform][org].included, ...newReposInScopeWithScore],
+        excluded: [...scope[platform][org].excluded]
+      }
+    } else {
+      newScope[platform][org] = {
+        included: newReposInScopeWithScore,
+        excluded: []
+      }
+    }
+  }
+
+  return newScope
+}
+
 const generateScores = async ({ scope, database: currentDatabase, maxRequestInParallel }) => {
   // @TODO: Improve deep clone logic
   const database = JSON.parse(JSON.stringify(currentDatabase))
   const platform = 'github.com'
-  const projects = scope[platform]
-  core.debug(`Total projects in scope: ${projects.length}`)
+
+  // @TODO: End the action if there are no projects in scope?
+
+  const orgs = Object.keys(scope[platform].included)
+  core.debug(`Total Orgs/Users in scope: ${orgs.length}`)
+
+  // Structure Projects
+  const projects = []
+
+  orgs.forEach((org) => {
+    const repos = scope[platform].included[org]
+    repos.forEach((repo) => projects.push({ org, repo }))
+  })
+
+  core.debug(`Total Projects in scope: ${projects.length}`)
 
   const chunks = chunkArray(projects, maxRequestInParallel)
   core.debug(`Total chunks: ${chunks.length}`)
@@ -20075,6 +20180,7 @@ const generateScores = async ({ scope, database: currentDatabase, maxRequestInPa
 }
 
 module.exports = {
+  generateScope,
   generateScores
 }
 
@@ -20384,7 +20490,7 @@ const { readFile, writeFile, stat } = (__nccwpck_require__(7147).promises)
 const { isDifferent } = __nccwpck_require__(9497)
 const { updateOrCreateSegment } = __nccwpck_require__(7794)
 
-const { generateScores } = __nccwpck_require__(4351)
+const { generateScores, generateScope } = __nccwpck_require__(4351)
 
 async function run () {
   let octokit
@@ -20401,24 +20507,47 @@ async function run () {
   const autoCommit = normalizeBoolean(core.getInput('auto-commit'))
   const issueTitle = core.getInput('issue-title') || 'OpenSSF Scorecard Report Updated!'
   const githubToken = core.getInput('github-token')
+  const autoScopeEnabled = normalizeBoolean(core.getInput('auto-scope-enabled'))
+  const autoScopeOrgs = core.getInput('auto-scope-orgs').split('\n').filter(x => x !== '').map(x => x.trim()) || []
   const reportTagsEnabled = normalizeBoolean(core.getInput('report-tags-enabled'))
   const startTag = core.getInput('report-start-tag') || '<!-- OPENSSF-SCORECARD-MONITOR:START -->'
   const endTag = core.getInput('report-end-tag') || '<!-- OPENSSF-SCORECARD-MONITOR:END -->'
 
   // Error Handling
   // @TODO: Validate Schemas
-  if (!githubToken && [autoPush, autoCommit, generateIssue].some(value => value)) {
-    throw new Error('Github token is required for push, commit, and create issue operations!')
+  if (!githubToken && [autoPush, autoCommit, generateIssue, autoScopeEnabled].some(value => value)) {
+    throw new Error('Github token is required for push, commit, create an issue and auto scope operations!')
+  }
+
+  if (autoScopeEnabled && !autoScopeOrgs.length) {
+    throw new Error('Auto scope is enabled but no organizations were provided!')
   }
 
   if (githubToken) {
     octokit = github.getOctokit(githubToken)
   }
 
-  core.info('Checking Scope...')
-  const scope = await readFile(scopePath, 'utf8').then(content => JSON.parse(content))
   let database = {}
+  let scope = null
   let originalReportContent = ''
+
+  // check if scope exists
+  core.info('Checking if scope file exists...')
+  const existScopeFile = await stat(scopePath)
+  if (!existScopeFile.isFile() && !autoScopeEnabled) {
+    throw new Error('Scope file does not exist and auto scope is not enabled')
+  }
+
+  // Use scope file if it exists
+  if (existScopeFile.isFile()) {
+    core.debug('Scope file exists, using it...')
+    scope = await readFile(scopePath, 'utf8').then(content => JSON.parse(content))
+  }
+
+  if (autoScopeEnabled) {
+    core.info(`Starting auto-scope for the organizations ${autoScopeOrgs}...`)
+    scope = await generateScope({ octokit, orgs: autoScopeOrgs, scope, maxRequestInParallel })
+  }
 
   // Check if database exists
   try {
@@ -20464,6 +20593,12 @@ async function run () {
       endTag
     }))
 
+  if(autoScopeEnabled){
+    core.info('Saving changes to scope...')
+    await writeFile(scopePath, JSON.stringify(scope, null, 2))
+  }
+
+
   // Commit changes
   // @see: https://github.com/actions/checkout#push-a-commit-using-the-built-in-token
   if (autoCommit) {
@@ -20472,6 +20607,10 @@ async function run () {
     await exec.exec('git config user.email github-actions@github.com')
     await exec.exec(`git add ${databasePath}`)
     await exec.exec(`git add ${reportPath}`)
+    if(autoScopeEnabled){
+      core.info('Committing changes to scope...')
+      await exec.exec(`git add ${scopePath}`)
+    }
     await exec.exec('git commit -m "Updated Scorecard Report"')
   }
 

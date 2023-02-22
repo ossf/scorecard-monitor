@@ -35,28 +35,6 @@ Here is a [demo repository](https://github.com/UlisesGascon/openssf-scorecard-mo
 ## :shipit: Used By
 
 _Soon_
-## ☕️ Setup
-
-Create a folder in your project (for example: `reporting`) and include the scope as follow:
-
-File: `reporting/scope.json`
-
-```json
-{
-    "github.com": [{
-        "org": "UlisesGascon",
-        "repo": "tor-detect-middleware"
-    }, {
-        "org": "UlisesGascon",
-        "repo": "check-my-headers"
-    },{
-        "org": "UlisesGascon",
-        "repo": "express-simple-pagination"
-    }]
-}
-```
-
-Note: You must follow this structure, and only `github.com` projects are included
 
 
 ## 📡 Usage
@@ -90,6 +68,9 @@ jobs:
           issue-title: "OpenSSF Scorecard Report Updated!"
           github-token: ${{ secrets.GITHUB_TOKEN }}
           max-request-in-parallel: 10
+          auto-scope-enabled: true
+          # As an example Awesome Org and Myself
+          auto-scope-orgs: 'UlisesGascon,Awesome'
 ```
 
 ### Options
@@ -103,6 +84,8 @@ jobs:
 - `issue-title`: Defines the issue title
 - `github-token`: The token usage to create the issue and push the code
 - `max-request-in-parallel`: Defines the total HTTP Request that can be done in parallel
+- `auto-scope-enabled`: Defined if the auto scope is enabled
+- `auto-scope-orgs`: List of organizations to be includes in the auto-scope, example: `auto-scope-orgs: owasp,nodejs`
 - `report-tags-enabled`: Defines if the markdown report must be created/updated around tags by default is disabled. This is useful if the report is going to be include in a file that has other content on it, like docusaurus docs site or similar.
 - `report-start-tag`: Defines the start tag, default `<!-- OPENSSF-SCORECARD-MONITOR:START -->`
 - `report-end-tag` Defines the closing tag, default `<!-- OPENSSF-SCORECARD-MONITOR:END -->`
@@ -113,6 +96,36 @@ jobs:
 - `scores`: Score data in JSON format
 
 ## 🍿 Other
+
+### Scoping Structure
+
+Just for reference, the scope will be stored this way:
+
+File: `reporting/scope.json`
+
+```json
+{
+    "github.com": {
+      "included": {
+        "UlisesGascon":[
+          "tor-detect-middleware", 
+          "check-my-headers", 
+          "express-simple-pagination"
+        ]
+      },
+      "excluded": {
+        "UlisesGascon": [
+          "demo-stuff"
+        ]
+      }
+    }
+
+}
+```
+
+
+☕️ **PRO TIP:** You can exclude any project at any time by editing this file  
+
 
 ### Database structure
 

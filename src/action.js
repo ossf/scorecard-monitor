@@ -8,7 +8,7 @@ const { readFile, writeFile, stat } = require('fs').promises
 const { isDifferent } = require('@ulisesgascon/is-different')
 const { updateOrCreateSegment } = require('@ulisesgascon/text-tags-manager')
 
-const { generateScores } = require('./')
+const { generateScores, generateScope } = require('./')
 
 async function run () {
   let octokit
@@ -25,24 +25,47 @@ async function run () {
   const autoCommit = normalizeBoolean(core.getInput('auto-commit'))
   const issueTitle = core.getInput('issue-title') || 'OpenSSF Scorecard Report Updated!'
   const githubToken = core.getInput('github-token')
+  const autoScopeEnabled = normalizeBoolean(core.getInput('auto-scope-enabled'))
+  const autoScopeOrgs = core.getInput('auto-scope-orgs').split('\n').filter(x => x !== '').map(x => x.trim()) || []
   const reportTagsEnabled = normalizeBoolean(core.getInput('report-tags-enabled'))
   const startTag = core.getInput('report-start-tag') || '<!-- OPENSSF-SCORECARD-MONITOR:START -->'
   const endTag = core.getInput('report-end-tag') || '<!-- OPENSSF-SCORECARD-MONITOR:END -->'
 
   // Error Handling
   // @TODO: Validate Schemas
-  if (!githubToken && [autoPush, autoCommit, generateIssue].some(value => value)) {
-    throw new Error('Github token is required for push, commit, and create issue operations!')
+  if (!githubToken && [autoPush, autoCommit, generateIssue, autoScopeEnabled].some(value => value)) {
+    throw new Error('Github token is required for push, commit, create an issue and auto scope operations!')
+  }
+
+  if (autoScopeEnabled && !autoScopeOrgs.length) {
+    throw new Error('Auto scope is enabled but no organizations were provided!')
   }
 
   if (githubToken) {
     octokit = github.getOctokit(githubToken)
   }
 
-  core.info('Checking Scope...')
-  const scope = await readFile(scopePath, 'utf8').then(content => JSON.parse(content))
   let database = {}
+  let scope = null
   let originalReportContent = ''
+
+  // check if scope exists
+  core.info('Checking if scope file exists...')
+  const existScopeFile = await stat(scopePath)
+  if (!existScopeFile.isFile() && !autoScopeEnabled) {
+    throw new Error('Scope file does not exist and auto scope is not enabled')
+  }
+
+  // Use scope file if it exists
+  if (existScopeFile.isFile()) {
+    core.debug('Scope file exists, using it...')
+    scope = await readFile(scopePath, 'utf8').then(content => JSON.parse(content))
+  }
+
+  if (autoScopeEnabled) {
+    core.info(`Starting auto-scope for the organizations ${autoScopeOrgs}...`)
+    scope = await generateScope({ octokit, orgs: autoScopeOrgs, scope, maxRequestInParallel })
+  }
 
   // Check if database exists
   try {
@@ -88,6 +111,11 @@ async function run () {
       endTag
     }))
 
+  if (autoScopeEnabled) {
+    core.info('Saving changes to scope...')
+    await writeFile(scopePath, JSON.stringify(scope, null, 2))
+  }
+
   // Commit changes
   // @see: https://github.com/actions/checkout#push-a-commit-using-the-built-in-token
   if (autoCommit) {
@@ -96,6 +124,10 @@ async function run () {
     await exec.exec('git config user.email github-actions@github.com')
     await exec.exec(`git add ${databasePath}`)
     await exec.exec(`git add ${reportPath}`)
+    if (autoScopeEnabled) {
+      core.info('Committing changes to scope...')
+      await exec.exec(`git add ${scopePath}`)
+    }
     await exec.exec('git commit -m "Updated Scorecard Report"')
   }
 
