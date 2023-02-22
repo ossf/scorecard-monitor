@@ -8,7 +8,7 @@ const { readFile, writeFile, stat } = require('fs').promises
 const { isDifferent } = require('@ulisesgascon/is-different')
 const { updateOrCreateSegment } = require('@ulisesgascon/text-tags-manager')
 
-const { generateScores } = require('./')
+const { generateScores, generateScope } = require('./')
 
 async function run () {
   let octokit
