@@ -35,33 +35,6 @@ Here is a [demo repository](https://github.com/UlisesGascon/openssf-scorecard-mo
 ## :shipit: Used By
 
 _Soon_
-## ☕️ Setup
-
-Create a folder in your project (for example: `reporting`) and include the scope as follow:
-
-File: `reporting/scope.json`
-
-```json
-{
-    "github.com": {
-      "included": {
-        "UlisesGascon":[
-          "tor-detect-middleware", 
-          "check-my-headers", 
-          "express-simple-pagination"
-        ]
-      },
-      "excluded": {
-        "UlisesGascon": [
-          "demo-stuff"
-        ]
-      }
-    }
-
-}
-```
-
-Note: You must follow this structure, and only `github.com` projects are included
 
 
 ## 📡 Usage
@@ -95,6 +68,9 @@ jobs:
           issue-title: "OpenSSF Scorecard Report Updated!"
           github-token: ${{ secrets.GITHUB_TOKEN }}
           max-request-in-parallel: 10
+          auto-scope-enabled: true
+          # As an example Awesome Org and Myself
+          auto-scope-orgs: 'UlisesGascon,Awesome'
 ```
 
 ### Options
@@ -120,6 +96,36 @@ jobs:
 - `scores`: Score data in JSON format
 
 ## 🍿 Other
+
+### Scoping Structure
+
+Just for reference, the scope will be stored this way:
+
+File: `reporting/scope.json`
+
+```json
+{
+    "github.com": {
+      "included": {
+        "UlisesGascon":[
+          "tor-detect-middleware", 
+          "check-my-headers", 
+          "express-simple-pagination"
+        ]
+      },
+      "excluded": {
+        "UlisesGascon": [
+          "demo-stuff"
+        ]
+      }
+    }
+
+}
+```
+
+
+☕️ **PRO TIP:** You can exclude any project at any time by editing this file  
+
 
 ### Database structure
 
