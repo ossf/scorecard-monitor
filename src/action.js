@@ -39,10 +39,11 @@ async function run () {
     octokit = github.getOctokit(githubToken)
   }
 
-  core.info('Checking Scope...')
-  const scope = await readFile(scopePath, 'utf8').then(content => JSON.parse(content))
   let database = {}
   let originalReportContent = ''
+
+  core.info('Checking Scope...')
+  const scope = await readFile(scopePath, 'utf8').then(content => JSON.parse(content))
 
   // Check if database exists
   try {
