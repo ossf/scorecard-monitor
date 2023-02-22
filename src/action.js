@@ -25,14 +25,20 @@ async function run () {
   const autoCommit = normalizeBoolean(core.getInput('auto-commit'))
   const issueTitle = core.getInput('issue-title') || 'OpenSSF Scorecard Report Updated!'
   const githubToken = core.getInput('github-token')
+  const autoScopeEnabled = normalizeBoolean(core.getInput('auto-scope-enabled'))
+  const autoScopeOrgs = core.getInput('auto-scope-orgs').split("\n").filter(x => x !== "") || []
   const reportTagsEnabled = normalizeBoolean(core.getInput('report-tags-enabled'))
   const startTag = core.getInput('report-start-tag') || '<!-- OPENSSF-SCORECARD-MONITOR:START -->'
   const endTag = core.getInput('report-end-tag') || '<!-- OPENSSF-SCORECARD-MONITOR:END -->'
 
   // Error Handling
   // @TODO: Validate Schemas
-  if (!githubToken && [autoPush, autoCommit, generateIssue].some(value => value)) {
-    throw new Error('Github token is required for push, commit, and create issue operations!')
+  if (!githubToken && [autoPush, autoCommit, generateIssue, autoScopeEnabled].some(value => value)) {
+    throw new Error('Github token is required for push, commit, create an issue and auto scope operations!')
+  }
+
+  if(autoScopeEnabled && !autoScopeOrgs.length) {
+    throw new Error('Auto scope is enabled but no organizations were provided!')
   }
 
   if (githubToken) {
@@ -44,6 +50,10 @@ async function run () {
 
   core.info('Checking Scope...')
   const scope = await readFile(scopePath, 'utf8').then(content => JSON.parse(content))
+
+  if (autoScopeEnabled) {
+    core.info(`Starting auto-scope for the organizations ${autoScopeOrgs}...`)
+  }
 
   // Check if database exists
   try {

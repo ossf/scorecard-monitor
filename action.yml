@@ -25,6 +25,12 @@ inputs:
     description: 'Title of the issue to be generated'
     required: false
     default: "OpenSSF Scorecard Report Updated!"
+  auto-scope-enabled:
+    description: 'Enable the automatic update of the scope file'
+    required: false
+  auto-scope-orgs:
+    description: 'List of organizations to be included in the scope file'
+    required: false
   report-tags-enabled:
     description: 'Enable the use of tags in the report'
     required: false
