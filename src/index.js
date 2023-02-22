@@ -6,9 +6,22 @@ const generateScores = async ({ scope, database: currentDatabase, maxRequestInPa
   // @TODO: Improve deep clone logic
   const database = JSON.parse(JSON.stringify(currentDatabase))
   const platform = 'github.com'
-  const projects = scope[platform]
-  core.debug(`Total projects in scope: ${projects.length}`)
 
+  // @TODO: End the action if there are no projects in scope?
+ 
+  const orgs = Object.keys(scope[platform].included)
+  core.debug(`Total Orgs/Users in scope: ${orgs.length}`)
+
+  // Structure Projects
+  const projects = []
+
+  orgs.forEach((org) => {
+    const repos = scope[platform].included[org]
+    repos.forEach((repo) => projects.push({ org, repo }))
+  })
+
+  core.debug(`Total Projects in scope: ${projects.length}`)
+  
   const chunks = chunkArray(projects, maxRequestInParallel)
   core.debug(`Total chunks: ${chunks.length}`)
 
