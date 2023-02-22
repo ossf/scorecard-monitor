@@ -43,16 +43,21 @@ File: `reporting/scope.json`
 
 ```json
 {
-    "github.com": [{
-        "org": "UlisesGascon",
-        "repo": "tor-detect-middleware"
-    }, {
-        "org": "UlisesGascon",
-        "repo": "check-my-headers"
-    },{
-        "org": "UlisesGascon",
-        "repo": "express-simple-pagination"
-    }]
+    "github.com": {
+      "included": {
+        "UlisesGascon":[
+          "tor-detect-middleware", 
+          "check-my-headers", 
+          "express-simple-pagination"
+        ]
+      },
+      "excluded": {
+        "UlisesGascon": [
+          "demo-stuff"
+        ]
+      }
+    }
+
 }
 ```
 
