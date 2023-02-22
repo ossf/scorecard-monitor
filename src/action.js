@@ -26,7 +26,7 @@ async function run () {
   const issueTitle = core.getInput('issue-title') || 'OpenSSF Scorecard Report Updated!'
   const githubToken = core.getInput('github-token')
   const autoScopeEnabled = normalizeBoolean(core.getInput('auto-scope-enabled'))
-  const autoScopeOrgs = core.getInput('auto-scope-orgs').split("\n").filter(x => x !== "") || []
+  const autoScopeOrgs = core.getInput('auto-scope-orgs').split('\n').filter(x => x !== '').map(x => x.trim()) || []
   const reportTagsEnabled = normalizeBoolean(core.getInput('report-tags-enabled'))
   const startTag = core.getInput('report-start-tag') || '<!-- OPENSSF-SCORECARD-MONITOR:START -->'
   const endTag = core.getInput('report-end-tag') || '<!-- OPENSSF-SCORECARD-MONITOR:END -->'
@@ -37,7 +37,7 @@ async function run () {
     throw new Error('Github token is required for push, commit, create an issue and auto scope operations!')
   }
 
-  if(autoScopeEnabled && !autoScopeOrgs.length) {
+  if (autoScopeEnabled && !autoScopeOrgs.length) {
     throw new Error('Auto scope is enabled but no organizations were provided!')
   }
 
@@ -46,13 +46,25 @@ async function run () {
   }
 
   let database = {}
+  let scope = null
   let originalReportContent = ''
 
-  core.info('Checking Scope...')
-  const scope = await readFile(scopePath, 'utf8').then(content => JSON.parse(content))
+  // check if scope exists
+  core.info('Checking if scope file exists...')
+  const existScopeFile = await stat(scopePath)
+  if (!existScopeFile.isFile() && !autoScopeEnabled) {
+    throw new Error('Scope file does not exist and auto scope is not enabled')
+  }
+
+  // Use scope file if it exists
+  if (existScopeFile.isFile()) {
+    core.debug('Scope file exists, using it...')
+    scope = await readFile(scopePath, 'utf8').then(content => JSON.parse(content))
+  }
 
   if (autoScopeEnabled) {
     core.info(`Starting auto-scope for the organizations ${autoScopeOrgs}...`)
+    scope = await generateScope({ octokit, orgs: autoScopeOrgs, scope, maxRequestInParallel })
   }
 
   // Check if database exists
