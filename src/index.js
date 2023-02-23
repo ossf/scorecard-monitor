@@ -17,11 +17,11 @@ const generateScope = async ({ octokit, orgs, scope, maxRequestInParallel }) => 
     let entityType = 'org'
     const repoList = []
     try {
-      const { data: repos } = await octokit.listForOrg({ org, type: 'public', per_page: 100 })
+      const { data: repos } = await octokit.rest.repos.listForOrg({ org, type: 'public', per_page: 100 })
       core.debug(`Got ${repos.length} repos for org: ${org}`)
     } catch (error) {
       entityType = 'user'
-      const { data: repos } = await octokit.listForUser({ username: org, type: 'public', per_page: 100 })
+      const { data: repos } = await octokit.rest.repos.listForUser({ username: org, type: 'public', per_page: 100 })
       core.debug(`Got ${repos.length} repos for user: ${org}`)
       repoList.push(...repos.map(entity => entity.name))
     }
@@ -34,7 +34,7 @@ const generateScope = async ({ octokit, orgs, scope, maxRequestInParallel }) => 
       entityInApi[entityType === 'org' ? 'org' : 'username'] = org
       while (hasMore) {
         core.debug(`Getting page ${page} for ${entityType}: ${org}`)
-        const { data: repos, headers } = await octokit[entityType === 'org' ? 'listForOrg' : 'listForUser']({ ...entityInApi, type: 'public', per_page: 100, page })
+        const { data: repos, headers } = await octokit.rest.repos[entityType === 'org' ? 'listForOrg' : 'listForUser']({ ...entityInApi, type: 'public', per_page: 100, page })
         core.debug(`Got ${repos.length} repos for ${entityType}: ${org}`)
         repoList.push(...repos.map(entity => entity.name))
         hasMore = headers.link.includes('rel="next"')
