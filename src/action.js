@@ -7,6 +7,7 @@ const { readFile, writeFile, stat } = require('fs').promises
 const { isDifferent } = require('@ulisesgascon/is-different')
 const { updateOrCreateSegment } = require('@ulisesgascon/text-tags-manager')
 const { generateScores, generateScope } = require('./')
+const { validateDatabaseIntegrity, validateScopeIntegrity } = require('./utils')
 
 async function run () {
   let octokit
@@ -30,7 +31,6 @@ async function run () {
   const endTag = core.getInput('report-end-tag') || '<!-- OPENSSF-SCORECARD-MONITOR:END -->'
 
   // Error Handling
-  // @TODO: Validate Schemas
   if (!githubToken && [autoPush, autoCommit, generateIssue, discoveryEnabled].some(value => value)) {
     throw new Error('Github token is required for push, commit, create an issue and discovery operations!')
   }
@@ -58,6 +58,7 @@ async function run () {
   if (existScopeFile) {
     core.debug('Scope file exists, using it...')
     scope = await readFile(scopePath, 'utf8').then(content => JSON.parse(content))
+    validateScopeIntegrity(scope)
   }
 
   if (discoveryEnabled) {
@@ -70,6 +71,7 @@ async function run () {
   const existDatabaseFile = existsSync(databasePath)
   if (existDatabaseFile) {
     database = await readFile(databasePath, 'utf8').then(content => JSON.parse(content))
+    validateDatabaseIntegrity(database)
   } else {
     core.info('Database does not exist, creating new database')
   }

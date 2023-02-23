@@ -4,6 +4,20 @@ const ejs = require('ejs')
 const { readFile } = require('fs').promises
 const { join } = require('path')
 const { softAssign } = require('@ulisesgascon/soft-assign-deep-property')
+const databaseSchema = require('../schemas/database.json')
+const scopeSchema = require('../schemas/scope.json')
+
+const Ajv = require('ajv')
+const addFormats = require('ajv-formats').default
+const ajv = new Ajv()
+addFormats(ajv)
+
+const validateAgainstSchema = (schema, name) => (data) => {
+  const valid = ajv.validate(schema, data)
+  if (!valid) {
+    throw new Error(`Check: ${name} file as the file is corrupted. Invalid data: ${ajv.errorsText()}`)
+  }
+}
 
 const getProjectScore = async ({ platform, org, repo }) => {
   core.debug(`Getting project score for ${platform}/${org}/${repo}`)
@@ -45,6 +59,8 @@ const generateIssueContent = async (scores) => {
 }
 
 module.exports = {
+  validateDatabaseIntegrity: validateAgainstSchema(databaseSchema, 'database'),
+  validateScopeIntegrity: validateAgainstSchema(scopeSchema, 'scope'),
   getProjectScore,
   saveScore,
   getScore,
