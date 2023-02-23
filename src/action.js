@@ -67,7 +67,7 @@ async function run () {
 
   // Check if database exists
   core.info('Checking if database exists...')
-  const existDatabaseFile = existsSync(DatabasePath)
+  const existDatabaseFile = existsSync(databasePath)
   if (existDatabaseFile) {
     database = await readFile(databasePath, 'utf8').then(content => JSON.parse(content))
   } else {

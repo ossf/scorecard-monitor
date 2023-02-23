@@ -20082,7 +20082,7 @@ const generateScope = async ({ octokit, orgs, scope, maxRequestInParallel }) => 
       const chunk = chunks[index]
       core.debug(`Processing chunk ${index + 1}/${chunks.length}`)
 
-      await Promise.all(chunk.map(async ({ org, repo }) => {
+      await Promise.all(chunk.map(async (repo) => {
         try {
           // The Scorecard API will return 404 if the repo is not available
           await getProjectScore({ platform, org, repo })
@@ -20094,6 +20094,8 @@ const generateScope = async ({ octokit, orgs, scope, maxRequestInParallel }) => 
         return Promise.resolve()
       }))
     }
+
+    core.debug(`Total new projects to add to the scope: ${newReposInScopeWithScore.length}`)
 
     // Add just the new repos to the scope
     if (scope[platform][org]) {
@@ -20527,7 +20529,7 @@ async function run () {
   }
 
   let database = {}
-  let scope = {'github.com': {}}
+  let scope = { 'github.com': {} }
   let originalReportContent = ''
 
   // check if scope exists
@@ -20550,7 +20552,7 @@ async function run () {
 
   // Check if database exists
   core.info('Checking if database exists...')
-  const existDatabaseFile = existsSync(DatabasePath)
+  const existDatabaseFile = existsSync(databasePath)
   if (existDatabaseFile) {
     database = await readFile(databasePath, 'utf8').then(content => JSON.parse(content))
   } else {
