@@ -1,0 +1,82 @@
+{
+    "type": "object",
+    "properties": {
+        "github.com": {
+            "type": "object",
+            "patternProperties": {
+                "^[a-zA-Z0-9-_.]+/[a-zA-Z0-9-_.]+$": {
+                    "type": "object",
+                    "patternProperties": {
+                        "^[a-zA-Z0-9-_.]+/[a-zA-Z0-9-_.]+$": {
+                            "type": "object",
+                            "properties": {
+                                "previous": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "score": {
+                                                "type": "number",
+                                                "minimum": 0,
+                                                "maximum": 10
+                                            },
+                                            "date": {
+                                                "type": "string",
+                                                "format": "date-time"
+                                            },
+                                            "commit": {
+                                                "type": "string",
+                                                "pattern": "^[a-f0-9]{40}$"
+                                            }
+                                        },
+                                        "additionalProperties": false,
+                                        "required": [
+                                            "score",
+                                            "date",
+                                            "commit"
+                                        ]
+                                    },
+                                    "minItems": 0,
+                                    "default": []
+                                },
+                                "current": {
+                                    "type": "object",
+                                    "properties": {
+                                        "score": {
+                                            "type": "number",
+                                            "minimum": 0,
+                                            "maximum": 10
+                                        },
+                                        "date": {
+                                            "type": "string",
+                                            "format": "date-time"
+                                        },
+                                        "commit": {
+                                            "type": "string",
+                                            "pattern": "^[a-f0-9]{40}$"
+                                        }
+                                    },
+                                    "additionalProperties": false,
+                                    "required": [
+                                        "score",
+                                        "date",
+                                        "commit"
+                                    ]
+                                }
+                            },
+                            "additionalProperties": false,
+                            "required": [
+                                "previous",
+                                "current"
+                            ]
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "additionalProperties": false,
+    "required": [
+        "github.com"
+    ]
+}

@@ -45,12 +45,14 @@
     "@actions/github": "5.1.1",
     "@ulisesgascon/array-to-chunks": "1.0.1",
     "@ulisesgascon/is-different": "1.0.0",
+    "@ulisesgascon/normalize-boolean": "1.0.0",
     "@ulisesgascon/soft-assign-deep-property": "1.0.0",
-    "@ulisesgascon/text-tags-manager": "^1.0.0",
+    "@ulisesgascon/text-tags-manager": "1.0.0",
     "@vercel/ncc": "0.36.1",
+    "ajv": "8.12.0",
+    "ajv-formats": "2.1.1",
     "ejs": "3.1.8",
-    "got": "11.8.6",
-    "normalize-boolean": "2.0.1"
+    "got": "11.8.6"
   },
   "engines": {
     "node": ">=16.0.0"
