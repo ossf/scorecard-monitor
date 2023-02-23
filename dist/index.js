@@ -20060,7 +20060,7 @@ const generateScope = async ({ octokit, orgs, scope, maxRequestInParallel }) => 
       }
     }
 
-    organizationRepos[org] = repoList.map(({ name }) => name)
+    organizationRepos[org] = repoList
 
     // Filter the repos that will be part of the scope
     let newReposInScope = organizationRepos[org]
