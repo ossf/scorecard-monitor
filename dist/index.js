@@ -20081,6 +20081,7 @@ const generateScope = async ({ octokit, orgs, scope, maxRequestInParallel }) => 
     for (let index = 0; index < chunks.length; index++) {
       const chunk = chunks[index]
       core.debug(`Processing chunk ${index + 1}/${chunks.length}`)
+      core.debug(`Current projects: ${chunks}`)
 
       await Promise.all(chunk.map(async (repo) => {
         try {
