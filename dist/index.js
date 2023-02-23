@@ -6226,6 +6226,31 @@ exports.isDifferent = isDifferent;
 
 /***/ }),
 
+/***/ 9214:
+/***/ ((__unused_webpack_module, exports) => {
+
+"use strict";
+
+exports.__esModule = true;
+exports.normalizeBoolean = void 0;
+function normalizeBoolean(value) {
+    if (!['boolean', 'string', 'number'].includes(typeof value)) {
+        return false;
+    }
+    var normalizedValue = !isNaN(parseInt(value)) ? parseInt(value) : value;
+    if (typeof normalizedValue === 'string') {
+        return ['true', 'on', 'yes', 'y'].includes(normalizedValue.toLowerCase().trim());
+    }
+    if (typeof normalizedValue === 'number') {
+        return normalizedValue === 1;
+    }
+    return Boolean(value);
+}
+exports.normalizeBoolean = normalizeBoolean;
+//# sourceMappingURL=index.js.map
+
+/***/ }),
+
 /***/ 7348:
 /***/ ((__unused_webpack_module, exports) => {
 
@@ -27846,14 +27871,6 @@ module.exports = eval("require")("encoding");
 
 /***/ }),
 
-/***/ 3631:
-/***/ ((module) => {
-
-module.exports = eval("require")("normalize-boolean");
-
-
-/***/ }),
-
 /***/ 9491:
 /***/ ((module) => {
 
@@ -28114,7 +28131,7 @@ var __webpack_exports__ = {};
 const core = __nccwpck_require__(2186)
 const github = __nccwpck_require__(5438)
 const exec = __nccwpck_require__(1514)
-const { normalizeBoolean } = __nccwpck_require__(3631)
+const { normalizeBoolean } = __nccwpck_require__(9214)
 const { existsSync } = __nccwpck_require__(7147)
 const { readFile, writeFile, stat } = (__nccwpck_require__(7147).promises)
 const { isDifferent } = __nccwpck_require__(9497)

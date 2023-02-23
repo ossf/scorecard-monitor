@@ -1,7 +1,7 @@
 const core = require('@actions/core')
 const github = require('@actions/github')
 const exec = require('@actions/exec')
-const { normalizeBoolean } = require('normalize-boolean')
+const { normalizeBoolean } = require('@ulisesgascon/normalize-boolean')
 const { existsSync } = require('fs')
 const { readFile, writeFile, stat } = require('fs').promises
 const { isDifferent } = require('@ulisesgascon/is-different')
