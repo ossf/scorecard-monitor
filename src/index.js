@@ -112,7 +112,7 @@ const generateScores = async ({ scope, database: currentDatabase, maxRequestInPa
   const projects = []
 
   orgs.forEach((org) => {
-    const repos = scope[platform].included[org]
+    const repos = scope[platform][org].included
     repos.forEach((repo) => projects.push({ org, repo }))
   })
 
