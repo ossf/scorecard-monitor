@@ -20484,12 +20484,10 @@ const core = __nccwpck_require__(2186)
 const github = __nccwpck_require__(5438)
 const exec = __nccwpck_require__(1514)
 const { normalizeBoolean } = __nccwpck_require__(6446)
-
+const { existsSync } = __nccwpck_require__(7147)
 const { readFile, writeFile, stat } = (__nccwpck_require__(7147).promises)
-
 const { isDifferent } = __nccwpck_require__(9497)
 const { updateOrCreateSegment } = __nccwpck_require__(7794)
-
 const { generateScores, generateScope } = __nccwpck_require__(4351)
 
 async function run () {
@@ -20533,8 +20531,8 @@ async function run () {
 
   // check if scope exists
   core.info('Checking if scope file exists...')
-  const existScopeFile = await stat(scopePath)
-  if (!existScopeFile.isFile() && !autoScopeEnabled) {
+  const existScopeFile = existsSync(scopePath)
+  if (!existScopeFile && !autoScopeEnabled) {
     throw new Error('Scope file does not exist and auto scope is not enabled')
   }
 
@@ -20550,11 +20548,11 @@ async function run () {
   }
 
   // Check if database exists
-  try {
-    core.info('Checking if database exists...')
-    await stat(databasePath)
+  core.info('Checking if database exists...')
+  const existDatabaseFile = existsSync(DatabasePath)
+  if (existDatabaseFile) {
     database = await readFile(databasePath, 'utf8').then(content => JSON.parse(content))
-  } catch (error) {
+  } else {
     core.info('Database does not exist, creating new database')
   }
 
@@ -20593,11 +20591,10 @@ async function run () {
       endTag
     }))
 
-  if(autoScopeEnabled){
+  if (autoScopeEnabled) {
     core.info('Saving changes to scope...')
     await writeFile(scopePath, JSON.stringify(scope, null, 2))
   }
-
 
   // Commit changes
   // @see: https://github.com/actions/checkout#push-a-commit-using-the-built-in-token
@@ -20607,7 +20604,7 @@ async function run () {
     await exec.exec('git config user.email github-actions@github.com')
     await exec.exec(`git add ${databasePath}`)
     await exec.exec(`git add ${reportPath}`)
-    if(autoScopeEnabled){
+    if (autoScopeEnabled) {
       core.info('Committing changes to scope...')
       await exec.exec(`git add ${scopePath}`)
     }
