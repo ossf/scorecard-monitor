@@ -20036,6 +20036,7 @@ const generateScope = async ({ octokit, orgs, scope, maxRequestInParallel }) => 
     try {
       const { data: repos } = await octokit.rest.repos.listForOrg({ org, type: 'public', per_page: 100 })
       core.debug(`Got ${repos.length} repos for org: ${org}`)
+      repoList.push(...repos.map(entity => entity.name))
     } catch (error) {
       entityType = 'user'
       const { data: repos } = await octokit.rest.repos.listForUser({ username: org, type: 'public', per_page: 100 })
@@ -20506,7 +20507,7 @@ async function run () {
   const issueTitle = core.getInput('issue-title') || 'OpenSSF Scorecard Report Updated!'
   const githubToken = core.getInput('github-token')
   const autoScopeEnabled = normalizeBoolean(core.getInput('auto-scope-enabled'))
-  const autoScopeOrgs = core.getInput('auto-scope-orgs').split('\n').filter(x => x !== '').map(x => x.trim()) || []
+  const autoScopeOrgs = core.getInput('auto-scope-orgs').split(',').filter(x => x !== '').map(x => x.trim()) || []
   const reportTagsEnabled = normalizeBoolean(core.getInput('report-tags-enabled'))
   const startTag = core.getInput('report-start-tag') || '<!-- OPENSSF-SCORECARD-MONITOR:START -->'
   const endTag = core.getInput('report-end-tag') || '<!-- OPENSSF-SCORECARD-MONITOR:END -->'

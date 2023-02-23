@@ -19,6 +19,7 @@ const generateScope = async ({ octokit, orgs, scope, maxRequestInParallel }) => 
     try {
       const { data: repos } = await octokit.rest.repos.listForOrg({ org, type: 'public', per_page: 100 })
       core.debug(`Got ${repos.length} repos for org: ${org}`)
+      repoList.push(...repos.map(entity => entity.name))
     } catch (error) {
       entityType = 'user'
       const { data: repos } = await octokit.rest.repos.listForUser({ username: org, type: 'public', per_page: 100 })
