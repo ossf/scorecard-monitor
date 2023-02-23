@@ -1,0 +1,40 @@
+{
+    "type": "object",
+    "properties": {
+        "github.com": {
+            "type": "object",
+            "patternProperties": {
+                "^[a-zA-Z0-9-_.]+/[a-zA-Z0-9-_.]+$": {
+                    "type": "object",
+                    "properties": {
+                        "included": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            },
+                            "minItems": 0,
+                            "default": []
+                        },
+                        "excluded": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            },
+                            "minItems": 0,
+                            "default": []
+                        }
+                    },
+                    "additionalProperties": false,
+                    "required": [
+                        "included",
+                        "excluded"
+                    ]
+                }
+            }
+        }
+    },
+    "additionalProperties": false,
+    "required": [
+        "github.com"
+    ]
+}
