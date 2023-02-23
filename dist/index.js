@@ -20509,20 +20509,20 @@ async function run () {
   const autoCommit = normalizeBoolean(core.getInput('auto-commit'))
   const issueTitle = core.getInput('issue-title') || 'OpenSSF Scorecard Report Updated!'
   const githubToken = core.getInput('github-token')
-  const autoScopeEnabled = normalizeBoolean(core.getInput('auto-scope-enabled'))
-  const autoScopeOrgs = core.getInput('auto-scope-orgs').split(',').filter(x => x !== '').map(x => x.trim()) || []
+  const discoveryEnabled = normalizeBoolean(core.getInput('discovery-enabled'))
+  const discoveryOrgs = core.getInput('discovery-orgs').split(',').filter(x => x !== '').map(x => x.trim()) || []
   const reportTagsEnabled = normalizeBoolean(core.getInput('report-tags-enabled'))
   const startTag = core.getInput('report-start-tag') || '<!-- OPENSSF-SCORECARD-MONITOR:START -->'
   const endTag = core.getInput('report-end-tag') || '<!-- OPENSSF-SCORECARD-MONITOR:END -->'
 
   // Error Handling
   // @TODO: Validate Schemas
-  if (!githubToken && [autoPush, autoCommit, generateIssue, autoScopeEnabled].some(value => value)) {
-    throw new Error('Github token is required for push, commit, create an issue and auto scope operations!')
+  if (!githubToken && [autoPush, autoCommit, generateIssue, discoveryEnabled].some(value => value)) {
+    throw new Error('Github token is required for push, commit, create an issue and discovery operations!')
   }
 
-  if (autoScopeEnabled && !autoScopeOrgs.length) {
-    throw new Error('Auto scope is enabled but no organizations were provided!')
+  if (discoveryEnabled && !discoveryOrgs.length) {
+    throw new Error('Discovery is enabled but no organizations were provided!')
   }
 
   if (githubToken) {
@@ -20536,8 +20536,8 @@ async function run () {
   // check if scope exists
   core.info('Checking if scope file exists...')
   const existScopeFile = existsSync(scopePath)
-  if (!existScopeFile && !autoScopeEnabled) {
-    throw new Error('Scope file does not exist and auto scope is not enabled')
+  if (!existScopeFile && !discoveryEnabled) {
+    throw new Error('Scope file does not exist and discovery is not enabled')
   }
 
   // Use scope file if it exists
@@ -20546,9 +20546,9 @@ async function run () {
     scope = await readFile(scopePath, 'utf8').then(content => JSON.parse(content))
   }
 
-  if (autoScopeEnabled) {
-    core.info(`Starting auto-scope for the organizations ${autoScopeOrgs}...`)
-    scope = await generateScope({ octokit, orgs: autoScopeOrgs, scope, maxRequestInParallel })
+  if (discoveryEnabled) {
+    core.info(`Starting discovery for the organizations ${discoveryOrgs}...`)
+    scope = await generateScope({ octokit, orgs: discoveryOrgs, scope, maxRequestInParallel })
   }
 
   // Check if database exists
@@ -20595,7 +20595,7 @@ async function run () {
       endTag
     }))
 
-  if (autoScopeEnabled) {
+  if (discoveryEnabled) {
     core.info('Saving changes to scope...')
     await writeFile(scopePath, JSON.stringify(scope, null, 2))
   }
@@ -20608,7 +20608,7 @@ async function run () {
     await exec.exec('git config user.email github-actions@github.com')
     await exec.exec(`git add ${databasePath}`)
     await exec.exec(`git add ${reportPath}`)
-    if (autoScopeEnabled) {
+    if (discoveryEnabled) {
       core.info('Committing changes to scope...')
       await exec.exec(`git add ${scopePath}`)
     }
