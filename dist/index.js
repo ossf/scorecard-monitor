@@ -20122,7 +20122,7 @@ const generateScores = async ({ scope, database: currentDatabase, maxRequestInPa
 
   // @TODO: End the action if there are no projects in scope?
 
-  const orgs = Object.keys(scope[platform].included)
+  const orgs = Object.keys(scope[platform])
   core.debug(`Total Orgs/Users in scope: ${orgs.length}`)
 
   // Structure Projects
