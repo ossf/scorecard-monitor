@@ -27664,7 +27664,7 @@ const generateScope = async ({ octokit, orgs, scope, maxRequestInParallel }) => 
     // Check if the org is already in scope and then filter the new repos
     if (scope[platform][org]) {
       // @TODO: Ensure that the included and excluded are covered by JSON Schemas
-      newReposInScope = organizationRepos[org].filter(repo => !scope[platform][org].includes(repo) && !scope[platform][org].excluded.includes(repo))
+      newReposInScope = organizationRepos[org].filter(repo => !scope[platform][org].included.includes(repo) && !scope[platform][org].excluded.includes(repo))
     }
 
     // Try the new repos against the API and filter the ones that have a score (and respect the http request limits)
