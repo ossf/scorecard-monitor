@@ -17,11 +17,12 @@ const generateScope = async ({ octokit, orgs, scope, maxRequestInParallel }) => 
     let entityType = 'org'
     const repoList = []
     try {
-      const { data: repos } = await octokit.listForOrg({ org, type: 'public', per_page: 100 })
+      const { data: repos } = await octokit.rest.repos.listForOrg({ org, type: 'public', per_page: 100 })
       core.debug(`Got ${repos.length} repos for org: ${org}`)
+      repoList.push(...repos.map(entity => entity.name))
     } catch (error) {
       entityType = 'user'
-      const { data: repos } = await octokit.listForUser({ username: org, type: 'public', per_page: 100 })
+      const { data: repos } = await octokit.rest.repos.listForUser({ username: org, type: 'public', per_page: 100 })
       core.debug(`Got ${repos.length} repos for user: ${org}`)
       repoList.push(...repos.map(entity => entity.name))
     }
@@ -34,7 +35,7 @@ const generateScope = async ({ octokit, orgs, scope, maxRequestInParallel }) => 
       entityInApi[entityType === 'org' ? 'org' : 'username'] = org
       while (hasMore) {
         core.debug(`Getting page ${page} for ${entityType}: ${org}`)
-        const { data: repos, headers } = await octokit[entityType === 'org' ? 'listForOrg' : 'listForUser']({ ...entityInApi, type: 'public', per_page: 100, page })
+        const { data: repos, headers } = await octokit.rest.repos[entityType === 'org' ? 'listForOrg' : 'listForUser']({ ...entityInApi, type: 'public', per_page: 100, page })
         core.debug(`Got ${repos.length} repos for ${entityType}: ${org}`)
         repoList.push(...repos.map(entity => entity.name))
         hasMore = headers.link.includes('rel="next"')
@@ -42,7 +43,7 @@ const generateScope = async ({ octokit, orgs, scope, maxRequestInParallel }) => 
       }
     }
 
-    organizationRepos[org] = repoList.map(({ name }) => name)
+    organizationRepos[org] = repoList
 
     // Filter the repos that will be part of the scope
     let newReposInScope = organizationRepos[org]
@@ -63,8 +64,9 @@ const generateScope = async ({ octokit, orgs, scope, maxRequestInParallel }) => 
     for (let index = 0; index < chunks.length; index++) {
       const chunk = chunks[index]
       core.debug(`Processing chunk ${index + 1}/${chunks.length}`)
+      core.debug(`Current projects: ${chunks}`)
 
-      await Promise.all(chunk.map(async ({ org, repo }) => {
+      await Promise.all(chunk.map(async (repo) => {
         try {
           // The Scorecard API will return 404 if the repo is not available
           await getProjectScore({ platform, org, repo })
@@ -76,6 +78,8 @@ const generateScope = async ({ octokit, orgs, scope, maxRequestInParallel }) => 
         return Promise.resolve()
       }))
     }
+
+    core.debug(`Total new projects to add to the scope: ${newReposInScopeWithScore.length}`)
 
     // Add just the new repos to the scope
     if (scope[platform][org]) {
@@ -101,14 +105,14 @@ const generateScores = async ({ scope, database: currentDatabase, maxRequestInPa
 
   // @TODO: End the action if there are no projects in scope?
 
-  const orgs = Object.keys(scope[platform].included)
+  const orgs = Object.keys(scope[platform])
   core.debug(`Total Orgs/Users in scope: ${orgs.length}`)
 
   // Structure Projects
   const projects = []
 
   orgs.forEach((org) => {
-    const repos = scope[platform].included[org]
+    const repos = scope[platform][org].included
     repos.forEach((repo) => projects.push({ org, repo }))
   })
 

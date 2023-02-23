@@ -2,12 +2,10 @@ const core = require('@actions/core')
 const github = require('@actions/github')
 const exec = require('@actions/exec')
 const { normalizeBoolean } = require('normalize-boolean')
-
+const { existsSync } = require('fs')
 const { readFile, writeFile, stat } = require('fs').promises
-
 const { isDifferent } = require('@ulisesgascon/is-different')
 const { updateOrCreateSegment } = require('@ulisesgascon/text-tags-manager')
-
 const { generateScores, generateScope } = require('./')
 
 async function run () {
@@ -26,7 +24,7 @@ async function run () {
   const issueTitle = core.getInput('issue-title') || 'OpenSSF Scorecard Report Updated!'
   const githubToken = core.getInput('github-token')
   const autoScopeEnabled = normalizeBoolean(core.getInput('auto-scope-enabled'))
-  const autoScopeOrgs = core.getInput('auto-scope-orgs').split('\n').filter(x => x !== '').map(x => x.trim()) || []
+  const autoScopeOrgs = core.getInput('auto-scope-orgs').split(',').filter(x => x !== '').map(x => x.trim()) || []
   const reportTagsEnabled = normalizeBoolean(core.getInput('report-tags-enabled'))
   const startTag = core.getInput('report-start-tag') || '<!-- OPENSSF-SCORECARD-MONITOR:START -->'
   const endTag = core.getInput('report-end-tag') || '<!-- OPENSSF-SCORECARD-MONITOR:END -->'
@@ -46,18 +44,18 @@ async function run () {
   }
 
   let database = {}
-  let scope = null
+  let scope = { 'github.com': {} }
   let originalReportContent = ''
 
   // check if scope exists
   core.info('Checking if scope file exists...')
-  const existScopeFile = await stat(scopePath)
-  if (!existScopeFile.isFile() && !autoScopeEnabled) {
+  const existScopeFile = existsSync(scopePath)
+  if (!existScopeFile && !autoScopeEnabled) {
     throw new Error('Scope file does not exist and auto scope is not enabled')
   }
 
   // Use scope file if it exists
-  if (existScopeFile.isFile()) {
+  if (existScopeFile) {
     core.debug('Scope file exists, using it...')
     scope = await readFile(scopePath, 'utf8').then(content => JSON.parse(content))
   }
@@ -68,11 +66,11 @@ async function run () {
   }
 
   // Check if database exists
-  try {
-    core.info('Checking if database exists...')
-    await stat(databasePath)
+  core.info('Checking if database exists...')
+  const existDatabaseFile = existsSync(databasePath)
+  if (existDatabaseFile) {
     database = await readFile(databasePath, 'utf8').then(content => JSON.parse(content))
-  } catch (error) {
+  } else {
     core.info('Database does not exist, creating new database')
   }
 

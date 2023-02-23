@@ -20034,11 +20034,12 @@ const generateScope = async ({ octokit, orgs, scope, maxRequestInParallel }) => 
     let entityType = 'org'
     const repoList = []
     try {
-      const { data: repos } = await octokit.listForOrg({ org, type: 'public', per_page: 100 })
+      const { data: repos } = await octokit.rest.repos.listForOrg({ org, type: 'public', per_page: 100 })
       core.debug(`Got ${repos.length} repos for org: ${org}`)
+      repoList.push(...repos.map(entity => entity.name))
     } catch (error) {
       entityType = 'user'
-      const { data: repos } = await octokit.listForUser({ username: org, type: 'public', per_page: 100 })
+      const { data: repos } = await octokit.rest.repos.listForUser({ username: org, type: 'public', per_page: 100 })
       core.debug(`Got ${repos.length} repos for user: ${org}`)
       repoList.push(...repos.map(entity => entity.name))
     }
@@ -20051,7 +20052,7 @@ const generateScope = async ({ octokit, orgs, scope, maxRequestInParallel }) => 
       entityInApi[entityType === 'org' ? 'org' : 'username'] = org
       while (hasMore) {
         core.debug(`Getting page ${page} for ${entityType}: ${org}`)
-        const { data: repos, headers } = await octokit[entityType === 'org' ? 'listForOrg' : 'listForUser']({ ...entityInApi, type: 'public', per_page: 100, page })
+        const { data: repos, headers } = await octokit.rest.repos[entityType === 'org' ? 'listForOrg' : 'listForUser']({ ...entityInApi, type: 'public', per_page: 100, page })
         core.debug(`Got ${repos.length} repos for ${entityType}: ${org}`)
         repoList.push(...repos.map(entity => entity.name))
         hasMore = headers.link.includes('rel="next"')
@@ -20059,7 +20060,7 @@ const generateScope = async ({ octokit, orgs, scope, maxRequestInParallel }) => 
       }
     }
 
-    organizationRepos[org] = repoList.map(({ name }) => name)
+    organizationRepos[org] = repoList
 
     // Filter the repos that will be part of the scope
     let newReposInScope = organizationRepos[org]
@@ -20080,8 +20081,9 @@ const generateScope = async ({ octokit, orgs, scope, maxRequestInParallel }) => 
     for (let index = 0; index < chunks.length; index++) {
       const chunk = chunks[index]
       core.debug(`Processing chunk ${index + 1}/${chunks.length}`)
+      core.debug(`Current projects: ${chunks}`)
 
-      await Promise.all(chunk.map(async ({ org, repo }) => {
+      await Promise.all(chunk.map(async (repo) => {
         try {
           // The Scorecard API will return 404 if the repo is not available
           await getProjectScore({ platform, org, repo })
@@ -20093,6 +20095,8 @@ const generateScope = async ({ octokit, orgs, scope, maxRequestInParallel }) => 
         return Promise.resolve()
       }))
     }
+
+    core.debug(`Total new projects to add to the scope: ${newReposInScopeWithScore.length}`)
 
     // Add just the new repos to the scope
     if (scope[platform][org]) {
@@ -20118,14 +20122,14 @@ const generateScores = async ({ scope, database: currentDatabase, maxRequestInPa
 
   // @TODO: End the action if there are no projects in scope?
 
-  const orgs = Object.keys(scope[platform].included)
+  const orgs = Object.keys(scope[platform])
   core.debug(`Total Orgs/Users in scope: ${orgs.length}`)
 
   // Structure Projects
   const projects = []
 
   orgs.forEach((org) => {
-    const repos = scope[platform].included[org]
+    const repos = scope[platform][org].included
     repos.forEach((repo) => projects.push({ org, repo }))
   })
 
@@ -20484,12 +20488,10 @@ const core = __nccwpck_require__(2186)
 const github = __nccwpck_require__(5438)
 const exec = __nccwpck_require__(1514)
 const { normalizeBoolean } = __nccwpck_require__(6446)
-
+const { existsSync } = __nccwpck_require__(7147)
 const { readFile, writeFile, stat } = (__nccwpck_require__(7147).promises)
-
 const { isDifferent } = __nccwpck_require__(9497)
 const { updateOrCreateSegment } = __nccwpck_require__(7794)
-
 const { generateScores, generateScope } = __nccwpck_require__(4351)
 
 async function run () {
@@ -20508,7 +20510,7 @@ async function run () {
   const issueTitle = core.getInput('issue-title') || 'OpenSSF Scorecard Report Updated!'
   const githubToken = core.getInput('github-token')
   const autoScopeEnabled = normalizeBoolean(core.getInput('auto-scope-enabled'))
-  const autoScopeOrgs = core.getInput('auto-scope-orgs').split('\n').filter(x => x !== '').map(x => x.trim()) || []
+  const autoScopeOrgs = core.getInput('auto-scope-orgs').split(',').filter(x => x !== '').map(x => x.trim()) || []
   const reportTagsEnabled = normalizeBoolean(core.getInput('report-tags-enabled'))
   const startTag = core.getInput('report-start-tag') || '<!-- OPENSSF-SCORECARD-MONITOR:START -->'
   const endTag = core.getInput('report-end-tag') || '<!-- OPENSSF-SCORECARD-MONITOR:END -->'
@@ -20528,18 +20530,18 @@ async function run () {
   }
 
   let database = {}
-  let scope = null
+  let scope = { 'github.com': {} }
   let originalReportContent = ''
 
   // check if scope exists
   core.info('Checking if scope file exists...')
-  const existScopeFile = await stat(scopePath)
-  if (!existScopeFile.isFile() && !autoScopeEnabled) {
+  const existScopeFile = existsSync(scopePath)
+  if (!existScopeFile && !autoScopeEnabled) {
     throw new Error('Scope file does not exist and auto scope is not enabled')
   }
 
   // Use scope file if it exists
-  if (existScopeFile.isFile()) {
+  if (existScopeFile) {
     core.debug('Scope file exists, using it...')
     scope = await readFile(scopePath, 'utf8').then(content => JSON.parse(content))
   }
@@ -20550,11 +20552,11 @@ async function run () {
   }
 
   // Check if database exists
-  try {
-    core.info('Checking if database exists...')
-    await stat(databasePath)
+  core.info('Checking if database exists...')
+  const existDatabaseFile = existsSync(databasePath)
+  if (existDatabaseFile) {
     database = await readFile(databasePath, 'utf8').then(content => JSON.parse(content))
-  } catch (error) {
+  } else {
     core.info('Database does not exist, creating new database')
   }
 
@@ -20593,11 +20595,10 @@ async function run () {
       endTag
     }))
 
-  if(autoScopeEnabled){
+  if (autoScopeEnabled) {
     core.info('Saving changes to scope...')
     await writeFile(scopePath, JSON.stringify(scope, null, 2))
   }
-
 
   // Commit changes
   // @see: https://github.com/actions/checkout#push-a-commit-using-the-built-in-token
@@ -20607,7 +20608,7 @@ async function run () {
     await exec.exec('git config user.email github-actions@github.com')
     await exec.exec(`git add ${databasePath}`)
     await exec.exec(`git add ${reportPath}`)
-    if(autoScopeEnabled){
+    if (autoScopeEnabled) {
       core.info('Committing changes to scope...')
       await exec.exec(`git add ${scopePath}`)
     }
