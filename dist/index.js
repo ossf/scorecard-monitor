@@ -20527,7 +20527,7 @@ async function run () {
   }
 
   let database = {}
-  let scope = null
+  let scope = {'github.com': {}}
   let originalReportContent = ''
 
   // check if scope exists
