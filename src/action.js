@@ -2,12 +2,10 @@ const core = require('@actions/core')
 const github = require('@actions/github')
 const exec = require('@actions/exec')
 const { normalizeBoolean } = require('normalize-boolean')
-
+const { existsSync } = require('fs')
 const { readFile, writeFile, stat } = require('fs').promises
-
 const { isDifferent } = require('@ulisesgascon/is-different')
 const { updateOrCreateSegment } = require('@ulisesgascon/text-tags-manager')
-
 const { generateScores, generateScope } = require('./')
 
 async function run () {
@@ -51,8 +49,8 @@ async function run () {
 
   // check if scope exists
   core.info('Checking if scope file exists...')
-  const existScopeFile = await stat(scopePath)
-  if (!existScopeFile.isFile() && !autoScopeEnabled) {
+  const existScopeFile = existsSync(scopePath)
+  if (!existScopeFile && !autoScopeEnabled) {
     throw new Error('Scope file does not exist and auto scope is not enabled')
   }
 
@@ -68,11 +66,11 @@ async function run () {
   }
 
   // Check if database exists
-  try {
-    core.info('Checking if database exists...')
-    await stat(databasePath)
+  core.info('Checking if database exists...')
+  const existDatabaseFile = existsSync(DatabasePath)
+  if (existDatabaseFile) {
     database = await readFile(databasePath, 'utf8').then(content => JSON.parse(content))
-  } catch (error) {
+  } else {
     core.info('Database does not exist, creating new database')
   }
 
