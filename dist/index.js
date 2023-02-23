@@ -20537,7 +20537,7 @@ async function run () {
   }
 
   // Use scope file if it exists
-  if (existScopeFile.isFile()) {
+  if (existScopeFile) {
     core.debug('Scope file exists, using it...')
     scope = await readFile(scopePath, 'utf8').then(content => JSON.parse(content))
   }
