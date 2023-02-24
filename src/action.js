@@ -103,13 +103,13 @@ async function run () {
   core.info('Saving changes to database and report')
   await writeFile(databasePath, JSON.stringify(newDatabaseState, null, 2))
   await writeFile(reportPath, reportTagsEnabled
-    ? reportContent
-    : updateOrCreateSegment({
+    ? updateOrCreateSegment({
       original: originalReportContent,
       replacementSegment: reportContent,
       startTag,
       endTag
-    }))
+    })
+    : reportContent)
 
   if (discoveryEnabled) {
     core.info('Saving changes to scope...')
