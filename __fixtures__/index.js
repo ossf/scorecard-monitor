@@ -72,7 +72,20 @@ const scope = {
   }
 }
 
+const scores = [
+  {
+    org: 'fake-org',
+    repo: 'fake-repo',
+    platform: 'github.com',
+    commit: '846b3ddb5f75d95235e94d9eb52e920f4a067338',
+    score: 10,
+    date: '2023-02-20',
+    currentDiff: 5
+  }
+]
+
 module.exports = {
   database,
-  scope
+  scope,
+  scores
 }
