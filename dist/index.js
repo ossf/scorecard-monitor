@@ -27711,7 +27711,7 @@ const generateScope = async ({ octokit, orgs, scope, maxRequestInParallel }) => 
   return newScope
 }
 
-const generateScores = async ({ scope, database: currentDatabase, maxRequestInParallel }) => {
+const generateScores = async ({ scope, database: currentDatabase, maxRequestInParallel, reportTagsEnabled }) => {
   // @TODO: Improve deep clone logic
   const database = JSON.parse(JSON.stringify(currentDatabase))
   const platform = 'github.com'
@@ -27770,7 +27770,7 @@ const generateScores = async ({ scope, database: currentDatabase, maxRequestInPa
 
   core.debug('All the scores are already collected')
 
-  const reportContent = await generateReportContent(scores)
+  const reportContent = await generateReportContent(scores, reportTagsEnabled)
   const issueContent = await generateIssueContent(scores)
 
   // SET OUTPUTS
@@ -27834,10 +27834,10 @@ const saveScore = ({ database, platform, org, repo, score, date, commit }) => {
   repoRef.current = { score, date, commit }
 }
 
-const generateReportContent = async (scores) => {
+const generateReportContent = async (scores, reportTagsEnabled) => {
   core.debug('Generating report content')
   const template = await readFile(__nccwpck_require__.ab + "report.ejs", 'utf8')
-  return ejs.render(template, { scores })
+  return ejs.render(template, { scores, reportTagsEnabled })
 }
 
 const generateIssueContent = async (scores) => {
@@ -28219,7 +28219,7 @@ async function run () {
 
   // PROCESS
   core.info('Generating scores...')
-  const { reportContent, issueContent, database: newDatabaseState } = await generateScores({ scope, database, maxRequestInParallel })
+  const { reportContent, issueContent, database: newDatabaseState } = await generateScores({ scope, database, maxRequestInParallel, reportTagsEnabled })
 
   core.info('Checking database changes...')
   const hasChanges = isDifferent(database, newDatabaseState)

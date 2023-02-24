@@ -42,10 +42,10 @@ const saveScore = ({ database, platform, org, repo, score, date, commit }) => {
   repoRef.current = { score, date, commit }
 }
 
-const generateReportContent = async (scores) => {
+const generateReportContent = async (scores, reportTagsEnabled) => {
   core.debug('Generating report content')
   const template = await readFile(join(process.cwd(), 'templates/report.ejs'), 'utf8')
-  return ejs.render(template, { scores })
+  return ejs.render(template, { scores, reportTagsEnabled })
 }
 
 const generateIssueContent = async (scores) => {
