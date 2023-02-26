@@ -12,42 +12,62 @@ _soon_
 
 ## ❤️ Awesome Features
 
-- Reporting in Markdown with simply information and comparative against the prior score. [Demo](https://github.com/UlisesGascon/openssf-scorecard-monitor-demo/blob/main/reporting/openssf-scorecard-report.md)
-- The reporting data is stored in json format (including previous records). [Demo](https://github.com/UlisesGascon/openssf-scorecard-monitor-demo/blob/main/reporting/database.json)
-- Generate an issue with the last changes in the scores, including links to the full report. [Demo](https://github.com/UlisesGascon/openssf-scorecard-monitor-demo/issues/2)
-- Easy to add/remove new repositories in scope from any github organization
-- Debug supported
-- Easy to use and great test coverage (soon)
+- Easy to use with great customization
+- Discovery mode: list all the repos in one or many organizations that are tracked in the OpenSSF Scorecard
+- Reporting in Markdown with essential information (hash, date, score) and comparative against the prior score.
+- Self-hosted: The reporting data is stored in json format (including previous records) in the repo itself.
+- Generate an issue with the last changes in the scores, including links to the full report.
+- Easy to exclude/include new repositories in the scope from any github organization
+- Extend the markdown template with you own content by using tags
+- Easy to modify the files and ensure the integrity with Json Schemas
+- The report data is exported as an output and can be used in the pipeline
+- Great test coverage (in progress)
 
 ### 🎉 Demo
-
-Here is a [demo repository](https://github.com/UlisesGascon/openssf-scorecard-monitor-demo) that is using this Action
 
 **Sample Report**
 
 ![sample report](.github/img/report.png)
 
+_[Sample report](https://github.com/nodejs/security-wg/blob/main/tools/ossf_scorecard/report.md)_
+
 **Sample Issue**
 
-![sample issue](.github/img/issue.png)
+![sample issue preview](.github/img/issue.png)
 
+_[Sample issue](https://github.com/nodejs/security-wg/issues/885)_
 
 ## :shipit: Used By
 
-_Soon_
+- [Nodejs](https://github.com/nodejs): The Node.js Ecosystem Security Working Group is using [this pipeline](https://github.com/nodejs/security-wg/blob/main/.github/workflows/ossf-scorecard-reporting.yml) to generate a [report](https://github.com/nodejs/security-wg/blob/main/tools/ossf_scorecard/report.md) with scores for all the repositories in the Node.js org.
+- [One Beyond](https://github.com/onebeyond): The Maintainers are using [this pipeline](https://github.com/onebeyond/maintainers/blob/main/.github/workflows/security-scoring.yml) to generate a scoring report inside [a specific document](https://github.com/onebeyond/maintainers/blob/main/docs/reporting/scorecard.md), in order to generate a [web version](https://onebeyond-maintainers.netlify.app/reporting/osff-scorecard) of it
 
 
 ## 📡 Usage
 
+### Standalone with auto discovery version
+
+With this workflow you get them most of this action:
+- Trigger manual or by Cron job every Sunday
+- It will scan the org(s) in scope looking for repositories that are available in the OpenSSF Scorecard
+- It will store the database and the scope files in the repo
+- It will generate an issue if there are changes in the score
+
 ```yml
 name: "OpenSSF Scoring"
 on: 
+  # Scheduled trigger
   schedule:
-    - cron: "0 0 * * *"
+    # Run every Sunday at 00:00
+    - cron: "0 0 * * 0"
+  # Manual trigger
+  workflow_dispatch:
 
 permissions:
+  # Write access in order to update the local files with the reports
   contents: write
   pull-requests: none 
+  # Write access in order to create issues
   issues: write
   packages: none
 
@@ -57,7 +77,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: OpenSSF Scorecard Monitor
-        uses: UlisesGascon/openssf-scorecard-monitor@v2.0.0-beta1
+        uses: UlisesGascon/openssf-scorecard-monitor@v2.0.0-beta2
         with:
           scope: reporting/scope.json
           database: reporting/database.json
@@ -65,22 +85,21 @@ jobs:
           auto-commit: true
           auto-push: true
           generate-issue: true
-          issue-title: "OpenSSF Scorecard Report Updated!"
+          # The token is needed to create issues, discovery mode and pushing changes in files
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          max-request-in-parallel: 10
           discovery-enabled: true
-          # As an example Awesome Org and Myself
-          discovery-orgs: 'UlisesGascon,Awesome'
+          # As an example nodejs Org and Myself
+          discovery-orgs: 'UlisesGascon,nodejs'
 ```
 
 ### Options
 
-- `scope`: defined the path to the file where the scope is defined
-- `database`: define the path to the json file usage to store the scores and compare
-- `report`: define the path where the markdown report will be added/updated
-- `auto-commit`: commit the changes in the `database` and `report` files
-- `auto-push`: push the code changes to the branch
-- `generate-issue`: create an issue with the scores that had been updated
+- `scope`: Defines the path to the file where the scope is defined
+- `database`: Defines the path to the json file usage to store the scores and compare
+- `report`: Defines the path where the markdown report will be added/updated
+- `auto-commit`: Commits the changes in the `database` and `report` files
+- `auto-push`: Pushes the code changes to the branch
+- `generate-issue`: Creates an issue with the scores that had been updated
 - `issue-title`: Defines the issue title
 - `github-token`: The token usage to create the issue and push the code
 - `max-request-in-parallel`: Defines the total HTTP Request that can be done in parallel
@@ -94,6 +113,51 @@ jobs:
 ### Outputs
 
 - `scores`: Score data in JSON format
+
+```yml
+name: "OpenSSF Scoring"
+on: 
+  # ...
+
+permissions:
+  # ...
+
+jobs:
+  security-scoring:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: OpenSSF Scorecard Monitor
+        uses: UlisesGascon/openssf-scorecard-monitor@v2.0.0-beta2
+        id: openssf-scorecard-monitor
+        with:
+          # ....
+      - name: Print the scores
+        run: |
+          echo '${{ steps.openssf-scorecard-monitor.outputs.scores }}'  
+```
+
+## 🚀 Advance Tips
+
+### Embed Report version
+
+If you want to mix the report in markdown format with other content, then you can use `report-tags-enabled=true` then report file will use the tags to add/update the report summary without affecting what is before or after the tagged section.
+
+This is very useful for static websites, here is [an example using docusaurus](https://github.com/onebeyond/maintainers/blob/main/docs/reporting/scorecard.md).
+
+### Custom tags
+
+By default we use `<!-- OPENSSF-SCORECARD-MONITOR:START -->` and `<!-- OPENSSF-SCORECARD-MONITOR:END -->`, but this can be customize by adding your custom tags as `report-start-tag` and `report-end-tag`
+
+### Increase HTTP request in parallel
+
+You can control the amount of parallel requests performed against the OpenSSF Scorecard Api by defining any numerical value in `max-request-in-parallel`, like `max-request-in-parallel=15`.
+
+By default the value is 10, higher values might not be a good use of the API and you can hit some limits, please check with OpenSSF if you want to rise the limits safely.
+
+### Exclude repos
+
+In some scenarios we want to enable the auto-discovery mode but we want to ignore certain repos, the best way to achieve that is by editing the `scope.json` file and add any report that you want to ignore in the `excluded` section for that specific organization.
 
 ## 🍿 Other
 
@@ -122,9 +186,6 @@ File: `reporting/scope.json`
 
 }
 ```
-
-
-☕️ **PRO TIP:** You can exclude any project at any time by editing this file  
 
 
 ### Database structure
