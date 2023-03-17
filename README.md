@@ -17,7 +17,7 @@ _soon_
 - Discovery mode: list all the repos in one or many organizations that are tracked in the OpenSSF Scorecard
 - Reporting in Markdown with essential information (hash, date, score) and comparative against the prior score.
 - Self-hosted: The reporting data is stored in json format (including previous records) in the repo itself.
-- Generate an issue with the last changes in the scores, including links to the full report.
+- Generate an issue (assignation, labels..) with the last changes in the scores, including links to the full report.
 - Easy to exclude/include new repositories in the scope from any github organization
 - Extend the markdown template with you own content by using tags
 - Easy to modify the files and ensure the integrity with Json Schemas
@@ -102,6 +102,8 @@ jobs:
 - `auto-push`: Pushes the code changes to the branch
 - `generate-issue`: Creates an issue with the scores that had been updated
 - `issue-title`: Defines the issue title
+- `issue-assignees`: List of assignees for the issue
+- `issue-labels`: List of labels for the issue
 - `github-token`: The token usage to create the issue and push the code
 - `max-request-in-parallel`: Defines the total HTTP Request that can be done in parallel
 - `discovery-enabled`: Defined if the discovery is enabled

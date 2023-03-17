@@ -28153,6 +28153,8 @@ async function run () {
   const autoPush = normalizeBoolean(core.getInput('auto-push'))
   const autoCommit = normalizeBoolean(core.getInput('auto-commit'))
   const issueTitle = core.getInput('issue-title') || 'OpenSSF Scorecard Report Updated!'
+  const issueAssignees = core.getInput('issue-assignees').split(',').filter(x => x !== '').map(x => x.trim()) || []
+  const issueLabels = core.getInput('issue-labels').split(',').filter(x => x !== '').map(x => x.trim()) || []
   const githubToken = core.getInput('github-token')
   const discoveryEnabled = normalizeBoolean(core.getInput('discovery-enabled'))
   const discoveryOrgs = core.getInput('discovery-orgs').split(',').filter(x => x !== '').map(x => x.trim()) || []
@@ -28275,7 +28277,9 @@ async function run () {
     await octokit.rest.issues.create({
       ...context.repo,
       title: issueTitle,
-      body: issueContent
+      body: issueContent,
+      labels: issueLabels,
+      assignees: issueAssignees
     })
   }
 }
