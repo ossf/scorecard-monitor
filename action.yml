@@ -25,6 +25,12 @@ inputs:
     description: 'Title of the issue to be generated'
     required: false
     default: "OpenSSF Scorecard Report Updated!"
+  issue-assignees:
+    description: 'List of assignees for the issue to be generated'
+    required: false
+  issue-labels:
+    description: 'List of labels for the issue to be generated'
+    required: false
   discovery-enabled:
     description: 'Enable the automatic update of the scope file'
     required: false
