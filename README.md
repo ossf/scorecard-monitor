@@ -108,7 +108,7 @@ jobs:
 - `github-token`: The token usage to create the issue and push the code
 - `max-request-in-parallel`: Defines the total HTTP Request that can be done in parallel
 - `discovery-enabled`: Defined if the discovery is enabled
-- `discovery-orgs`: List of organizations to be includes in the discovery, example: `discovery-orgs: owasp,nodejs`
+- `discovery-orgs`: List of organizations to be includes in the discovery, example: `discovery-orgs: owasp,nodejs`. The OpenSSF Scorecard API is case sensitive, please use the same organization name as in the github url, like: https://github.com/NodeSecure is `NodeSecure` and not `nodesecure`. [See example](https://github.com/NodeSecure/Governance/issues/21#issuecomment-1474770986)
 - `report-tags-enabled`: Defines if the markdown report must be created/updated around tags by default is disabled. This is useful if the report is going to be include in a file that has other content on it, like docusaurus docs site or similar.
 - `report-start-tag`: Defines the start tag, default `<!-- OPENSSF-SCORECARD-MONITOR:START -->`
 - `report-end-tag` Defines the closing tag, default `<!-- OPENSSF-SCORECARD-MONITOR:END -->`
