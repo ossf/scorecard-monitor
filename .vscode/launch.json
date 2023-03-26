@@ -1,0 +1,26 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Launch Program",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "program": "${workspaceFolder}/src/action.js",
+            "env": {
+                "NODE_ENV": "development",
+                "INPUT_SCOPE" : "reporting/scope.json",
+                "INPUT_DATABASE" : "reporting/database.json",
+                "INPUT_REPORT": "reporting/openssf-scorecard-report.md",
+                "INPUT_DISCOVERY-ENABLED": "true",
+                "INPUT_DISCOVERY-ORGS": "UlisesGascon",
+                "INPUT_GITHUB-TOKEN": "${env:GH_TOKEN}"
+            }
+        }
+    ]
+}
