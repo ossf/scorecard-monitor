@@ -103,6 +103,10 @@ async function run () {
 
   // Save changes
   core.info('Saving changes to database and report')
+  // check if the directory exists, if not create it
+  const reportDirectory = reportPath.split('/').slice(0, -1).join('/')
+  await stat(reportDirectory).catch(() => exec.exec(`mkdir -p ${reportDirectory}`))
+
   await writeFile(databasePath, JSON.stringify(newDatabaseState, null, 2))
   await writeFile(reportPath, reportTagsEnabled
     ? updateOrCreateSegment({
@@ -115,6 +119,11 @@ async function run () {
 
   if (discoveryEnabled) {
     core.info('Saving changes to scope...')
+    
+    // check if the directory exists, if not create it
+    const scopetDirectory = scopePath.split('/').slice(0, -1).join('/')
+    await stat(scopeDirectory).catch(() => exec.exec(`mkdir -p ${scopeDirectory}`))
+
     await writeFile(scopePath, JSON.stringify(scope, null, 2))
   }
 
