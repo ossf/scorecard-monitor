@@ -98,7 +98,7 @@ const generateScope = async ({ octokit, orgs, scope, maxRequestInParallel }) => 
   return newScope
 }
 
-const generateScores = async ({ scope, database: currentDatabase, maxRequestInParallel, reportTagsEnabled }) => {
+const generateScores = async ({ scope, database: currentDatabase, maxRequestInParallel, reportTagsEnabled, renderBadge }) => {
   // @TODO: Improve deep clone logic
   const database = JSON.parse(JSON.stringify(currentDatabase))
   const platform = 'github.com'
@@ -157,8 +157,8 @@ const generateScores = async ({ scope, database: currentDatabase, maxRequestInPa
 
   core.debug('All the scores are already collected')
 
-  const reportContent = await generateReportContent(scores, reportTagsEnabled)
-  const issueContent = await generateIssueContent(scores)
+  const reportContent = await generateReportContent(scores, reportTagsEnabled, renderBadge)
+  const issueContent = await generateIssueContent(scores, renderBadge)
 
   // SET OUTPUTS
   core.setOutput('scores', scores)
