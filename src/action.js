@@ -31,6 +31,7 @@ async function run () {
   const reportTagsEnabled = normalizeBoolean(core.getInput('report-tags-enabled'))
   const startTag = core.getInput('report-start-tag') || '<!-- OPENSSF-SCORECARD-MONITOR:START -->'
   const endTag = core.getInput('report-end-tag') || '<!-- OPENSSF-SCORECARD-MONITOR:END -->'
+  const renderBadge = normalizeBoolean(core.getInput('render-badge'))
 
   // Error Handling
   if (!githubToken && [autoPush, autoCommit, generateIssue, discoveryEnabled].some(value => value)) {
@@ -91,7 +92,7 @@ async function run () {
 
   // PROCESS
   core.info('Generating scores...')
-  const { reportContent, issueContent, database: newDatabaseState } = await generateScores({ scope, database, maxRequestInParallel, reportTagsEnabled })
+  const { reportContent, issueContent, database: newDatabaseState } = await generateScores({ scope, database, maxRequestInParallel, reportTagsEnabled, renderBadge })
 
   core.info('Checking database changes...')
   const hasChanges = isDifferent(database, newDatabaseState)

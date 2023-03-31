@@ -27711,7 +27711,7 @@ const generateScope = async ({ octokit, orgs, scope, maxRequestInParallel }) => 
   return newScope
 }
 
-const generateScores = async ({ scope, database: currentDatabase, maxRequestInParallel, reportTagsEnabled }) => {
+const generateScores = async ({ scope, database: currentDatabase, maxRequestInParallel, reportTagsEnabled, renderBadge }) => {
   // @TODO: Improve deep clone logic
   const database = JSON.parse(JSON.stringify(currentDatabase))
   const platform = 'github.com'
@@ -27770,8 +27770,8 @@ const generateScores = async ({ scope, database: currentDatabase, maxRequestInPa
 
   core.debug('All the scores are already collected')
 
-  const reportContent = await generateReportContent(scores, reportTagsEnabled)
-  const issueContent = await generateIssueContent(scores)
+  const reportContent = await generateReportContent(scores, reportTagsEnabled, renderBadge)
+  const issueContent = await generateIssueContent(scores, renderBadge)
 
   // SET OUTPUTS
   core.setOutput('scores', scores)
@@ -27834,20 +27834,20 @@ const saveScore = ({ database, platform, org, repo, score, date, commit }) => {
   repoRef.current = { score, date, commit }
 }
 
-const generateReportContent = async (scores, reportTagsEnabled) => {
+const generateReportContent = async (scores, reportTagsEnabled, renderBadge) => {
   core.debug('Generating report content')
   const template = await readFile(__nccwpck_require__.ab + "report.ejs", 'utf8')
-  return ejs.render(template, { scores, reportTagsEnabled })
+  return ejs.render(template, { scores, reportTagsEnabled, renderBadge })
 }
 
-const generateIssueContent = async (scores) => {
+const generateIssueContent = async (scores, renderBadge) => {
   core.debug('Generating issue content')
   const scoresInScope = scores.filter(({ currentDiff }) => currentDiff)
   if (!scoresInScope.length) {
     return null
   }
   const template = await readFile(__nccwpck_require__.ab + "issue.ejs", 'utf8')
-  return ejs.render(template, { scores: scoresInScope })
+  return ejs.render(template, { scores: scoresInScope, renderBadge })
 }
 
 module.exports = {
@@ -28161,6 +28161,7 @@ async function run () {
   const reportTagsEnabled = normalizeBoolean(core.getInput('report-tags-enabled'))
   const startTag = core.getInput('report-start-tag') || '<!-- OPENSSF-SCORECARD-MONITOR:START -->'
   const endTag = core.getInput('report-end-tag') || '<!-- OPENSSF-SCORECARD-MONITOR:END -->'
+  const renderBadge = normalizeBoolean(core.getInput('render-badge'))
 
   // Error Handling
   if (!githubToken && [autoPush, autoCommit, generateIssue, discoveryEnabled].some(value => value)) {
@@ -28221,7 +28222,7 @@ async function run () {
 
   // PROCESS
   core.info('Generating scores...')
-  const { reportContent, issueContent, database: newDatabaseState } = await generateScores({ scope, database, maxRequestInParallel, reportTagsEnabled })
+  const { reportContent, issueContent, database: newDatabaseState } = await generateScores({ scope, database, maxRequestInParallel, reportTagsEnabled, renderBadge })
 
   core.info('Checking database changes...')
   const hasChanges = isDifferent(database, newDatabaseState)
