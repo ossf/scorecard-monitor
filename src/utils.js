@@ -1,7 +1,7 @@
 const got = require('got')
 const core = require('@actions/core')
 const ejs = require('ejs')
-const { readFile, existsSync, mkdir } = require('fs').promises
+const { readFile, existsSync, mkdirSync } = require('fs').promises
 const { join } = require('path')
 const { softAssign } = require('@ulisesgascon/soft-assign-deep-property')
 const databaseSchema = require('../schemas/database.json')
@@ -59,10 +59,10 @@ const generateIssueContent = async (scores, renderBadge) => {
 }
 
 const makeDirectory = ({ path }) => {
-  console.log('Making directory', path)
   const directories = path.split('/').slice(0, -1).join('/')
-  core.debug(`Making directory ${directories}`)  
+  core.debug(`Making directory ${directories}`)
   if (!existsSync(directories)) {
+    core.debug('Making directory: ', path)
     mkdirSync(directories, { recursive: true })
   }
 }

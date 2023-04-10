@@ -117,7 +117,7 @@ async function run () {
     : reportContent)
 
   if (discoveryEnabled) {
-    core.info('Saving changes to scope...')    
+    core.info('Saving changes to scope...')
     makeDirectory(scopePath)
     await writeFile(scopePath, JSON.stringify(scope, null, 2))
   }

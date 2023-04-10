@@ -27793,7 +27793,7 @@ module.exports = {
 const got = __nccwpck_require__(3061)
 const core = __nccwpck_require__(2186)
 const ejs = __nccwpck_require__(8431)
-const { readFile, existsSync, mkdir } = (__nccwpck_require__(7147).promises)
+const { readFile, existsSync, mkdirSync } = (__nccwpck_require__(7147).promises)
 const { join } = __nccwpck_require__(1017)
 const { softAssign } = __nccwpck_require__(7348)
 const databaseSchema = __nccwpck_require__(5324)
@@ -27851,10 +27851,10 @@ const generateIssueContent = async (scores, renderBadge) => {
 }
 
 const makeDirectory = ({ path }) => {
-  console.log('Making directory', path)
   const directories = path.split('/').slice(0, -1).join('/')
-  core.debug(`Making directory ${directories}`)  
+  core.debug(`Making directory ${directories}`)
   if (!existsSync(directories)) {
+    core.debug('Making directory: ', path)
     mkdirSync(directories, { recursive: true })
   }
 }
@@ -28257,7 +28257,7 @@ async function run () {
     : reportContent)
 
   if (discoveryEnabled) {
-    core.info('Saving changes to scope...')    
+    core.info('Saving changes to scope...')
     makeDirectory(scopePath)
     await writeFile(scopePath, JSON.stringify(scope, null, 2))
   }
