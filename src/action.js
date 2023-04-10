@@ -7,7 +7,7 @@ const { readFile, writeFile, stat } = require('fs').promises
 const { isDifferent } = require('@ulisesgascon/is-different')
 const { updateOrCreateSegment } = require('@ulisesgascon/text-tags-manager')
 const { generateScores, generateScope } = require('./')
-const { validateDatabaseIntegrity, validateScopeIntegrity } = require('./utils')
+const { validateDatabaseIntegrity, validateScopeIntegrity, makeDirectory } = require('./utils')
 
 async function run () {
   let octokit
@@ -104,10 +104,8 @@ async function run () {
 
   // Save changes
   core.info('Saving changes to database and report')
-  // check if the directory exists, if not create it
-  const reportDirectory = reportPath.split('/').slice(0, -1).join('/')
-  await stat(reportDirectory).catch(() => exec.exec(`mkdir -p ${reportDirectory}`))
-
+  console.log('Saving changes to database and report')
+  makeDirectory(reportPath)
   await writeFile(databasePath, JSON.stringify(newDatabaseState, null, 2))
   await writeFile(reportPath, reportTagsEnabled
     ? updateOrCreateSegment({
@@ -119,12 +117,8 @@ async function run () {
     : reportContent)
 
   if (discoveryEnabled) {
-    core.info('Saving changes to scope...')
-    
-    // check if the directory exists, if not create it
-    const scopetDirectory = scopePath.split('/').slice(0, -1).join('/')
-    await stat(scopeDirectory).catch(() => exec.exec(`mkdir -p ${scopeDirectory}`))
-
+    core.info('Saving changes to scope...')    
+    makeDirectory(scopePath)
     await writeFile(scopePath, JSON.stringify(scope, null, 2))
   }
 
