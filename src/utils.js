@@ -58,7 +58,7 @@ const generateIssueContent = async (scores, renderBadge) => {
   return ejs.render(template, { scores: scoresInScope, renderBadge })
 }
 
-const makeDirectory = ({ path }) => {
+const makeDirectory = ( path ) => {
   const directories = path.split('/').slice(0, -1).join('/')
   core.debug(`Making directory ${directories}`)
   if (!existsSync(directories)) {
