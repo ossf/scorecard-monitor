@@ -13,7 +13,7 @@ _soon_
 ## ❤️ Awesome Features
 
 - Easy to use with great customization
-- Easy to patch the scoring as the reports includes a direct link to [StepSecurity](http://app.stepsecurity.io)
+- Easy to patch the scoring as the reports includes a direct link to [StepSecurity](https://app.stepsecurity.io)
 - Discovery mode: list all the repos in one or many organizations that are tracked in the OpenSSF Scorecard
 - Reporting in Markdown with essential information (hash, date, score) and comparative against the prior score.
 - Self-hosted: The reporting data is stored in json format (including previous records) in the repo itself.
