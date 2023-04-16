@@ -27711,7 +27711,7 @@ const generateScope = async ({ octokit, orgs, scope, maxRequestInParallel }) => 
   return newScope
 }
 
-const generateScores = async ({ scope, database: currentDatabase, maxRequestInParallel, reportTagsEnabled, renderBadge }) => {
+const generateScores = async ({ scope, database: currentDatabase, maxRequestInParallel, reportTagsEnabled, renderBadge, reportTool }) => {
   // @TODO: Improve deep clone logic
   const database = JSON.parse(JSON.stringify(currentDatabase))
   const platform = 'github.com'
@@ -27770,8 +27770,8 @@ const generateScores = async ({ scope, database: currentDatabase, maxRequestInPa
 
   core.debug('All the scores are already collected')
 
-  const reportContent = await generateReportContent(scores, reportTagsEnabled, renderBadge)
-  const issueContent = await generateIssueContent(scores, renderBadge)
+  const reportContent = await generateReportContent({ scores, reportTagsEnabled, renderBadge, reportTool })
+  const issueContent = await generateIssueContent({ scores, renderBadge, reportTool })
 
   // SET OUTPUTS
   core.setOutput('scores', scores)
@@ -27834,20 +27834,29 @@ const saveScore = ({ database, platform, org, repo, score, date, commit }) => {
   repoRef.current = { score, date, commit }
 }
 
-const generateReportContent = async (scores, reportTagsEnabled, renderBadge) => {
-  core.debug('Generating report content')
-  const template = await readFile(__nccwpck_require__.ab + "report.ejs", 'utf8')
-  return ejs.render(template, { scores, reportTagsEnabled, renderBadge })
+const generateReportUrl = reportTool => (org, repo) => {
+  if (reportTool === 'scorecard-visualizer') {
+    return `https://kooltheba.github.io/openssf-scorecard-api-visualizer/#/projects/github.com/${org}/${repo}`
+  }
+  return `https://deps.dev/project/github/${org.toLowerCase()}%2F${repo.toLowerCase()}`
 }
 
-const generateIssueContent = async (scores, renderBadge) => {
+const generateReportContent = async ({ scores, reportTagsEnabled, renderBadge, reportTool }) => {
+  core.debug('Generating report content')
+  const template = await readFile(__nccwpck_require__.ab + "report.ejs", 'utf8')
+  const getReportUrl = generateReportUrl(reportTool)
+  return ejs.render(template, { scores, reportTagsEnabled, renderBadge, getReportUrl })
+}
+
+const generateIssueContent = async ({ scores, renderBadge, reportTool }) => {
   core.debug('Generating issue content')
   const scoresInScope = scores.filter(({ currentDiff }) => currentDiff)
   if (!scoresInScope.length) {
     return null
   }
   const template = await readFile(__nccwpck_require__.ab + "issue.ejs", 'utf8')
-  return ejs.render(template, { scores: scoresInScope, renderBadge })
+  const getReportUrl = generateReportUrl(reportTool)
+  return ejs.render(template, { scores: scoresInScope, renderBadge, getReportUrl })
 }
 
 module.exports = {
@@ -28162,6 +28171,12 @@ async function run () {
   const startTag = core.getInput('report-start-tag') || '<!-- OPENSSF-SCORECARD-MONITOR:START -->'
   const endTag = core.getInput('report-end-tag') || '<!-- OPENSSF-SCORECARD-MONITOR:END -->'
   const renderBadge = normalizeBoolean(core.getInput('render-badge'))
+  const reportTool = core.getInput('report-tool') || 'scorecard-visualizer'
+
+  const availableReportTools = ['scorecard-visualizer', 'deps.dev']
+  if (!availableReportTools.includes(reportTool)) {
+    throw new Error(`The report-tool is not valid, please use: ${availableReportTools.join(', ')}`)
+  }
 
   // Error Handling
   if (!githubToken && [autoPush, autoCommit, generateIssue, discoveryEnabled].some(value => value)) {
@@ -28222,7 +28237,7 @@ async function run () {
 
   // PROCESS
   core.info('Generating scores...')
-  const { reportContent, issueContent, database: newDatabaseState } = await generateScores({ scope, database, maxRequestInParallel, reportTagsEnabled, renderBadge })
+  const { reportContent, issueContent, database: newDatabaseState } = await generateScores({ scope, database, maxRequestInParallel, reportTagsEnabled, renderBadge, reportTool })
 
   core.info('Checking database changes...')
   const hasChanges = isDifferent(database, newDatabaseState)
