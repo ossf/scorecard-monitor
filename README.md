@@ -113,6 +113,7 @@ jobs:
 - `report-start-tag` Defines the start tag, default `<!-- OPENSSF-SCORECARD-MONITOR:START -->`
 - `report-end-tag`: Defines the closing tag, default `<!-- OPENSSF-SCORECARD-MONITOR:END -->`
 - `render-badge`: Defines if the OpenSSF badge must be rendered in the reportor to only show the score
+- `report-tool`: Defines the reporting review tool in place: `scorecard-visualizer` [Example](https://kooltheba.github.io/openssf-scorecard-api-visualizer/#/projects/github.com/nodejs/node) or `deps.dev` [Example](https://deps.dev/project/github/nodejs%2Fnode), by default `scorecard-visualizer`
 
 ### Outputs
 
