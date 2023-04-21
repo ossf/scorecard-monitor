@@ -42,20 +42,29 @@ const saveScore = ({ database, platform, org, repo, score, date, commit }) => {
   repoRef.current = { score, date, commit }
 }
 
-const generateReportContent = async (scores, reportTagsEnabled, renderBadge) => {
-  core.debug('Generating report content')
-  const template = await readFile(join(process.cwd(), 'templates/report.ejs'), 'utf8')
-  return ejs.render(template, { scores, reportTagsEnabled, renderBadge })
+const generateReportUrl = reportTool => (org, repo) => {
+  if (reportTool === 'scorecard-visualizer') {
+    return `https://kooltheba.github.io/openssf-scorecard-api-visualizer/#/projects/github.com/${org}/${repo}`
+  }
+  return `https://deps.dev/project/github/${org.toLowerCase()}%2F${repo.toLowerCase()}`
 }
 
-const generateIssueContent = async (scores, renderBadge) => {
+const generateReportContent = async ({ scores, reportTagsEnabled, renderBadge, reportTool }) => {
+  core.debug('Generating report content')
+  const template = await readFile(join(process.cwd(), 'templates/report.ejs'), 'utf8')
+  const getReportUrl = generateReportUrl(reportTool)
+  return ejs.render(template, { scores, reportTagsEnabled, renderBadge, getReportUrl })
+}
+
+const generateIssueContent = async ({ scores, renderBadge, reportTool }) => {
   core.debug('Generating issue content')
   const scoresInScope = scores.filter(({ currentDiff }) => currentDiff)
   if (!scoresInScope.length) {
     return null
   }
   const template = await readFile(join(process.cwd(), 'templates/issue.ejs'), 'utf8')
-  return ejs.render(template, { scores: scoresInScope, renderBadge })
+  const getReportUrl = generateReportUrl(reportTool)
+  return ejs.render(template, { scores: scoresInScope, renderBadge, getReportUrl })
 }
 
 module.exports = {

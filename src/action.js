@@ -32,6 +32,12 @@ async function run () {
   const startTag = core.getInput('report-start-tag') || '<!-- OPENSSF-SCORECARD-MONITOR:START -->'
   const endTag = core.getInput('report-end-tag') || '<!-- OPENSSF-SCORECARD-MONITOR:END -->'
   const renderBadge = normalizeBoolean(core.getInput('render-badge'))
+  const reportTool = core.getInput('report-tool') || 'scorecard-visualizer'
+
+  const availableReportTools = ['scorecard-visualizer', 'deps.dev']
+  if (!availableReportTools.includes(reportTool)) {
+    throw new Error(`The report-tool is not valid, please use: ${availableReportTools.join(', ')}`)
+  }
 
   // Error Handling
   if (!githubToken && [autoPush, autoCommit, generateIssue, discoveryEnabled].some(value => value)) {
@@ -92,7 +98,7 @@ async function run () {
 
   // PROCESS
   core.info('Generating scores...')
-  const { reportContent, issueContent, database: newDatabaseState } = await generateScores({ scope, database, maxRequestInParallel, reportTagsEnabled, renderBadge })
+  const { reportContent, issueContent, database: newDatabaseState } = await generateScores({ scope, database, maxRequestInParallel, reportTagsEnabled, renderBadge, reportTool })
 
   core.info('Checking database changes...')
   const hasChanges = isDifferent(database, newDatabaseState)

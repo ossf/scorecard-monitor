@@ -59,6 +59,10 @@ inputs:
     description: 'Render the OSSF badge in the report'
     required: false
     default: "false"
+  report-tool:
+    description: 'Tool to be included as link in the report'
+    required: false
+    default: "scorecard-visualizer"
   
 outputs:
   scores:

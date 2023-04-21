@@ -23,18 +23,33 @@ describe('Utils', () => {
   describe('generateReportContent', () => {
     it('Should render template with scores and title', async () => {
       const reportTagsEnabled = false
-      const report = await generateReportContent(scores, reportTagsEnabled)
+      const reportTool = 'scorecard-visualizer'
+      const report = await generateReportContent({ scores, renderBadge: reportTagsEnabled, reportTool })
       expect(report).toMatchSnapshot()
     })
     it('Should render template with scores only', async () => {
       const reportTagsEnabled = true
-      const report = await generateReportContent(scores, reportTagsEnabled)
+      const reportTool = 'scorecard-visualizer'
+      const report = await generateReportContent({ scores, renderBadge: reportTagsEnabled, reportTool })
       expect(report).toMatchSnapshot()
     })
     it('Should render template with title only', async () => {
       const emptyScores = []
       const reportTagsEnabled = false
-      const report = await generateReportContent(emptyScores, reportTagsEnabled)
+      const reportTool = 'scorecard-visualizer'
+      const report = await generateReportContent({ scores: emptyScores, renderBadge: reportTagsEnabled, reportTool })
+      expect(report).toMatchSnapshot()
+    })
+    it('Should render template with deps.dev as renderTool', async () => {
+      const reportTagsEnabled = true
+      const reportTool = 'deps.dev'
+      const report = await generateReportContent({ scores, renderBadge: reportTagsEnabled, reportTool })
+      expect(report).toMatchSnapshot()
+    })
+    it('Should render template with scorecard-visualizer as renderTool', async () => {
+      const reportTagsEnabled = true
+      const reportTool = 'scorecard-visualizer'
+      const report = await generateReportContent({ scores, renderBadge: reportTagsEnabled, reportTool })
       expect(report).toMatchSnapshot()
     })
   })

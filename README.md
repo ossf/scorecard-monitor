@@ -14,6 +14,7 @@ _soon_
 
 - Easy to use with great customization
 - Easy to patch the scoring as the reports includes a direct link to [StepSecurity](https://app.stepsecurity.io)
+- Easy way to visualize the scorecard results with [The Scorecard Visualizer](https://kooltheba.github.io/openssf-scorecard-api-visualizer/#/projects/github.com/nodejs/node) or [deps.dev](https://deps.dev/project/github/nodejs%2Fnode)
 - Discovery mode: list all the repos in one or many organizations that are tracked in the OpenSSF Scorecard
 - Reporting in Markdown with essential information (hash, date, score) and comparative against the prior score.
 - Self-hosted: The reporting data is stored in json format (including previous records) in the repo itself.
@@ -113,6 +114,7 @@ jobs:
 - `report-start-tag` Defines the start tag, default `<!-- OPENSSF-SCORECARD-MONITOR:START -->`
 - `report-end-tag`: Defines the closing tag, default `<!-- OPENSSF-SCORECARD-MONITOR:END -->`
 - `render-badge`: Defines if the OpenSSF badge must be rendered in the reportor to only show the score
+- `report-tool`: Defines the reporting review tool in place: `scorecard-visualizer` [Example](https://kooltheba.github.io/openssf-scorecard-api-visualizer/#/projects/github.com/nodejs/node) or `deps.dev` [Example](https://deps.dev/project/github/nodejs%2Fnode), by default `scorecard-visualizer`
 
 ### Outputs
 
