@@ -27834,9 +27834,9 @@ const saveScore = ({ database, platform, org, repo, score, date, commit }) => {
   repoRef.current = { score, date, commit }
 }
 
-const generateReportUrl = reportTool => (org, repo) => {
+const generateReportUrl = reportTool => (org, repo, commit) => {
   if (reportTool === 'scorecard-visualizer') {
-    return `https://kooltheba.github.io/openssf-scorecard-api-visualizer/#/projects/github.com/${org}/${repo}`
+    return `https://kooltheba.github.io/openssf-scorecard-api-visualizer/#/projects/github.com/${org}/${repo}/commit/${commit}`
   }
   return `https://deps.dev/project/github/${org.toLowerCase()}%2F${repo.toLowerCase()}`
 }
