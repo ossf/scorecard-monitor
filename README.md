@@ -145,6 +145,50 @@ jobs:
 
 ## 🚀 Advance Tips
 
+### Avoid commit directly in the branch and generate a PR 
+
+If you have the OpenSSF Scorecard recommended branch protection rules in place, it will be impossible to commit and push directly to the `main` branch. An easy alternative is to extend the pipeline to generate a PR for you:
+
+```yml
+name: "OpenSSF Scoring"
+on: 
+  # ...
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+  packages: none
+
+jobs:
+  security-scoring:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: OpenSSF Scorecard Monitor
+        uses: UlisesGascon/openssf-scorecard-monitor@v2.0.0-beta5
+        id: openssf-scorecard-monitor
+        with:
+          auto-commit: false
+          auto-push: false
+          generate-issue: true
+          # ....
+      - name: Print the scores
+        run: |
+          echo '${{ steps.openssf-scorecard-monitor.outputs.scores }}'
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@38e0b6e68b4c852a5500a94740f0e535e0d7ba54 # v4.2.4
+        with:
+            token: ${{ secrets.GITHUB_TOKEN }}
+            commit-message: OpenSSF Scorecard Report Updated
+            title: OpenSSF Scorecard Report Updated
+            body: OpenSSF Scorecard Report Updated
+            base: main
+            assignees: ${{ github.actor }}
+            branch: openssf-scorecard-report-updated
+            delete-branch: true
+``` 
+
 ### Embed Report version
 
 If you want to mix the report in markdown format with other content, then you can use `report-tags-enabled=true` then report file will use the tags to add/update the report summary without affecting what is before or after the tagged section.
