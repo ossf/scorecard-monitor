@@ -145,7 +145,7 @@ jobs:
 
 ## 🚀 Advance Tips
 
-### Avoid commit directly in the branch and generate a PR 
+### Avoid committing directly to the branch and instead generate a PR
 
 If you have the OpenSSF Scorecard recommended branch protection rules in place, it will be impossible to commit and push directly to the `main` branch. An easy alternative is to extend the pipeline to generate a PR for you:
 
