@@ -5,7 +5,7 @@ exports[`Utils generateReportContent Should render template with deps.dev as ren
 
 ## Summary
 
-| Repository | Commit | Score | Date | Difference | Report Link | StepSecurity Link |
+| Repository | Commit | Score | Date | Difference | Report | StepSecurity Link |
 | -- | -- | -- | -- | -- | -- | -- |
 | [fake-org/fake-repo](https://github.com/fake-org/fake-repo) | [846b3dd](https://github.com/fake-org/fake-repo/commit/846b3ddb5f75d95235e94d9eb52e920f4a067338) |  [![OpenSSF Scorecard](https://api.securityscorecards.dev/projects/github.com/fake-org/fake-repo/badge)](https://api.securityscorecards.dev/projects/github.com/fake-org/fake-repo) | 2023-02-20 | 5 | [Full Report](https://deps.dev/project/github/fake-org%2Ffake-repo) | [Fix it](https://app.stepsecurity.io/securerepo?repo=fake-org/fake-repo) |
 
@@ -17,7 +17,7 @@ exports[`Utils generateReportContent Should render template with scorecard-visua
 
 ## Summary
 
-| Repository | Commit | Score | Date | Difference | Report Link | StepSecurity Link |
+| Repository | Commit | Score | Date | Difference | Report | StepSecurity Link |
 | -- | -- | -- | -- | -- | -- | -- |
 | [fake-org/fake-repo](https://github.com/fake-org/fake-repo) | [846b3dd](https://github.com/fake-org/fake-repo/commit/846b3ddb5f75d95235e94d9eb52e920f4a067338) |  [![OpenSSF Scorecard](https://api.securityscorecards.dev/projects/github.com/fake-org/fake-repo/badge)](https://api.securityscorecards.dev/projects/github.com/fake-org/fake-repo) | 2023-02-20 | 5 | [Full Report](https://kooltheba.github.io/openssf-scorecard-api-visualizer/#/projects/github.com/fake-org/fake-repo/commit/846b3ddb5f75d95235e94d9eb52e920f4a067338) | [Fix it](https://app.stepsecurity.io/securerepo?repo=fake-org/fake-repo) |
 
@@ -29,7 +29,7 @@ exports[`Utils generateReportContent Should render template with scores and titl
 
 ## Summary
 
-| Repository | Commit | Score | Date | Difference | Report Link | StepSecurity Link |
+| Repository | Commit | Score | Date | Difference | Report | StepSecurity Link |
 | -- | -- | -- | -- | -- | -- | -- |
 | [fake-org/fake-repo](https://github.com/fake-org/fake-repo) | [846b3dd](https://github.com/fake-org/fake-repo/commit/846b3ddb5f75d95235e94d9eb52e920f4a067338) | 10 | 2023-02-20 | 5 | [Full Report](https://kooltheba.github.io/openssf-scorecard-api-visualizer/#/projects/github.com/fake-org/fake-repo/commit/846b3ddb5f75d95235e94d9eb52e920f4a067338) | [Fix it](https://app.stepsecurity.io/securerepo?repo=fake-org/fake-repo) |
 
@@ -41,7 +41,7 @@ exports[`Utils generateReportContent Should render template with scores only 1`]
 
 ## Summary
 
-| Repository | Commit | Score | Date | Difference | Report Link | StepSecurity Link |
+| Repository | Commit | Score | Date | Difference | Report | StepSecurity Link |
 | -- | -- | -- | -- | -- | -- | -- |
 | [fake-org/fake-repo](https://github.com/fake-org/fake-repo) | [846b3dd](https://github.com/fake-org/fake-repo/commit/846b3ddb5f75d95235e94d9eb52e920f4a067338) |  [![OpenSSF Scorecard](https://api.securityscorecards.dev/projects/github.com/fake-org/fake-repo/badge)](https://api.securityscorecards.dev/projects/github.com/fake-org/fake-repo) | 2023-02-20 | 5 | [Full Report](https://kooltheba.github.io/openssf-scorecard-api-visualizer/#/projects/github.com/fake-org/fake-repo/commit/846b3ddb5f75d95235e94d9eb52e920f4a067338) | [Fix it](https://app.stepsecurity.io/securerepo?repo=fake-org/fake-repo) |
 
