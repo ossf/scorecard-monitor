@@ -1,6 +1,6 @@
 {
   "name": "openssf-scorecard-monitor",
-  "version": "2.0.0-beta5",
+  "version": "2.0.0-beta6",
   "description": "A simple way to monitor OpenSSF Scorecard at organization level",
   "main": "src/index.js",
   "private": true,
