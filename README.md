@@ -147,7 +147,7 @@ jobs:
 
 ### Avoid committing directly to the branch and instead generate a PR
 
-If you have the OpenSSF Scorecard recommended branch protection rules in place, it will be impossible to commit and push directly to the `main` branch. An easy alternative is to extend the pipeline to generate a PR for you:
+If you have implemented the recommended branch protection rules from the OpenSSF Scorecard, committing and pushing directly to the `main` branch will be impossible. An easy alternative is to extend the pipeline to automatically generate a PR for you:
 
 ```yml
 name: "OpenSSF Scoring"
