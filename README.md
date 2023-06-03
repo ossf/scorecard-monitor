@@ -15,6 +15,7 @@ _soon_
 - Easy to use with great customization
 - Easy to patch the scoring as the reports includes a direct link to [StepSecurity](https://app.stepsecurity.io)
 - Easy way to visualize the scorecard results with [The Scorecard Visualizer](https://kooltheba.github.io/openssf-scorecard-api-visualizer/#/projects/github.com/nodejs/node) or [deps.dev](https://deps.dev/project/github/nodejs%2Fnode)
+- Cutting-edge feature that effortlessly compares OpenSSF scorecards between previous and current commits with [The Scorecard Visualizer Comparator](https://kooltheba.github.io/openssf-scorecard-api-visualizer/#/projects/github.com/nodejs/node/compare/39a08ee8b8d3818677eb823cb566f36b1b1c4671/19fa9f1bc47b0666be0747583bea8cb3d8ad5eb1)
 - Discovery mode: list all the repos in one or many organizations that are tracked in the OpenSSF Scorecard
 - Reporting in Markdown with essential information (hash, date, score) and comparative against the prior score.
 - Self-hosted: The reporting data is stored in json format (including previous records) in the repo itself.

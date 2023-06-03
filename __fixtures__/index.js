@@ -78,6 +78,7 @@ const scores = [
     repo: 'fake-repo',
     platform: 'github.com',
     commit: '846b3ddb5f75d95235e94d9eb52e920f4a067338',
+    prevCommit: '39a08ee8b8d3818677eb823cb566f36b1b1c4671',
     score: 10,
     date: '2023-02-20',
     currentDiff: 5

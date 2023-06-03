@@ -143,6 +143,7 @@ const generateScores = async ({ scope, database: currentDatabase, maxRequestInPa
       if (storedScore) {
         scoreData.prevScore = storedScore.score
         scoreData.prevDate = storedScore.date
+        scoreData.prevCommit = storedScore.commit
 
         if (storedScore.score !== score) {
           scoreData.currentDiff = parseFloat((score - storedScore.score).toFixed(1))
