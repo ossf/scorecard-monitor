@@ -6,6 +6,12 @@
 
 If you're feeling overwhelmed by an avalanche of repository scorecards in your organization, you can breathe easy: Automation is here to make your life easier! It will streamline the process of keeping track of them all by providing a comprehensive report in Markdown and a local database in JSON with all the scores. Furthermore, to stay on top of any changes in the scores, you can choose to get notifications through Github Issues.
 
+## ✅ Requirements
+
+Please ensure that any repository you wish to track with Scorecard Monitor has already been analyzed by [OpenSSF Scorecard](https://github.com/ossf/scorecard) at least once. This can be accomplished using the official [GitHub Action](https://github.com/ossf/scorecard-action) or the [Scorecard CLI](https://github.com/ossf/scorecard?tab=readme-ov-file#scorecard-command-line-interface). It's also possible that some repositories in your organization are already being [automatically tracked](https://github.com/ossf/scorecard/blob/main/docs/faq.md#can-i-preview-my-projects-score) by OpenSSF via this [CSV file](https://github.com/ossf/scorecard/blob/main/cron/internal/data/projects.csv)!
+
+If you're not sure whether a specific project is already using Scorecard, you can always spot-check with the following URL pattern: `https://securityscorecards.dev/viewer/?uri=github.com/<ORG_NAME>/<REPO_NAME>` (substitute `<ORG_NAME>` and `<REPO_NAME>` as appropriate). The [Scorecard API](https://api.securityscorecards.dev/) is also able to fetch scores for a given repository.
+
 ## 📺 Tutorial
 
 _soon_
@@ -16,13 +22,14 @@ _soon_
 - Easy to patch the scoring as the reports includes a direct link to [StepSecurity](https://app.stepsecurity.io)
 - Easy way to visualize the scorecard results with [The Scorecard Visualizer](https://kooltheba.github.io/openssf-scorecard-api-visualizer/#/projects/github.com/nodejs/node) or [deps.dev](https://deps.dev/project/github/nodejs%2Fnode)
 - Cutting-edge feature that effortlessly compares OpenSSF scorecards between previous and current commits with [The Scorecard Visualizer Comparator](https://kooltheba.github.io/openssf-scorecard-api-visualizer/#/projects/github.com/nodejs/node/compare/39a08ee8b8d3818677eb823cb566f36b1b1c4671/19fa9f1bc47b0666be0747583bea8cb3d8ad5eb1)
-- Discovery mode: list all the repos in one or many organizations that are tracked in the OpenSSF Scorecard
-- Reporting in Markdown with essential information (hash, date, score) and comparative against the prior score.
-- Self-hosted: The reporting data is stored in json format (including previous records) in the repo itself.
-- Generate an issue (assignation, labels..) with the last changes in the scores, including links to the full report.
-- Easy to exclude/include new repositories in the scope from any github organization
+- Discovery mode: list all the repos in one or many organizations that are already being tracked with [OpenSSF Scorecard](https://github.com/ossf/scorecard)
+- Reporting in Markdown with essential information (hash, date, score) and comparative against the prior score
+- Self-hosted: The reporting data is stored in JSON format (including previous records) in the repo itself
+- Generate an issue (assignation, labels..) with the last changes in the scores, including links to the full report
+- Automatically create a pull request for repositories that have branch protection enabled
+- Easy to exclude/include new repositories in the scope from any GitHub organization
 - Extend the markdown template with you own content by using tags
-- Easy to modify the files and ensure the integrity with Json Schemas
+- Easy to modify the files and ensure the integrity with JSON Schemas
 - The report data is exported as an output and can be used in the pipeline
 - Great test coverage (in progress)
 
@@ -51,8 +58,9 @@ _[Sample issue](https://github.com/nodejs/security-wg/issues/885)_
 
 ### Standalone with auto discovery version
 
-With this workflow you get them most of this action:
-- Trigger manual or by Cron job every Sunday
+With the following workflow, you will get the most out of this action:
+
+- Trigger manually or by Cron job every Sunday
 - It will scan the org(s) in scope looking for repositories that are available in the OpenSSF Scorecard
 - It will store the database and the scope files in the repo
 - It will generate an issue if there are changes in the score
@@ -70,6 +78,7 @@ on:
 permissions:
   # Write access in order to update the local files with the reports
   contents: write
+  # Write access only required if creating PRs (see Advanced Tips below)
   pull-requests: none 
   # Write access in order to create issues
   issues: write
@@ -99,7 +108,7 @@ jobs:
 ### Options
 
 - `scope`: Defines the path to the file where the scope is defined
-- `database`: Defines the path to the json file usage to store the scores and compare
+- `database`: Defines the path to the JSON file usage to store the scores and compare
 - `report`: Defines the path where the markdown report will be added/updated
 - `auto-commit`: Commits the changes in the `database` and `report` files
 - `auto-push`: Pushes the code changes to the branch
@@ -110,7 +119,7 @@ jobs:
 - `github-token`: The token usage to create the issue and push the code
 - `max-request-in-parallel`: Defines the total HTTP Request that can be done in parallel
 - `discovery-enabled`: Defined if the discovery is enabled
-- `discovery-orgs`: List of organizations to be includes in the discovery, example: `discovery-orgs: owasp,nodejs`. The OpenSSF Scorecard API is case sensitive, please use the same organization name as in the github url, like: https://github.com/NodeSecure is `NodeSecure` and not `nodesecure`. [See example](https://github.com/NodeSecure/Governance/issues/21#issuecomment-1474770986)
+- `discovery-orgs`: List of organizations to be includes in the discovery, example: `discovery-orgs: owasp,nodejs`. The OpenSSF Scorecard API is case sensitive, please use the same organization name as in the GitHub url, like: <https://github.com/NodeSecure> is `NodeSecure` and not `nodesecure`. [See example](https://github.com/NodeSecure/Governance/issues/21#issuecomment-1474770986)
 - `report-tags-enabled`: Defines if the markdown report must be created/updated around tags by default is disabled. This is useful if the report is going to be include in a file that has other content on it, like docusaurus docs site or similar
 - `report-start-tag` Defines the start tag, default `<!-- OPENSSF-SCORECARD-MONITOR:START -->`
 - `report-end-tag`: Defines the closing tag, default `<!-- OPENSSF-SCORECARD-MONITOR:END -->`
@@ -144,7 +153,7 @@ jobs:
           echo '${{ steps.openssf-scorecard-monitor.outputs.scores }}'  
 ```
 
-## 🚀 Advance Tips
+## 🚀 Advanced Tips
 
 ### Avoid committing directly to the branch and instead generate a PR
 
@@ -188,7 +197,7 @@ jobs:
             assignees: ${{ github.actor }}
             branch: openssf-scorecard-report-updated
             delete-branch: true
-``` 
+```
 
 ### Embed Report version
 
@@ -237,7 +246,6 @@ File: `reporting/scope.json`
 
 }
 ```
-
 
 ### Database structure
 
