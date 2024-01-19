@@ -47,7 +47,7 @@
     "@ulisesgascon/is-different": "2.0.0",
     "@ulisesgascon/normalize-boolean": "2.0.0",
     "@ulisesgascon/soft-assign-deep-property": "2.0.0",
-    "@ulisesgascon/text-tags-manager": "1.0.0",
+    "@ulisesgascon/text-tags-manager": "2.0.0",
     "@vercel/ncc": "0.38.1",
     "ajv": "8.12.0",
     "ajv-formats": "2.1.1",
