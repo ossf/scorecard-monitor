@@ -55,7 +55,7 @@
     "got": "11.8.6"
   },
   "engines": {
-    "node": ">=16.0.0"
+    "node": ">=20.0.0"
   },
   "devDependencies": {
     "@commitlint/cli": "17.4.2",

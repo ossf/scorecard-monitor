@@ -69,7 +69,7 @@ outputs:
     description: 'Score data in JSON format'
 
 runs:
-  using: 'node16'
+  using: 'node20'
   main: 'dist/index.js'
 
 # https://actions-cool.github.io/github-action-branding/
