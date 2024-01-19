@@ -14,7 +14,8 @@ If you're not sure whether a specific project is already using Scorecard, you ca
 
 ## 📺 Tutorial
 
-_soon_
+This section is coming soon.
+If you would like to contribute to the documentation, please feel free to open a pull request for review.
 
 ## ❤️ Awesome Features
 
@@ -35,13 +36,13 @@ _soon_
 
 ### 🎉 Demo
 
-**Sample Report**
+#### Sample Report
 
 ![sample report](.github/img/report.png)
 
 _[Sample report](https://github.com/nodejs/security-wg/blob/main/tools/ossf_scorecard/report.md)_
 
-**Sample Issue**
+#### Sample Issue
 
 ![sample issue preview](.github/img/issue.png)
 
@@ -58,7 +59,7 @@ _[Sample issue](https://github.com/nodejs/security-wg/issues/885)_
 
 ## 📡 Usage
 
-### Standalone with auto discovery version
+### Standalone with auto-discovery version
 
 With the following workflow, you will get the most out of this action:
 
