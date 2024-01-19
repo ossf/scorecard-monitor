@@ -45,7 +45,7 @@
     "@actions/github": "5.1.1",
     "@ulisesgascon/array-to-chunks": "2.0.0",
     "@ulisesgascon/is-different": "2.0.0",
-    "@ulisesgascon/normalize-boolean": "1.0.0",
+    "@ulisesgascon/normalize-boolean": "2.0.0",
     "@ulisesgascon/soft-assign-deep-property": "1.0.0",
     "@ulisesgascon/text-tags-manager": "1.0.0",
     "@vercel/ncc": "0.38.1",
