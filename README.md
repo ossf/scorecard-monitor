@@ -14,7 +14,8 @@ If you're not sure whether a specific project is already using Scorecard, you ca
 
 ## 📺 Tutorial
 
-_soon_
+This section is coming soon.
+If you would like to contribute to the documentation, please feel free to open a pull request for review.
 
 ## ❤️ Awesome Features
 
@@ -35,13 +36,13 @@ _soon_
 
 ### 🎉 Demo
 
-**Sample Report**
+#### Sample Report
 
 ![sample report](.github/img/report.png)
 
 _[Sample report](https://github.com/nodejs/security-wg/blob/main/tools/ossf_scorecard/report.md)_
 
-**Sample Issue**
+#### Sample Issue
 
 ![sample issue preview](.github/img/issue.png)
 
@@ -50,13 +51,15 @@ _[Sample issue](https://github.com/nodejs/security-wg/issues/885)_
 ## :shipit: Used By
 
 - [Nodejs](https://github.com/nodejs): The Node.js Ecosystem Security Working Group is using [this pipeline](https://github.com/nodejs/security-wg/blob/main/.github/workflows/ossf-scorecard-reporting.yml) to generate a [report](https://github.com/nodejs/security-wg/blob/main/tools/ossf_scorecard/report.md) with scores for all the repositories in the Node.js org.
-- [One Beyond](https://github.com/onebeyond): The Maintainers are using [this pipeline](https://github.com/onebeyond/maintainers/blob/main/.github/workflows/security-scoring.yml) to generate a scoring report inside [a specific document](https://github.com/onebeyond/maintainers/blob/main/docs/reporting/scorecard.md), in order to generate a [web version](https://onebeyond-maintainers.netlify.app/reporting/osff-scorecard) of it
+- [One Beyond](https://github.com/onebeyond): The Maintainers are using [this pipeline](https://github.com/onebeyond/maintainers/blob/main/.github/workflows/security-scoring.yml) to generate a scoring report inside [a specific document][onebeyond-report], in order to generate a [web version](https://onebeyond-maintainers.netlify.app/reporting/ossf-scorecard) of it
 - [NodeSecure](https://github.com/NodeSecure): The Maintainers are using [this pipeline](https://github.com/NodeSecure/Governance/blob/main/.github/workflows/ossf-scorecard-reporting.yml) to generate a scoring report and notification issues.
 - **[More users](https://github.com/UlisesGascon/openssf-scorecard-monitor/network/dependents)**
 
+[onebeyond-report]: https://github.com/onebeyond/maintainers/blob/main/docs/06-reporting/01-scorecard.md
+
 ## 📡 Usage
 
-### Standalone with auto discovery version
+### Standalone with auto-discovery version
 
 With the following workflow, you will get the most out of this action:
 
@@ -203,7 +206,7 @@ jobs:
 
 If you want to mix the report in markdown format with other content, then you can use `report-tags-enabled=true` then report file will use the tags to add/update the report summary without affecting what is before or after the tagged section.
 
-This is very useful for static websites, here is [an example using docusaurus](https://github.com/onebeyond/maintainers/blob/main/docs/reporting/scorecard.md).
+This is very useful for static websites, here is [an example using docusaurus][onebeyond-report].
 
 ### Custom tags
 
