@@ -8,7 +8,9 @@ If you're feeling overwhelmed by an avalanche of repository scorecards in your o
 
 ## ✅ Requirements
 
-Please ensure that any repository you wish to track with Scorecard Monitor has already been analyzed by [OpenSSF Scorecard](https://github.com/ossf/scorecard) at least once. This can be accomplished using the official [GitHub Action](https://github.com/ossf/scorecard-action) or the [Scorecard CLI](https://github.com/ossf/scorecard?tab=readme-ov-file#scorecard-command-line-interface). It's also possible that some repositories in your organization are already being [automatically tracked](https://github.com/ossf/scorecard/blob/main/docs/faq.md#can-i-preview-my-projects-score) by OpenSSF via this [CSV file](https://github.com/ossf/scorecard/blob/main/cron/internal/data/projects.csv)!
+Please ensure that any repository you wish to track with Scorecard Monitor has already been analyzed by [OpenSSF Scorecard](https://github.com/ossf/scorecard) at least once. This can be accomplished using the official [GitHub Action](https://github.com/ossf/scorecard-action) or the [Scorecard CLI](https://github.com/ossf/scorecard?tab=readme-ov-file#scorecard-command-line-interface).
+
+It's also possible that some repositories in your organization are already being [automatically tracked](https://github.com/ossf/scorecard/blob/main/docs/faq.md#can-i-preview-my-projects-score) by OpenSSF in this [CSV file](https://github.com/ossf/scorecard/blob/main/cron/internal/data/projects.csv) via weekly cronjob. One caveat: Automatically tracked projects _do not_ include [certain checks](https://github.com/ossf/scorecard/issues/3438) in their analysis (`CI-Tests,Contributors,Dependency-Update-Tool,Webhooks`).
 
 If you're not sure whether a specific project is already using Scorecard, you can always spot-check with the following URL pattern: `https://securityscorecards.dev/viewer/?uri=github.com/<ORG_NAME>/<REPO_NAME>` (substitute `<ORG_NAME>` and `<REPO_NAME>` as appropriate). The [Scorecard API](https://api.securityscorecards.dev/) is also able to fetch scores for a given repository.
 
