@@ -274,3 +274,7 @@ Just for reference, the database will store the current value and previous value
   }
 }
 ```
+
+## 💪 Contributing
+
+Please read [CONTRIBUTING.md](https://github.com/UlisesGascon/.github/blob/main/contributing.md) for details on our code of conduct and the process for submitting pull requests to us. You need to accept DCO 1.1 in order to make contributions.
