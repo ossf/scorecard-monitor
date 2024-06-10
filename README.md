@@ -23,8 +23,8 @@ If you would like to contribute to the documentation, please feel free to open a
 
 - Easy to use with great customization
 - Easy to patch the scoring as the reports includes a direct link to [StepSecurity](https://app.stepsecurity.io)
-- Easy way to visualize the scorecard results with [The Scorecard Visualizer](https://kooltheba.github.io/openssf-scorecard-api-visualizer/#/projects/github.com/nodejs/node) or [deps.dev](https://deps.dev/project/github/nodejs%2Fnode)
-- Cutting-edge feature that effortlessly compares OpenSSF scorecards between previous and current commits with [The Scorecard Visualizer Comparator](https://kooltheba.github.io/openssf-scorecard-api-visualizer/#/projects/github.com/nodejs/node/compare/39a08ee8b8d3818677eb823cb566f36b1b1c4671/19fa9f1bc47b0666be0747583bea8cb3d8ad5eb1)
+- Easy way to visualize the scorecard results with [The Scorecard Visualizer](https://ossf.github.io/scorecard-visualizer/#/projects/github.com/nodejs/node) or [deps.dev](https://deps.dev/project/github/nodejs%2Fnode)
+- Cutting-edge feature that effortlessly compares OpenSSF scorecards between previous and current commits with [The Scorecard Visualizer Comparator](https://ossf.github.io/scorecard-visualizer/#/projects/github.com/nodejs/node/compare/39a08ee8b8d3818677eb823cb566f36b1b1c4671/19fa9f1bc47b0666be0747583bea8cb3d8ad5eb1)
 - Discovery mode: list all the repos in one or many organizations that are already being tracked with [OpenSSF Scorecard](https://github.com/ossf/scorecard)
 - Reporting in Markdown with essential information (hash, date, score) and comparative against the prior score
 - Self-hosted: The reporting data is stored in JSON format (including previous records) in the repo itself
@@ -129,7 +129,7 @@ jobs:
 - `report-start-tag` Defines the start tag, default `<!-- OPENSSF-SCORECARD-MONITOR:START -->`
 - `report-end-tag`: Defines the closing tag, default `<!-- OPENSSF-SCORECARD-MONITOR:END -->`
 - `render-badge`: Defines if the OpenSSF badge must be rendered in the reportor to only show the score
-- `report-tool`: Defines the reporting review tool in place: `scorecard-visualizer` [Example](https://kooltheba.github.io/openssf-scorecard-api-visualizer/#/projects/github.com/nodejs/node) or `deps.dev` [Example](https://deps.dev/project/github/nodejs%2Fnode), by default `scorecard-visualizer`
+- `report-tool`: Defines the reporting review tool in place: `scorecard-visualizer` [Example](https://ossf.github.io/scorecard-visualizer/#/projects/github.com/nodejs/node) or `deps.dev` [Example](https://deps.dev/project/github/nodejs%2Fnode), by default `scorecard-visualizer`
 
 ### Outputs
 
