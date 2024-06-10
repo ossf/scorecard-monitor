@@ -55,7 +55,7 @@ _[Sample issue](https://github.com/nodejs/security-wg/issues/885)_
 - [Nodejs](https://github.com/nodejs): The Node.js Ecosystem Security Working Group is using [this pipeline](https://github.com/nodejs/security-wg/blob/main/.github/workflows/ossf-scorecard-reporting.yml) to generate a [report](https://github.com/nodejs/security-wg/blob/main/tools/ossf_scorecard/report.md) with scores for all the repositories in the Node.js org.
 - [One Beyond](https://github.com/onebeyond): The Maintainers are using [this pipeline](https://github.com/onebeyond/maintainers/blob/main/.github/workflows/security-scoring.yml) to generate a scoring report inside [a specific document][onebeyond-report], in order to generate a [web version](https://onebeyond-maintainers.netlify.app/reporting/ossf-scorecard) of it
 - [NodeSecure](https://github.com/NodeSecure): The Maintainers are using [this pipeline](https://github.com/NodeSecure/Governance/blob/main/.github/workflows/ossf-scorecard-reporting.yml) to generate a scoring report and notification issues.
-- **[More users](https://github.com/UlisesGascon/openssf-scorecard-monitor/network/dependents)**
+- **[More users](https://github.com/ossf/scorecard-monitor/network/dependents)**
 
 [onebeyond-report]: https://github.com/onebeyond/maintainers/blob/main/docs/06-reporting/01-scorecard.md
 
@@ -95,7 +95,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: OpenSSF Scorecard Monitor
-        uses: UlisesGascon/openssf-scorecard-monitor@v2.0.0-beta7
+        uses: ossf/scorecard-monitor@v2.0.0-beta7
         with:
           scope: reporting/scope.json
           database: reporting/database.json
@@ -149,7 +149,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: OpenSSF Scorecard Monitor
-        uses: UlisesGascon/openssf-scorecard-monitor@v2.0.0-beta7
+        uses: ossf/scorecard-monitor@v2.0.0-beta7
         id: openssf-scorecard-monitor
         with:
           # ....
@@ -181,7 +181,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: OpenSSF Scorecard Monitor
-        uses: UlisesGascon/openssf-scorecard-monitor@v2.0.0-beta7
+        uses: ossf/scorecard-monitor@v2.0.0-beta7
         id: openssf-scorecard-monitor
         with:
           auto-commit: false

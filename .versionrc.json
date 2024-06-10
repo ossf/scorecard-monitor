@@ -9,6 +9,6 @@
       {"type": "perf", "section": "Others"},
       {"type": "test", "section": "Test"}
     ],
-    "commitUrlFormat": "https://github.com/ulisesGascon/openssf-scorecard-monitor/commits/{{hash}}",
-    "compareUrlFormat": "https://github.com/ulisesGascon/openssf-scorecard-monitor/compare/{{previousTag}}...{{currentTag}}"
+    "commitUrlFormat": "https://github.com/ossf/scorecard-monitor/commits/{{hash}}",
+    "compareUrlFormat": "https://github.com/ossf/scorecard-monitor/compare/{{previousTag}}...{{currentTag}}"
   }
