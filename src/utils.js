@@ -44,10 +44,10 @@ const saveScore = ({ database, platform, org, repo, score, date, commit }) => {
 
 const generateReportUrl = reportTool => (org, repo, commit, prevCommit) => {
   if (reportTool === 'scorecard-visualizer' && !prevCommit) {
-    return `https://kooltheba.github.io/openssf-scorecard-api-visualizer/#/projects/github.com/${org}/${repo}/commit/${commit}`
+    return `https://ossf.github.io/scorecard-visualizer/#/projects/github.com/${org}/${repo}/commit/${commit}`
   }
   if (reportTool === 'scorecard-visualizer' && prevCommit) {
-    return `https://kooltheba.github.io/openssf-scorecard-api-visualizer/#/projects/github.com/${org}/${repo}/compare/${prevCommit}/${commit}`
+    return `https://ossf.github.io/scorecard-visualizer/#/projects/github.com/${org}/${repo}/compare/${prevCommit}/${commit}`
   }
   return `https://deps.dev/project/github/${org.toLowerCase()}%2F${repo.toLowerCase()}`
 }
