@@ -2,6 +2,14 @@
 
 **Simplify OpenSSF Scorecard tracking in your organization with automated markdown and JSON reports, plus optional GitHub issue alerts.**
 
+---
+
+**📢 IMPORTANT**
+
+This project is now part of the [OpenSSF](https://openssf.org/) organization. You can find more information about it in [this announcement](https://github.com/ossf/scorecard-monitor/issues/79).
+
+---
+
 ## 🔮 About
 
 If you're feeling overwhelmed by an avalanche of repository scorecards in your organization, you can breathe easy: Automation is here to make your life easier! It will streamline the process of keeping track of them all by providing a comprehensive report in Markdown and a local database in JSON with all the scores. Furthermore, to stay on top of any changes in the scores, you can choose to get notifications through Github Issues.
