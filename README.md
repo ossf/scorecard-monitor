@@ -103,7 +103,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: OpenSSF Scorecard Monitor
-        uses: ossf/scorecard-monitor@v2.0.0-beta7
+        uses: ossf/scorecard-monitor@v2.0.0-beta8
         with:
           scope: reporting/scope.json
           database: reporting/database.json
@@ -157,7 +157,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: OpenSSF Scorecard Monitor
-        uses: ossf/scorecard-monitor@v2.0.0-beta7
+        uses: ossf/scorecard-monitor@v2.0.0-beta8
         id: openssf-scorecard-monitor
         with:
           # ....
@@ -189,7 +189,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: OpenSSF Scorecard Monitor
-        uses: ossf/scorecard-monitor@v2.0.0-beta7
+        uses: ossf/scorecard-monitor@v2.0.0-beta8
         id: openssf-scorecard-monitor
         with:
           auto-commit: false
