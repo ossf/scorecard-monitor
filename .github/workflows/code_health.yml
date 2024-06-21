@@ -29,3 +29,15 @@ jobs:
 
     - name: Build
       run: npm run build
+
+    - name: Check dist directory
+      run: |
+        FILES=$(git status -s dist/)
+        if [ -n "$FILES" ]; then
+          echo "You need to include the changes in the dist folder, execute: npm run build and commit the changes in the dist folder"
+          echo "Uncommitted files:"
+          echo "$FILES"
+          echo "Diff content:"
+          git diff dist/
+          exit 1
+        fi
