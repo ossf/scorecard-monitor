@@ -138,7 +138,7 @@ It is important to ensure that the `package.json`, `package-lock.json` and `CHAN
 
 In order to create a new release, follow these steps:
 
-1. Use the GitHub web UI for releases ([link](https://github.com/ossf/scorecard-monitor/releases/new)).
+1. Use the GitHub web UI for [new releases](https://github.com/ossf/scorecard-monitor/releases/new).
 2. Mark `Publish this Action to the GitHub Marketplace` as we want to deliver this to our users.
 3. Target the new release version, like `v.1.0.3-beta5`. Note that you can use metadata like `-beta5` and you must include `v` as prefix.
 4. Mark `Set as the latest release`
