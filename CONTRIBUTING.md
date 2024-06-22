@@ -126,7 +126,7 @@ npm run release:major
 ```
 
 
-This includes all the changes in the `CHANGELOG.md` and ensures that the `package.json` and `package-lock.json` are up to date.
+This includes all the changes in the [CHANGELOG](./CHANGELOG.md) and ensures that the `package.json` and `package-lock.json` are up to date.
 
 You can discard the tag that has been generated locally, as we won't use it.
 
