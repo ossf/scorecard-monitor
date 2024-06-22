@@ -162,4 +162,4 @@ Following are the targets that can be used to test your changes locally.
 
 ## Updating Docs
 
-The documentation can be found at `README.md`. Any change that is landed to `main` will be reflected directly on https://github.com/marketplace/actions/openssf-scorecard-monitor. So, doc changes do not require a specific release.
+The documentation can be found in the [README](./README.md). Any changes that are merged to `main` will be reflected directly on https://github.com/marketplace/actions/openssf-scorecard-monitor. Therefore, documentation changes do not require a specific release.
