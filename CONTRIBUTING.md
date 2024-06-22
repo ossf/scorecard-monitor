@@ -45,7 +45,7 @@ You must install these tools:
 1.  [`git`](https://help.github.com/articles/set-up-git/): For source control
 
 1.  [`node`](https://nodejs.org/en/download/package-manager): You need node version
-        `v20.11.0`. The project includes support for nvm
+        `v20+`. The project includes support for [nvm](https://github.com/nvm-sh/nvm).
 
 ### New to Node.js?
 
