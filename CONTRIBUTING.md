@@ -147,7 +147,7 @@ In order to create a new release, follow these steps:
 
 ## What to do before submitting a pull request
 
-Following are the targets that can be used to test your changes locally.
+The following are the targets that can be used to test your changes locally:
 
 | Command  | Description                                        | Is called in the CI? |
 | -------- | -------------------------------------------------- | -------------------- |
