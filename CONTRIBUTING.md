@@ -78,7 +78,7 @@ Currently, the project is using [Jest](https://jestjs.io/) and [Snapshot Testing
 You have several options to run the tests:
 - `npm run test`: this will run the tests
 - `npm run test:update`: this will run the tests and update the snapshots
-- `npm run test:coverage` this will run the tests and generate a coverage report as terminal output and in HTML format that can be found at `coverage/` folder
+- `npm run test:coverage` this will run the tests and generate a coverage report as terminal output and in HTML format that can be found in the `coverage/` folder
 - `npm run test:watch`: this will run the tests when you make changes in any of the project's files.
 
 ## How to run the linter
