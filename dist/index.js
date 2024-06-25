@@ -1,9 +1,6 @@
 /******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
-<<<<<<< HEAD
-/***/ 613:
-=======
 /***/ 7351:
 /***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
 
@@ -47167,12 +47164,15 @@ function wrappy (fn, cb) {
 /***/ }),
 
 /***/ 4351:
+<<<<<<< HEAD
 >>>>>>> 37cbd35 (:seedling: Add step to validate the dist folder content (#84))
+=======
+>>>>>>> e282306 (Rebuild dist files)
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
-const core = __nccwpck_require__(481)
-const { getProjectScore, generateIssueContent, generateReportContent, getScore, saveScore } = __nccwpck_require__(629)
-const { chunkArray } = __nccwpck_require__(462)
+const core = __nccwpck_require__(2186)
+const { getProjectScore, generateIssueContent, generateReportContent, getScore, saveScore } = __nccwpck_require__(1608)
+const { chunkArray } = __nccwpck_require__(4478)
 
 const generateScope = async ({ octokit, orgs, scope, maxRequestInParallel }) => {
   const platform = 'github.com'
@@ -47347,20 +47347,20 @@ module.exports = {
 
 /***/ }),
 
-/***/ 629:
+/***/ 1608:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
-const got = __nccwpck_require__(931)
-const core = __nccwpck_require__(481)
-const ejs = __nccwpck_require__(451)
-const { readFile } = (__nccwpck_require__(147).promises)
-const { join } = __nccwpck_require__(17)
-const { softAssign } = __nccwpck_require__(595)
-const databaseSchema = __nccwpck_require__(324)
-const scopeSchema = __nccwpck_require__(746)
+const got = __nccwpck_require__(3061)
+const core = __nccwpck_require__(2186)
+const ejs = __nccwpck_require__(8431)
+const { readFile } = (__nccwpck_require__(7147).promises)
+const { join } = __nccwpck_require__(1017)
+const { softAssign } = __nccwpck_require__(7348)
+const databaseSchema = __nccwpck_require__(5324)
+const scopeSchema = __nccwpck_require__(1746)
 
-const Ajv = __nccwpck_require__(467)
-const addFormats = (__nccwpck_require__(867)["default"])
+const Ajv = __nccwpck_require__(2426)
+const addFormats = (__nccwpck_require__(567)["default"])
 const ajv = new Ajv()
 addFormats(ajv)
 
@@ -47435,103 +47435,79 @@ module.exports = {
 
 /***/ }),
 
-/***/ 481:
+/***/ 9491:
 /***/ ((module) => {
 
-module.exports = eval("require")("@actions/core");
-
+"use strict";
+module.exports = require("assert");
 
 /***/ }),
 
-/***/ 474:
+/***/ 852:
 /***/ ((module) => {
 
-module.exports = eval("require")("@actions/exec");
-
+"use strict";
+module.exports = require("async_hooks");
 
 /***/ }),
 
-/***/ 29:
+/***/ 4300:
 /***/ ((module) => {
 
-module.exports = eval("require")("@actions/github");
-
+"use strict";
+module.exports = require("buffer");
 
 /***/ }),
 
-/***/ 462:
+/***/ 2081:
 /***/ ((module) => {
 
-module.exports = eval("require")("@ulisesgascon/array-to-chunks");
-
+"use strict";
+module.exports = require("child_process");
 
 /***/ }),
 
-/***/ 577:
+/***/ 6206:
 /***/ ((module) => {
 
-module.exports = eval("require")("@ulisesgascon/is-different");
-
+"use strict";
+module.exports = require("console");
 
 /***/ }),
 
-/***/ 435:
+/***/ 6113:
 /***/ ((module) => {
 
-module.exports = eval("require")("@ulisesgascon/normalize-boolean");
-
+"use strict";
+module.exports = require("crypto");
 
 /***/ }),
 
-/***/ 595:
+/***/ 7643:
 /***/ ((module) => {
 
-module.exports = eval("require")("@ulisesgascon/soft-assign-deep-property");
-
+"use strict";
+module.exports = require("diagnostics_channel");
 
 /***/ }),
 
-/***/ 92:
+/***/ 9523:
 /***/ ((module) => {
 
-module.exports = eval("require")("@ulisesgascon/text-tags-manager");
-
+"use strict";
+module.exports = require("dns");
 
 /***/ }),
 
-/***/ 467:
+/***/ 2361:
 /***/ ((module) => {
 
-module.exports = eval("require")("ajv");
-
+"use strict";
+module.exports = require("events");
 
 /***/ }),
 
-/***/ 867:
-/***/ ((module) => {
-
-module.exports = eval("require")("ajv-formats");
-
-
-/***/ }),
-
-/***/ 451:
-/***/ ((module) => {
-
-module.exports = eval("require")("ejs");
-
-
-/***/ }),
-
-/***/ 931:
-/***/ ((module) => {
-
-module.exports = eval("require")("got");
-
-
-/***/ }),
-
-/***/ 147:
+/***/ 7147:
 /***/ ((module) => {
 
 "use strict";
@@ -47539,7 +47515,71 @@ module.exports = require("fs");
 
 /***/ }),
 
-/***/ 17:
+/***/ 3685:
+/***/ ((module) => {
+
+"use strict";
+module.exports = require("http");
+
+/***/ }),
+
+/***/ 5158:
+/***/ ((module) => {
+
+"use strict";
+module.exports = require("http2");
+
+/***/ }),
+
+/***/ 5687:
+/***/ ((module) => {
+
+"use strict";
+module.exports = require("https");
+
+/***/ }),
+
+/***/ 1808:
+/***/ ((module) => {
+
+"use strict";
+module.exports = require("net");
+
+/***/ }),
+
+/***/ 5673:
+/***/ ((module) => {
+
+"use strict";
+module.exports = require("node:events");
+
+/***/ }),
+
+/***/ 4492:
+/***/ ((module) => {
+
+"use strict";
+module.exports = require("node:stream");
+
+/***/ }),
+
+/***/ 7261:
+/***/ ((module) => {
+
+"use strict";
+module.exports = require("node:util");
+
+/***/ }),
+
+/***/ 2037:
+/***/ ((module) => {
+
+"use strict";
+module.exports = require("os");
+
+/***/ }),
+
+/***/ 1017:
 /***/ ((module) => {
 
 "use strict";
@@ -47547,9 +47587,6 @@ module.exports = require("path");
 
 /***/ }),
 
-<<<<<<< HEAD
-/***/ 324:
-=======
 /***/ 4074:
 /***/ ((module) => {
 
@@ -49290,7 +49327,10 @@ module.exports = {"i8":"3.1.10"};
 /***/ }),
 
 /***/ 5324:
+<<<<<<< HEAD
 >>>>>>> 37cbd35 (:seedling: Add step to validate the dist folder content (#84))
+=======
+>>>>>>> e282306 (Rebuild dist files)
 /***/ ((module) => {
 
 "use strict";
@@ -49298,7 +49338,7 @@ module.exports = JSON.parse('{"type":"object","properties":{"github.com":{"type"
 
 /***/ }),
 
-/***/ 746:
+/***/ 1746:
 /***/ ((module) => {
 
 "use strict";
@@ -49328,7 +49368,7 @@ module.exports = JSON.parse('{"type":"object","properties":{"github.com":{"type"
 /******/ 		// Execute the module function
 /******/ 		var threw = true;
 /******/ 		try {
-/******/ 			__webpack_modules__[moduleId](module, module.exports, __nccwpck_require__);
+/******/ 			__webpack_modules__[moduleId].call(module.exports, module, module.exports, __nccwpck_require__);
 /******/ 			threw = false;
 /******/ 		} finally {
 /******/ 			if(threw) delete __webpack_module_cache__[moduleId];
@@ -49347,16 +49387,16 @@ module.exports = JSON.parse('{"type":"object","properties":{"github.com":{"type"
 var __webpack_exports__ = {};
 // This entry need to be wrapped in an IIFE because it need to be isolated against other modules in the chunk.
 (() => {
-const core = __nccwpck_require__(481)
-const github = __nccwpck_require__(29)
-const exec = __nccwpck_require__(474)
-const { normalizeBoolean } = __nccwpck_require__(435)
-const { existsSync } = __nccwpck_require__(147)
-const { readFile, writeFile, stat } = (__nccwpck_require__(147).promises)
-const { isDifferent } = __nccwpck_require__(577)
-const { updateOrCreateSegment } = __nccwpck_require__(92)
-const { generateScores, generateScope } = __nccwpck_require__(613)
-const { validateDatabaseIntegrity, validateScopeIntegrity } = __nccwpck_require__(629)
+const core = __nccwpck_require__(2186)
+const github = __nccwpck_require__(5438)
+const exec = __nccwpck_require__(1514)
+const { normalizeBoolean } = __nccwpck_require__(9214)
+const { existsSync } = __nccwpck_require__(7147)
+const { readFile, writeFile, stat } = (__nccwpck_require__(7147).promises)
+const { isDifferent } = __nccwpck_require__(9497)
+const { updateOrCreateSegment } = __nccwpck_require__(7794)
+const { generateScores, generateScope } = __nccwpck_require__(4351)
+const { validateDatabaseIntegrity, validateScopeIntegrity } = __nccwpck_require__(1608)
 
 async function run () {
   let octokit
