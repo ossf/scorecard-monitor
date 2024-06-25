@@ -47164,10 +47164,6 @@ function wrappy (fn, cb) {
 /***/ }),
 
 /***/ 4351:
-<<<<<<< HEAD
->>>>>>> 37cbd35 (:seedling: Add step to validate the dist folder content (#84))
-=======
->>>>>>> e282306 (Rebuild dist files)
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
 const core = __nccwpck_require__(2186)
@@ -49327,10 +49323,6 @@ module.exports = {"i8":"3.1.10"};
 /***/ }),
 
 /***/ 5324:
-<<<<<<< HEAD
->>>>>>> 37cbd35 (:seedling: Add step to validate the dist folder content (#84))
-=======
->>>>>>> e282306 (Rebuild dist files)
 /***/ ((module) => {
 
 "use strict";
