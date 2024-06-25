@@ -143,7 +143,8 @@ In order to create a new release, follow these steps:
 3. Target the new release version, like `v.1.0.3-beta5`. Note that you can use metadata like `-beta5` and you must include `v` as prefix.
 4. Mark `Set as the latest release`
 5. (Optionally) mark `Set as a pre-release` if it is non-production ready.
-6. You can check another release ([example](https://github.com/ossf/scorecard-monitor/releases/tag/v2.0.0-beta7)) to follow the style for title and description (_Main Changes, PRs, New contributions_). Click the `Generate release notes` as it will add most of this information for you.
+6. :bulb: **Hint:** You can check another release ([example](https://github.com/ossf/scorecard-monitor/releases/tag/v2.0.0-beta7)) to follow the style for title and description (_Main Changes, PRs, New contributions_). 
+7. Click the `Generate release notes` button in the top right to automatically populate the release description.
 
 ## What to do before submitting a pull request
 
