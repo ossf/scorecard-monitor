@@ -8,13 +8,11 @@ This document describes the process for releasing a new version of the Scorecard
 
 In order to generate a new release, it is recommended to use the commands:
 
-
-```
+```console
 npm run release:minor
 npm run release:patch
 npm run release:major
 ```
-
 
 This includes all the changes in the [CHANGELOG](./CHANGELOG.md) and ensures that the `package.json` and `package-lock.json` are up to date.
 
@@ -33,5 +31,5 @@ In order to create a new release, follow these steps:
 3. Target the new release version, like `v.1.0.3-beta5`. Note that you can use metadata like `-beta5` and you must include `v` as prefix.
 4. Mark `Set as the latest release`
 5. (Optionally) mark `Set as a pre-release` if it is non-production ready.
-6. :bulb: **Hint:** You can check another release ([example](https://github.com/ossf/scorecard-monitor/releases/tag/v2.0.0-beta7)) to follow the style for title and description (_Main Changes, PRs, New contributions_). 
+6. :bulb: **Hint:** You can check another release ([example](https://github.com/ossf/scorecard-monitor/releases/tag/v2.0.0-beta7)) to follow the style for title and description (_Main Changes, PRs, New contributions_).
 7. Click the `Generate release notes` button in the top right to automatically populate the release description.

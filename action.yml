@@ -1,6 +1,6 @@
 name: 'OpenSSF Scorecard Monitor'
-description: 'Monitor OpenSSF Scorecard Evolution over time'
-author: 'Ulises Gascon'
+description: 'Monitor OpenSSF Scorecard evolution over time'
+author: 'OpenSSF Scorecard Authors'
 
 inputs:
   scope:
@@ -56,7 +56,7 @@ inputs:
     required: false
     default: "10"
   render-badge:
-    description: 'Render the OSSF badge in the report'
+    description: 'Render the OpenSSF Scorecard badge in the report'
     required: false
     default: "false"
   report-tool:

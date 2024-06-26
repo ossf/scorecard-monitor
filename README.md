@@ -2,17 +2,11 @@
 
 **Simplify OpenSSF Scorecard tracking in your organization with automated markdown and JSON reports, plus optional GitHub issue alerts.**
 
----
-
-**📢 IMPORTANT**
-
-This project is now part of the [OpenSSF](https://openssf.org/) organization. You can find more information about it in [this announcement](https://github.com/ossf/scorecard-monitor/issues/79).
-
----
+*This project is part of [OpenSSF Scorecard](https://github.com/ossf/scorecard). Read [the announcement](https://github.com/ossf/scorecard-monitor/issues/79) for more details.*
 
 ## 🔮 About
 
-If you're feeling overwhelmed by an avalanche of repository scorecards in your organization, you can breathe easy: Automation is here to make your life easier! It will streamline the process of keeping track of them all by providing a comprehensive report in Markdown and a local database in JSON with all the scores. Furthermore, to stay on top of any changes in the scores, you can choose to get notifications through Github Issues.
+If you're feeling overwhelmed by an avalanche of scorecards across your organizations, you can breathe easy: automation is here to make your life easier! Scorecard Monitor streamlines the process of keeping track of them all by providing a comprehensive report in Markdown and a local database in JSON with all the scores. To stay on top of any changes in the scores, you can also choose to get notifications through Github Issues.
 
 ## ✅ Requirements
 
@@ -20,7 +14,7 @@ Please ensure that any repository you wish to track with Scorecard Monitor has a
 
 It's also possible that some repositories in your organization are already being [automatically tracked](https://github.com/ossf/scorecard/blob/main/docs/faq.md#can-i-preview-my-projects-score) by OpenSSF in this [CSV file](https://github.com/ossf/scorecard/blob/main/cron/internal/data/projects.csv) via weekly cronjob. One caveat: Automatically tracked projects _do not_ include [certain checks](https://github.com/ossf/scorecard/issues/3438) in their analysis (`CI-Tests,Contributors,Dependency-Update-Tool,Webhooks`).
 
-If you're not sure whether a specific project is already using Scorecard, you can always spot-check with the following URL pattern: `https://securityscorecards.dev/viewer/?uri=github.com/<ORG_NAME>/<REPO_NAME>` (substitute `<ORG_NAME>` and `<REPO_NAME>` as appropriate). The [Scorecard API](https://api.securityscorecards.dev/) is also able to fetch scores for a given repository.
+If you're not sure whether a specific project is already using OpenSSF Scorecard, you can always spot-check with the following URL pattern: `https://securityscorecards.dev/viewer/?uri=github.com/<ORG_NAME>/<REPO_NAME>` (substitute `<ORG_NAME>` and `<REPO_NAME>` as appropriate). The [Scorecard API](https://api.scorecard.dev/) is also able to fetch scores for a given repository.
 
 ## 📺 Tutorial
 
@@ -31,7 +25,7 @@ If you would like to contribute to the documentation, please feel free to open a
 
 - Easy to use with great customization
 - Easy to patch the scoring as the reports includes a direct link to [StepSecurity](https://app.stepsecurity.io)
-- Easy way to visualize the scorecard results with [The Scorecard Visualizer](https://ossf.github.io/scorecard-visualizer/#/projects/github.com/nodejs/node) or [deps.dev](https://deps.dev/project/github/nodejs%2Fnode)
+- Easy way to visualize results with [Scorecard Visualizer](https://ossf.github.io/scorecard-visualizer/#/projects/github.com/nodejs/node) or [deps.dev](https://deps.dev/project/github/nodejs%2Fnode)
 - Cutting-edge feature that effortlessly compares OpenSSF scorecards between previous and current commits with [The Scorecard Visualizer Comparator](https://ossf.github.io/scorecard-visualizer/#/projects/github.com/nodejs/node/compare/39a08ee8b8d3818677eb823cb566f36b1b1c4671/19fa9f1bc47b0666be0747583bea8cb3d8ad5eb1)
 - Discovery mode: list all the repos in one or many organizations that are already being tracked with [OpenSSF Scorecard](https://github.com/ossf/scorecard)
 - Reporting in Markdown with essential information (hash, date, score) and comparative against the prior score
@@ -42,7 +36,7 @@ If you would like to contribute to the documentation, please feel free to open a
 - Extend the markdown template with you own content by using tags
 - Easy to modify the files and ensure the integrity with JSON Schemas
 - The report data is exported as an output and can be used in the pipeline
-- Great test coverage (in progress)
+- Great test coverage
 
 ### 🎉 Demo
 
@@ -136,7 +130,7 @@ jobs:
 - `report-tags-enabled`: Defines if the markdown report must be created/updated around tags by default is disabled. This is useful if the report is going to be include in a file that has other content on it, like docusaurus docs site or similar
 - `report-start-tag` Defines the start tag, default `<!-- OPENSSF-SCORECARD-MONITOR:START -->`
 - `report-end-tag`: Defines the closing tag, default `<!-- OPENSSF-SCORECARD-MONITOR:END -->`
-- `render-badge`: Defines if the OpenSSF badge must be rendered in the reportor to only show the score
+- `render-badge`: Defines if the OpenSSF Scorecard badge must be rendered in the reporter to only show the score
 - `report-tool`: Defines the reporting review tool in place: `scorecard-visualizer` [Example](https://ossf.github.io/scorecard-visualizer/#/projects/github.com/nodejs/node) or `deps.dev` [Example](https://deps.dev/project/github/nodejs%2Fnode), by default `scorecard-visualizer`
 
 ### Outputs
@@ -285,4 +279,4 @@ Just for reference, the database will store the current value and previous value
 
 ## 💪 Contributing
 
-Please read [CONTRIBUTING.md](https://github.com/UlisesGascon/.github/blob/main/contributing.md) for details on our code of conduct and the process for submitting pull requests to us. You need to accept DCO 1.1 in order to make contributions.
+Please read [CONTRIBUTING.md](https://github.com/ossf/scorecard-monitor/blob/main/CONTRIBUTING.md) for details on our code of conduct and the process for submitting pull requests to us. You need to accept DCO 1.1 in order to make contributions.
