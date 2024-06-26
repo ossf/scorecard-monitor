@@ -56,7 +56,7 @@ We recommend starting with several resources from the official Node.js website:
 ## Contributing steps
 
 1.  Identify an existing issue you would like to work on, or submit an issue describing your proposed change to the repo in question.
-1.  The repo owners will respond to your issue promptly.
+1.  The maintainers will respond to your issue promptly.
 1.  Fork this repo, develop, and test your code changes.
 1.  Submit a pull request.
 
