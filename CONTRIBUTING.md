@@ -80,7 +80,7 @@ You have several options to run the tests:
 - `npm run test:coverage` this will run the tests and generate a coverage report as terminal output and in HTML format that can be found in the `coverage/` folder
 - `npm run test:watch`: this will run the tests when you make changes in any of the project's files.
 
-## How to run the linter
+## Linting the codebase
 
 This project uses [JavaScript Standard Style](https://standardjs.com/). If you are not familiar with this style, you can make your changes and run `npm run lint:fix` when you are ready. The linter will fix most of the issues for you and it will highlight any additional issue that requires manual work.
 
