@@ -18,14 +18,12 @@ project. This document describes the contribution guidelines for the project.
     * [Environment Setup](#environment-setup)
     * [New to Node.js?](#new-to-nodejs)
 * [Contributing steps](#contributing-steps)
-* [How to run the Scorecard Monitor locally](#how-to-run-the-scorecard-monitor-locally)
-* [How to install the dependencies](#how-to-install-the-dependencies)
-* [How to run the tests](#how-to-run-the-tests)
-* [How to run the linter](#how-to-run-the-linter)
-* [PR Process](#pr-process)
-* [Changelog and versioning](#changelog-and-versioning)
-* [Releasing a new version](#releasing-a-new-version)
+* [Running the project locally](#running-the-project-locally)
+* [Installing the project dependencies](#installing-the-project-dependencies)
+* [Running tests](#running-tests)
+* [Linting the codebase](#linting-the-codebase)
 * [What to do before submitting a pull request](#what-to-do-before-submitting-a-pull-request)
+* [PR Process](#pr-process)
 * [Where the CI Tests are configured](#where-the-ci-tests-are-configured)
 * [Updating Docs](#updating-docs)
 
@@ -86,6 +84,16 @@ This project uses [JavaScript Standard Style](https://standardjs.com/). If you a
 
 To check that your files are properly linted, you can run `npm run lint`. This review won't make changes to your files.
 
+## What to do before submitting a pull request
+
+The following are the targets that can be used to test your changes locally:
+
+| Command  | Description                                        | Is called in the CI? |
+| -------- | -------------------------------------------------- | -------------------- |
+| `npm run lint:fix` | force the JS Standard style on your files | checked as `npm run lint` |
+| `npm run test:coverage` | Run the unit tests | Yes |
+| `npm run build` | Use ncc to generate the `dist/` folder | yes, it has a validation step |
+
 ## PR Process
 
 Every PR should be tagged with the relevant labels. This work is done by the maintainers exclusively.
@@ -98,16 +106,6 @@ change, it's generally encouraged to submit the bugfix separately, but if you mu
 > Once a maintainer reviews your code, please address feedback without rebasing when possible.
 > This includes [synchronizing your PR](https://docs.github.com/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/keeping-your-pull-request-in-sync-with-the-base-branch)
 > with `main`. The GitHub review experience is much nicer with traditional merge commits.
-
-## What to do before submitting a pull request
-
-The following are the targets that can be used to test your changes locally:
-
-| Command  | Description                                        | Is called in the CI? |
-| -------- | -------------------------------------------------- | -------------------- |
-| `npm run lint:fix` | force the JS Standard style on your files | checked as `npm run lint` |
-| `npm run test:coverage` | Run the unit tests | Yes |
-| `npm run build` | Use ncc to generate the `dist/` folder | yes, it has a validation step |
 
 ## Where the CI Tests are configured
 
