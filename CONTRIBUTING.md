@@ -89,19 +89,7 @@ To check that your files are properly linted, you can run `npm run lint`. This r
 
 ## PR Process
 
-Every PR should be annotated with an icon indicating whether it's a:
-
--   Breaking change: :warning: (`:warning:`)
--   Non-breaking feature: :sparkles: (`:sparkles:`)
--   Patch fix: :bug: (`:bug:`)
--   Documentation changes (user or developer): :book: (`:book:`)
--   Infra/Tests/Other: :seedling: (`:seedling:`)
--   No release note: :ghost: (`:ghost:`)
-
-Use :ghost: (no release note) only for the PRs that change or revert unreleased
-changes, which don't deserve a release note. Please don't abuse it.
-
-Prefer using the `:xyz:` aliases over the equivalent emoji directly when possible.
+Every PR should be tagged with the relevant labels. This work is done by the maintainers exclusively.
 
 Individual commits should not be tagged separately, but will generally be
 assumed to match the PR. For instance, if you have a bugfix in with a breaking
