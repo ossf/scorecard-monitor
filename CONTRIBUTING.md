@@ -34,8 +34,7 @@ project. This document describes the contribution guidelines for the project.
 ### Getting started
 
 1.  Create [a GitHub account](https://github.com/join)
-1.  Create a
-        [personal access token](https://docs.github.com/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens)
+1.  Create a [personal access token](https://docs.github.com/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens)
 1.  Set up your [development environment](#environment-setup)
 
 ### Environment Setup
