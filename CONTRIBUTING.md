@@ -60,7 +60,7 @@ We recommend starting with several resources from the official Node.js website:
 1.  Fork this repo, develop, and test your code changes.
 1.  Submit a pull request.
 
-## How to run the Scorecard Monitor locally
+## Running the project locally
 
 Currently, this project is consumed as a GitHub Action, so local development is quite limited. In order to test the full workflow, you can consume directly your fork and branch from another project or by adding a new workflow in your fork.
 
