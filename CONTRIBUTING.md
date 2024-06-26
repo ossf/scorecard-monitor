@@ -13,50 +13,49 @@ project. This document describes the contribution guidelines for the project.
 > For more details, see the [LF DCO wiki](https://wiki.linuxfoundation.org/dco)
 > or [this Pi-hole signoff guide](https://docs.pi-hole.net/guides/github/how-to-signoff/).
 
-* [Contributing code](#contributing-code)
-    * [Getting started](#getting-started)
-    * [Environment Setup](#environment-setup)
-    * [New to Node.js?](#new-to-nodejs)
-* [Contributing steps](#contributing-steps)
-* [Running the project locally](#running-the-project-locally)
-* [Installing the project dependencies](#installing-the-project-dependencies)
-* [Running tests](#running-tests)
-* [Linting the codebase](#linting-the-codebase)
-* [What to do before submitting a pull request](#what-to-do-before-submitting-a-pull-request)
-* [PR Process](#pr-process)
-* [Where the CI Tests are configured](#where-the-ci-tests-are-configured)
-* [Updating Docs](#updating-docs)
+- [Contributing code](#contributing-code)
+  - [Getting started](#getting-started)
+  - [Environment Setup](#environment-setup)
+  - [New to Node.js?](#new-to-nodejs)
+- [Contributing steps](#contributing-steps)
+- [Running the project locally](#running-the-project-locally)
+- [Installing the project dependencies](#installing-the-project-dependencies)
+- [Running tests](#running-tests)
+- [Linting the codebase](#linting-the-codebase)
+- [What to do before submitting a pull request](#what-to-do-before-submitting-a-pull-request)
+- [PR Process](#pr-process)
+- [Where the CI Tests are configured](#where-the-ci-tests-are-configured)
+- [Updating Docs](#updating-docs)
 
 ## Contributing code
 
 ### Getting started
 
-1.  Create [a GitHub account](https://github.com/join)
-1.  Create a [personal access token](https://docs.github.com/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens)
-1.  Set up your [development environment](#environment-setup)
+1. Create [a GitHub account](https://github.com/join)
+1. Create a [personal access token](https://docs.github.com/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens)
+1. Set up your [development environment](#environment-setup)
 
 ### Environment Setup
 
 You must install these tools:
 
-1.  [`git`](https://help.github.com/articles/set-up-git/): For source control
+1. [`git`](https://help.github.com/articles/set-up-git/): For source control
 
-1.  [`node`](https://nodejs.org/en/download/package-manager): You need node version
-        `v20+`. The project includes support for [nvm](https://github.com/nvm-sh/nvm).
+1. [`node`](https://nodejs.org/en/download/package-manager): You need node version `v20+`. The project includes support for [nvm](https://github.com/nvm-sh/nvm).
 
 ### New to Node.js?
 
 If you're unfamiliar with Node.js, there are plenty of articles, resources, and books.
 We recommend starting with several resources from the official Node.js website:
 
-* [Introduction to Node.js](https://nodejs.org/en/learn/getting-started/introduction-to-nodejs)
+- [Introduction to Node.js](https://nodejs.org/en/learn/getting-started/introduction-to-nodejs)
 
 ## Contributing steps
 
-1.  Identify an existing issue you would like to work on, or submit an issue describing your proposed change to the repo in question.
-1.  The maintainers will respond to your issue promptly.
-1.  Fork this repo, develop, and test your code changes.
-1.  Submit a pull request.
+1. Identify an existing issue you would like to work on, or submit an issue describing your proposed change to the repo in question.
+1. The maintainers will respond to your issue promptly.
+1. Fork this repo, develop, and test your code changes.
+1. Submit a pull request.
 
 ## Running the project locally
 
@@ -73,6 +72,7 @@ First, check that you are using Node v20+ and then execute `npm ci` instead of `
 Currently, the project is using [Jest](https://jestjs.io/) and [Snapshot Testing](https://jestjs.io/docs/snapshot-testing).
 
 You have several options to run the tests:
+
 - `npm run test`: this will run the tests
 - `npm run test:update`: this will run the tests and update the snapshots
 - `npm run test:coverage` this will run the tests and generate a coverage report as terminal output and in HTML format that can be found in the `coverage/` folder
@@ -109,9 +109,8 @@ change, it's generally encouraged to submit the bugfix separately, but if you mu
 
 ## Where the CI Tests are configured
 
-1.  See the [action files](.github/workflows) to check its tests, and the
-    scripts used on it.
+1. See the [action files](.github/workflows) to check its tests, and the scripts used on it.
 
 ## Updating Docs
 
-The documentation can be found in the [README](./README.md). Any changes that are merged to `main` will be reflected directly on https://github.com/marketplace/actions/openssf-scorecard-monitor. Therefore, documentation changes do not require a specific release.
+The documentation can be found in the [README](./README.md). Any changes that are merged to `main` will be reflected directly on the [GitHub Actions Marketplace](https://github.com/marketplace/actions/openssf-scorecard-monitor), so documentation changes do not require a specific release.

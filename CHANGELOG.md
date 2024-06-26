@@ -2,15 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
-### [1.0.1](https://github.com/ossf/scorecard-monitor/compare/v1.0.0...v1.0.1) (2023-02-15)
-
+## [1.0.1](https://github.com/ossf/scorecard-monitor/compare/v1.0.0...v1.0.1) (2023-02-15)
 
 ### Other
 
 * added github action branding  ([831364a](https://github.com/ossf/scorecard-monitor/commits/831364aaf4654af1bbc4747fcbc414539b9d7a74))
 
 ## 1.0.0 (2023-02-15)
-
 
 ### Features
 
@@ -32,11 +30,9 @@ All notable changes to this project will be documented in this file. See [standa
 * simplified legacy code ([eb024ed](https://github.com/ossf/scorecard-monitor/commits/eb024ed84e505433bb89098c65140e43b5784e7c))
 * WIP core logic ([939ebba](https://github.com/ossf/scorecard-monitor/commits/939ebba0c1d773237366620cefd77e2a54afff09))
 
-
 ### Bug Fixes
 
 * minor bugs ([#4](https://github.com/ossf/scorecard-monitor/issues/4)) ([e07d7f7](https://github.com/ossf/scorecard-monitor/commits/e07d7f7dd38efa5caaf64d0c548752f2ae54ed45))
-
 
 ### Other
 
