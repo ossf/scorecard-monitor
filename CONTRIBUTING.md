@@ -70,7 +70,7 @@ Aside from this, it is possible to test certain things locally, like the `utils.
 
 First, check that you are using Node v20+ and then execute `npm ci` instead of `npm i` or `npm install` as you want to mimic the pipeline steps in order to avoid discrepancies later on with the `dist/` as the dependencies are included there.
 
-## How to run the tests
+## Running tests
 
 Currently, the project is using [Jest](https://jestjs.io/) and [Snapshot Testing](https://jestjs.io/docs/snapshot-testing).
 
