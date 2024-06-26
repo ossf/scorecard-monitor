@@ -5,7 +5,7 @@ project. This document describes the contribution guidelines for the project.
 
 > [!IMPORTANT]
 > Before you start contributing, you must read and abide by our
-**[Code of Conduct](./CODE_OF_CONDUCT.md)**.
+**[Code of Conduct](https://github.com/ossf/scorecard-monitor?tab=coc-ov-file)**.
 >
 > Additionally, the Linux Foundation (LF) requires all contributions include per-commit sign-offs.
 > Ensure you use the `-s` or `--signoff` flag for every commit.
