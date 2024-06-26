@@ -66,7 +66,7 @@ Currently, this project is consumed as a GitHub Action, so local development is 
 
 Aside from this, it is possible to test certain things locally, like the `utils.js` file. Check the test folder `_tests_/utils.test.js` to get a better idea.
 
-## How to install the dependencies
+## Installing the project dependencies
 
 First, check that you are using Node v20+ and then execute `npm ci` instead of `npm i` or `npm install` as you want to mimic the pipeline steps in order to avoid discrepancies later on with the `dist/` as the dependencies are included there.
 
