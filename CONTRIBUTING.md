@@ -34,8 +34,7 @@ project. This document describes the contribution guidelines for the project.
 ### Getting started
 
 1.  Create [a GitHub account](https://github.com/join)
-1.  Create a
-        [personal access token](https://docs.github.com/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens)
+1.  Create a [personal access token](https://docs.github.com/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens)
 1.  Set up your [development environment](#environment-setup)
 
 ### Environment Setup
@@ -57,8 +56,8 @@ We recommend starting with several resources from the official Node.js website:
 ## Contributing steps
 
 1.  Identify an existing issue you would like to work on, or submit an issue describing your proposed change to the repo in question.
-1.  The repo owners will respond to your issue promptly.
-1.  Fork the desired repo, develop and test your code changes.
+1.  The maintainers will respond to your issue promptly.
+1.  Fork this repo, develop, and test your code changes.
 1.  Submit a pull request.
 
 ## How to run the Scorecard Monitor locally
@@ -71,7 +70,7 @@ Aside from this, it is possible to test certain things locally, like the `utils.
 
 First, check that you are using Node v20+ and then execute `npm ci` instead of `npm i` or `npm install` as you want to mimic the pipeline steps in order to avoid discrepancies later on with the `dist/` as the dependencies are included there.
 
-## How to run the tests
+## Running tests
 
 Currently, the project is using [Jest](https://jestjs.io/) and [Snapshot Testing](https://jestjs.io/docs/snapshot-testing).
 
@@ -81,7 +80,7 @@ You have several options to run the tests:
 - `npm run test:coverage` this will run the tests and generate a coverage report as terminal output and in HTML format that can be found in the `coverage/` folder
 - `npm run test:watch`: this will run the tests when you make changes in any of the project's files.
 
-## How to run the linter
+## Linting the codebase
 
 This project uses [JavaScript Standard Style](https://standardjs.com/). If you are not familiar with this style, you can make your changes and run `npm run lint:fix` when you are ready. The linter will fix most of the issues for you and it will highlight any additional issue that requires manual work.
 
