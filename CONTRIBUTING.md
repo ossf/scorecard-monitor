@@ -64,7 +64,7 @@ We recommend starting with several resources from the official Node.js website:
 
 Currently, this project is consumed as a GitHub Action, so local development is quite limited. In order to test the full workflow, you can consume directly your fork and branch from another project or by adding a new workflow in your fork.
 
-Aside from this, it is possible to test certain things locally, like the `utils.js` file. Just check the test folder `_tests_/utils.test.js` to get a better idea.
+Aside from this, it is possible to test certain things locally, like the `utils.js` file. Check the test folder `_tests_/utils.test.js` to get a better idea.
 
 ## How to install the dependencies
 
