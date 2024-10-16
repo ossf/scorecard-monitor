@@ -71,9 +71,12 @@ async function run () {
   // Context
   const context = github.context
   // Inputs
-  const scopePath = core.getInput('scope', { required: true })
-  const databasePath = core.getInput('database', { required: true })
-  const reportPath = core.getInput('report', { required: true })
+  const scopePath = 'scope.json'
+  const databasePath = 'databasefile.json'
+  const reportPath = 'reportfile.md'
+  // const scopePath = core.getInput('scope', { required: true })
+  // const databasePath = core.getInput('database', { required: true })
+  // const reportPath = core.getInput('report', { required: true })
   // Options
   const maxRequestInParallel = parseInt(core.getInput('max-request-in-parallel') || 10)
   const generateIssue = normalizeBoolean(core.getInput('generate-issue'))
