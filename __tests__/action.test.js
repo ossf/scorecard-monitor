@@ -49,6 +49,7 @@ describe('action', () => {
   })
 
   it.todo("should't throw an error if the available report is valid")
+  it.todo("should scorecard-visualizer be the default report tool")
 
   it.each(['auto-push', 'generate-issue', 'auto-commit', 'discovery-enabled'])('should throw an error if the github token is not provided when %s is enabled', async (input) => {
     getInputMock.mockImplementation(name => {
