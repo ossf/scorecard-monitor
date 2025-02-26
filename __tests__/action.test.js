@@ -66,4 +66,23 @@ describe('action', () => {
       'Github token is required for push, commit, create an issue and discovery operations!'
     )
   })
+
+  it('should throw an error if discovery is enabled but no organizations are provided', async () => {
+    getInputMock.mockImplementation(name => {
+      if (name === 'github-token') {
+        return 'ghp_obj_obj'
+      }
+      if (name === 'discovery-enabled') {
+        return 'true'
+      }
+
+      return ''
+    })
+    await main.run()
+
+    expect(runMock).toHaveReturned()
+    expect(setFailedMock).toHaveBeenNthCalledWith(1,
+      'Discovery is enabled but no organizations were provided!'
+    )
+  })
 })
