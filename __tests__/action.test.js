@@ -31,4 +31,22 @@ describe('action', () => {
       `Input required and not supplied: ${input}`
     )
   })
+
+  it('should throw an error if the available report is not valid', async () => {
+    getInputMock.mockImplementation(name => {
+      if (name === 'report-tool') {
+        return 'invalid'
+      }
+
+      return ''
+    })
+    await main.run()
+
+    expect(runMock).toHaveReturned()
+    expect(setFailedMock).toHaveBeenNthCalledWith(
+      'The report-tool is not valid, please use: scorecard-visualizer, deps.dev'
+    )
+  })
+
+  it.todo("should't throw an error if the available report is valid")
 })
