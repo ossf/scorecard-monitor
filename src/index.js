@@ -1,5 +1,5 @@
 const core = require('@actions/core')
-const { getProjectScore, generateIssueContent, generateReportContent, getScore, saveScore } = require('./utils')
+const { getProjectScore, generateIssueContent, generateReportContent, getScore, saveScore, scoreChangeThreshold } = require('./utils')
 const { chunkArray } = require('@ulisesgascon/array-to-chunks')
 
 const generateScope = async ({ octokit, orgs, scope, maxRequestInParallel }) => {
@@ -98,7 +98,7 @@ const generateScope = async ({ octokit, orgs, scope, maxRequestInParallel }) => 
   return newScope
 }
 
-const generateScores = async ({ scope, database: currentDatabase, maxRequestInParallel, reportTagsEnabled, renderBadge, reportTool }) => {
+const generateScores = async ({ scope, database: currentDatabase, maxRequestInParallel, reportTagsEnabled, renderBadge, reportTool, positiveThreshold, negativeThreshold }) => {
   // @TODO: Improve deep clone logic
   const database = JSON.parse(JSON.stringify(currentDatabase))
   const platform = 'github.com'
@@ -145,8 +145,10 @@ const generateScores = async ({ scope, database: currentDatabase, maxRequestInPa
         scoreData.prevDate = storedScore.date
         scoreData.prevCommit = storedScore.commit
 
-        if (storedScore.score !== score) {
-          scoreData.currentDiff = parseFloat((score - storedScore.score).toFixed(1))
+        const diff = scoreChangeThreshold(score, storedScore.score, positiveThreshold, negativeThreshold)
+
+        if (diff !== null) {
+          scoreData.currentDiff = diff
         }
       }
 

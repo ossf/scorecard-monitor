@@ -70,6 +70,22 @@ const generateIssueContent = async ({ scores, renderBadge, reportTool }) => {
   return ejs.render(template, { scores: scoresInScope, renderBadge, getReportUrl })
 }
 
+const scoreChangeThreshold = (score, prevScore, positiveThreshold, negativeThreshold) => {
+  if (score === prevScore) {
+    return null
+  }
+
+  const diff = parseFloat((score - prevScore).toFixed(1))
+
+  if (diff >= positiveThreshold) {
+    return diff
+  }
+  if (diff <= -negativeThreshold) {
+    return diff
+  }
+  return null
+}
+
 module.exports = {
   validateDatabaseIntegrity: validateAgainstSchema(databaseSchema, 'database'),
   validateScopeIntegrity: validateAgainstSchema(scopeSchema, 'scope'),
@@ -77,5 +93,6 @@ module.exports = {
   saveScore,
   getScore,
   generateReportContent,
-  generateIssueContent
+  generateIssueContent,
+  scoreChangeThreshold
 }

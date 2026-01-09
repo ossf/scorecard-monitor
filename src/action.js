@@ -33,6 +33,8 @@ async function run () {
   const endTag = core.getInput('report-end-tag') || '<!-- OPENSSF-SCORECARD-MONITOR:END -->'
   const renderBadge = normalizeBoolean(core.getInput('render-badge'))
   const reportTool = core.getInput('report-tool') || 'scorecard-visualizer'
+  const positiveThreshold = parseInt(core.getInput('possitive-threshold') || 1)
+  const negativeThreshold = parseInt(core.getInput('negative-threshold') || 1)
 
   const availableReportTools = ['scorecard-visualizer', 'deps.dev']
   if (!availableReportTools.includes(reportTool)) {
@@ -98,7 +100,7 @@ async function run () {
 
   // PROCESS
   core.info('Generating scores...')
-  const { reportContent, issueContent, database: newDatabaseState } = await generateScores({ scope, database, maxRequestInParallel, reportTagsEnabled, renderBadge, reportTool })
+  const { reportContent, issueContent, database: newDatabaseState } = await generateScores({ scope, database, maxRequestInParallel, reportTagsEnabled, renderBadge, reportTool, positiveThreshold, negativeThreshold })
 
   core.info('Checking database changes...')
   const hasChanges = isDifferent(database, newDatabaseState)
