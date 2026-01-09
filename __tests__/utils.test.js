@@ -80,5 +80,18 @@ describe('Utils', () => {
       expect(scoreChangeThreshold(7.1, 7.0, 0.1, 0.1)).toBe(0.1)
       expect(scoreChangeThreshold(6.9, 7.0, 0.1, 0.1)).toBe(-0.1)
     })
+
+    it('returns diff when positiveThreshold is null (disabled)', () => {
+      expect(scoreChangeThreshold(9, 8, null, 0.5)).toBe(1)
+    })
+
+    it('returns diff when negativeThreshold is null (disabled)', () => {
+      expect(scoreChangeThreshold(4, 6, 0.5, null)).toBe(-2)
+    })
+
+    it('returns diff when both thresholds are null (disabled)', () => {
+      expect(scoreChangeThreshold(5, 3, null, null)).toBe(2)
+      expect(scoreChangeThreshold(3, 5, null, null)).toBe(-2)
+    })
   })
 })

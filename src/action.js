@@ -33,8 +33,11 @@ async function run () {
   const endTag = core.getInput('report-end-tag') || '<!-- OPENSSF-SCORECARD-MONITOR:END -->'
   const renderBadge = normalizeBoolean(core.getInput('render-badge'))
   const reportTool = core.getInput('report-tool') || 'scorecard-visualizer'
-  const positiveThreshold = parseInt(core.getInput('possitive-threshold') || 1)
-  const negativeThreshold = parseInt(core.getInput('negative-threshold') || 1)
+
+  const rawPositiveThreshold = core.getInput('positive-threshold')
+  const positiveThreshold = rawPositiveThreshold === 'false' ? null : parseFloat(rawPositiveThreshold)
+  const rawNegativeThreshold = core.getInput('negative-threshold')
+  const negativeThreshold = rawNegativeThreshold === 'false' ? null : parseFloat(rawNegativeThreshold)
 
   const availableReportTools = ['scorecard-visualizer', 'deps.dev']
   if (!availableReportTools.includes(reportTool)) {

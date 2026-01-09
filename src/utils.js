@@ -71,19 +71,19 @@ const generateIssueContent = async ({ scores, renderBadge, reportTool }) => {
 }
 
 const scoreChangeThreshold = (score, prevScore, positiveThreshold, negativeThreshold) => {
-  if (score === prevScore) {
-    return null
-  }
+  if (score === prevScore) return null
 
   const diff = parseFloat((score - prevScore).toFixed(1))
 
-  if (diff >= positiveThreshold) {
-    return diff
+  if (diff > 0) {
+    if (positiveThreshold === null || positiveThreshold === undefined) return diff
+    return diff >= Number(positiveThreshold) ? diff : null
   }
-  if (diff <= -negativeThreshold) {
-    return diff
-  }
-  return null
+
+  // diff < 0
+  if (negativeThreshold === null || negativeThreshold === undefined) return diff
+
+  return Math.abs(diff) >= Number(negativeThreshold) ? diff : null
 }
 
 module.exports = {
