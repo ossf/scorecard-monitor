@@ -166,7 +166,7 @@ const generateScores = async ({ scope, database: currentDatabase, maxRequestInPa
   // SET OUTPUTS
   core.setOutput('scores', scores)
 
-  return { reportContent, issueContent, database }
+  return { reportContent, issueContent, database, scores }
 }
 
 module.exports = {

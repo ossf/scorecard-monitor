@@ -103,10 +103,10 @@ async function run () {
 
   // PROCESS
   core.info('Generating scores...')
-  const { reportContent, issueContent, database: newDatabaseState } = await generateScores({ scope, database, maxRequestInParallel, reportTagsEnabled, renderBadge, reportTool, positiveThreshold, negativeThreshold })
+  const { reportContent, issueContent, database: newDatabaseState, scores } = await generateScores({ scope, database, maxRequestInParallel, reportTagsEnabled, renderBadge, reportTool, positiveThreshold, negativeThreshold })
 
   core.info('Checking database changes...')
-  const hasChanges = isDifferent(database, newDatabaseState)
+  const hasChanges = isDifferent(database, newDatabaseState) || scores.filter(score => score.currentDiff !== undefined).length
 
   if (!hasChanges) {
     core.info('No changes to database, skipping the rest of the process')
