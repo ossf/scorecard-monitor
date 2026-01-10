@@ -106,7 +106,7 @@ async function run () {
   const { reportContent, issueContent, database: newDatabaseState, scores } = await generateScores({ scope, database, maxRequestInParallel, reportTagsEnabled, renderBadge, reportTool, positiveThreshold, negativeThreshold })
 
   core.info('Checking database changes...')
-  const hasChanges = isDifferent(database, newDatabaseState) || scores.filter(score => score.currentDiff !== undefined).length
+  const hasChanges = isDifferent(database, newDatabaseState)
 
   if (!hasChanges) {
     core.info('No changes to database, skipping the rest of the process')
@@ -115,8 +115,12 @@ async function run () {
 
   // Save changes
   core.info('Saving changes to database and report')
-  await writeFile(databasePath, JSON.stringify(newDatabaseState, null, 2))
-  
+  const scoreChanges = scores.filter(score => score.currentDiff !== undefined)
+
+  if (scoreChanges.length) {
+    await writeFile(databasePath, JSON.stringify(newDatabaseState, null, 2))
+  }
+
   if (reportContent) {
     await writeFile(reportPath, reportTagsEnabled
       ? updateOrCreateSegment({

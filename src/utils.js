@@ -55,7 +55,7 @@ const generateReportUrl = reportTool => (org, repo, commit, prevCommit) => {
 const generateReportContent = async ({ scores, reportTagsEnabled, renderBadge, reportTool }) => {
   core.debug('Generating report content')
   const scoresInScope = scores.filter(({ currentDiff }) => currentDiff)
-  
+
   if (!scoresInScope.length) {
     core.debug('No score changes detected, skipping report generation')
     return null
