@@ -116,14 +116,17 @@ async function run () {
   // Save changes
   core.info('Saving changes to database and report')
   await writeFile(databasePath, JSON.stringify(newDatabaseState, null, 2))
-  await writeFile(reportPath, reportTagsEnabled
-    ? updateOrCreateSegment({
-      original: originalReportContent,
-      replacementSegment: reportContent,
-      startTag,
-      endTag
-    })
-    : reportContent)
+  
+  if (reportContent) {
+    await writeFile(reportPath, reportTagsEnabled
+      ? updateOrCreateSegment({
+        original: originalReportContent,
+        replacementSegment: reportContent,
+        startTag,
+        endTag
+      })
+      : reportContent)
+  }
 
   if (discoveryEnabled) {
     core.info('Saving changes to scope...')

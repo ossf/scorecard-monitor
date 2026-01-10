@@ -54,15 +54,23 @@ const generateReportUrl = reportTool => (org, repo, commit, prevCommit) => {
 
 const generateReportContent = async ({ scores, reportTagsEnabled, renderBadge, reportTool }) => {
   core.debug('Generating report content')
+  const scoresInScope = scores.filter(({ currentDiff }) => currentDiff)
+  
+  if (!scoresInScope.length) {
+    core.debug('No score changes detected, skipping report generation')
+    return null
+  }
+
   const template = await readFile(join(process.cwd(), 'templates/report.ejs'), 'utf8')
   const getReportUrl = generateReportUrl(reportTool)
-  return ejs.render(template, { scores, reportTagsEnabled, renderBadge, getReportUrl })
+  return ejs.render(template, { scores: scoresInScope, reportTagsEnabled, renderBadge, getReportUrl })
 }
 
 const generateIssueContent = async ({ scores, renderBadge, reportTool }) => {
   core.debug('Generating issue content')
   const scoresInScope = scores.filter(({ currentDiff }) => currentDiff)
   if (!scoresInScope.length) {
+    core.debug('No score changes detected, skipping issue content generation')
     return null
   }
   const template = await readFile(join(process.cwd(), 'templates/issue.ejs'), 'utf8')
