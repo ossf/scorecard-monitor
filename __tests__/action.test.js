@@ -236,6 +236,8 @@ describe('ensureParentDir', () => {
     await mkdir(parentDir, { recursive: true })
 
     // Should not throw when called again
-    await expect(mkdir(parentDir, { recursive: true })).resolves.not.toThrow()
+    await expect(async () => {
+      await mkdir(parentDir, { recursive: true })
+    }).not.toThrow()
   })
 })
