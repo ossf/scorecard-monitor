@@ -2,10 +2,10 @@
   "name": "openssf-scorecard-monitor",
   "version": "2.0.0-beta8",
   "description": "A simple way to monitor OpenSSF Scorecard at organization level",
-  "main": "src/index.js",
+  "main": "src/action.js",
   "private": true,
   "scripts": {
-    "build": "ncc build src/action.js -o dist",
+    "build": "ncc build src/bin.js -o dist",
     "test": "FORCE_COLOR=3 jest  --verbose",
     "test:update": "FORCE_COLOR=3 jest --verbose --u",
     "test:coverage": "FORCE_COLOR=3 jest --verbose  --coverage",
