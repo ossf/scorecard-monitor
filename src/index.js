@@ -98,87 +98,98 @@ const generateScope = async ({ octokit, orgs, scope, maxRequestInParallel }) => 
   return newScope
 }
 
-const generateScores = async ({ scope, database: currentDatabase, maxRequestInParallel, reportTagsEnabled, renderBadge, reportTool }) => {
+/**
+ * Parse local Scorecard results (Scorecard JSON v2 format) into the
+ * internal score format used by scorecard-monitor.
+ * @param {Array} results - Array of Scorecard JSON v2 result objects
+ * @returns {Array} - Array of {score, date, commit, platform, org, repo}
+ */
+const parseLocalResults = (results) => {
+  return results.map((x) => {
+    const parts = x.repo.name.split('/')
+    return {
+      score: x.score,
+      date: x.date,
+      commit: x.repo.commit,
+      platform: parts[0],
+      org: parts[1],
+      repo: parts[2]
+    }
+  })
+}
+
+const generateScores = async ({ scope, database: currentDatabase, maxRequestInParallel, reportTagsEnabled, renderBadge, reportTool, localResultsPath }) => {
   // @TODO: Improve deep clone logic
   const database = JSON.parse(JSON.stringify(currentDatabase))
-  // const platform = 'github.com'
 
-  // // @TODO: End the action if there are no projects in scope?
+  let rawScores = []
 
-  // const orgs = Object.keys(scope[platform])
-  // core.debug(`Total Orgs/Users in scope: ${orgs.length}`)
+  if (localResultsPath) {
+    // Local results mode: read scores from a Scorecard JSON v2 file
+    const { readFile } = require('fs').promises
+    const content = await readFile(localResultsPath, 'utf8')
+    const results = JSON.parse(content)
+    rawScores = parseLocalResults(Array.isArray(results) ? results : [results])
+    core.debug(`Loaded ${rawScores.length} scores from local results file: ${localResultsPath}`)
+  } else {
+    // API mode: fetch scores from the public Scorecard API
+    const platform = 'github.com'
 
-  // // Structure Projects
-  // const projects = []
+    // @TODO: End the action if there are no projects in scope?
 
-  // orgs.forEach((org) => {
-  //   const repos = scope[platform][org].included
-  //   repos.forEach((repo) => projects.push({ org, repo }))
-  // })
+    const orgs = Object.keys(scope[platform])
+    core.debug(`Total Orgs/Users in scope: ${orgs.length}`)
 
-  // core.debug(`Total Projects in scope: ${projects.length}`)
+    // Structure Projects
+    const projects = []
 
-  // const chunks = chunkArray(projects, maxRequestInParallel)
-  // core.debug(`Total chunks: ${chunks.length}`)
-
-  // const scores = []
-
-  // for (let index = 0; index < chunks.length; index++) {
-  //   const chunk = chunks[index]
-  //   core.debug(`Processing chunk ${index + 1}/${chunks.length}`)
-
-  //   const chunkScores = await Promise.all(chunk.map(async ({ org, repo }) => {
-  //     const { score, date, commit } = await getProjectScore({ platform, org, repo })
-  //     core.debug(`Got project score for ${platform}/${org}/${repo}: ${score} (${date})`)
-
-  //     const storedScore = getScore({ database, platform, org, repo })
-
-  //     const scoreData = { platform, org, repo, score, date, commit }
-  //     // If no stored score then record if score is different then:
-  //     if (!storedScore || storedScore.score !== score) {
-  //       saveScore({ database, platform, org, repo, score, date, commit })
-  //     }
-
-  //     // Add previous score and date if available to the report
-  //     if (storedScore) {
-  //       scoreData.prevScore = storedScore.score
-  //       scoreData.prevDate = storedScore.date
-  //       scoreData.prevCommit = storedScore.commit
-
-  //       if (storedScore.score !== score) {
-  //         scoreData.currentDiff = parseFloat((score - storedScore.score).toFixed(1))
-  //       }
-  //     }
-
-  //     return scoreData
-  //   }))
-
-  //   scores.push(...chunkScores)
-  // }
-
-    let localScores = await getLocalScores(scoredata)
-
-    const scores = localScores.map(({ score, date, commit, platform, org, repo }) => {
-        const storedScore = getScore({ database, platform, org, repo })
-        const scoreData = { platform, org, repo, score, date, commit }
-
-        if (!storedScore || storedScore.score !== score) {
-            saveScore({ database, platform, org, repo, score, date, commit })
-        }
-
-        // Add previous score and date if available to the report
-        if (storedScore) {
-            scoreData.prevScore = storedScore.score
-            scoreData.prevDate = storedScore.date
-            scoreData.prevCommit = storedScore.commit
-
-            if (storedScore.score !== score) {
-                scoreData.currentDiff = parseFloat((score - storedScore.score).toFixed(1))
-            }
-        }
-
-        return scoreData
+    orgs.forEach((org) => {
+      const repos = scope[platform][org].included
+      repos.forEach((repo) => projects.push({ org, repo }))
     })
+
+    core.debug(`Total Projects in scope: ${projects.length}`)
+
+    const chunks = chunkArray(projects, maxRequestInParallel)
+    core.debug(`Total chunks: ${chunks.length}`)
+
+    for (let index = 0; index < chunks.length; index++) {
+      const chunk = chunks[index]
+      core.debug(`Processing chunk ${index + 1}/${chunks.length}`)
+
+      const chunkScores = await Promise.all(chunk.map(async ({ org, repo }) => {
+        const { score, date, commit } = await getProjectScore({ platform, org, repo })
+        core.debug(`Got project score for ${platform}/${org}/${repo}: ${score} (${date})`)
+        return { score, date, commit, platform, org, repo }
+      }))
+
+      rawScores.push(...chunkScores)
+    }
+  }
+
+  // Common path: enrich scores with database history
+  const scores = rawScores.map(({ score, date, commit, platform, org, repo }) => {
+    const storedScore = getScore({ database, platform, org, repo })
+    const scoreData = { platform, org, repo, score, date, commit }
+
+    // If no stored score then record if score is different then:
+    if (!storedScore || storedScore.score !== score) {
+      saveScore({ database, platform, org, repo, score, date, commit })
+    }
+
+    // Add previous score and date if available to the report
+    if (storedScore) {
+      scoreData.prevScore = storedScore.score
+      scoreData.prevDate = storedScore.date
+      scoreData.prevCommit = storedScore.commit
+
+      if (storedScore.score !== score) {
+        scoreData.currentDiff = parseFloat((score - storedScore.score).toFixed(1))
+      }
+    }
+
+    return scoreData
+  })
 
   core.debug('All the scores are already collected')
 
@@ -194,19 +205,4 @@ const generateScores = async ({ scope, database: currentDatabase, maxRequestInPa
 module.exports = {
   generateScope,
   generateScores
-}
-
-let scoredata = require('../results.json')
-
-const getLocalScores = async ( scores ) => {
-    return scores.map((x) => {
-        const parts = x.repo.name.split('/');
-        score = x.score
-        date = x.date
-        commit = x.repo.commit
-        platform = parts[0]
-        org = parts[1]
-        repo = parts[2]
-        return { score, date, commit, platform, org, repo }
-    })
 }

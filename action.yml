@@ -4,8 +4,8 @@ author: 'OpenSSF Scorecard Authors'
 
 inputs:
   scope:
-    description: 'File that includes the list of repositories to monitor'
-    required: true
+    description: 'File that includes the list of repositories to monitor. Required when not using local-results-path.'
+    required: false
   database:
     description: 'File that stores the state of the scorecard'
     required: true
@@ -63,7 +63,15 @@ inputs:
     description: 'Tool to be included as link in the report'
     required: false
     default: "scorecard-visualizer"
-  
+  local-results-path:
+    description: >-
+      Path to a local Scorecard results JSON file. When provided, scores
+      are read from this file instead of the public Scorecard API. The file
+      should contain an array of Scorecard JSON v2 result objects (the
+      output of scorecard --format=json2). When set, the scope input is
+      not required.
+    required: false
+
 outputs:
   scores:
     description: 'Score data in JSON format'

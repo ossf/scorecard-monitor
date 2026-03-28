@@ -47266,63 +47266,98 @@ const generateScope = async ({ octokit, orgs, scope, maxRequestInParallel }) => 
   return newScope
 }
 
-const generateScores = async ({ scope, database: currentDatabase, maxRequestInParallel, reportTagsEnabled, renderBadge, reportTool }) => {
+/**
+ * Parse local Scorecard results (Scorecard JSON v2 format) into the
+ * internal score format used by scorecard-monitor.
+ * @param {Array} results - Array of Scorecard JSON v2 result objects
+ * @returns {Array} - Array of {score, date, commit, platform, org, repo}
+ */
+const parseLocalResults = (results) => {
+  return results.map((x) => {
+    const parts = x.repo.name.split('/')
+    return {
+      score: x.score,
+      date: x.date,
+      commit: x.repo.commit,
+      platform: parts[0],
+      org: parts[1],
+      repo: parts[2]
+    }
+  })
+}
+
+const generateScores = async ({ scope, database: currentDatabase, maxRequestInParallel, reportTagsEnabled, renderBadge, reportTool, localResultsPath }) => {
   // @TODO: Improve deep clone logic
   const database = JSON.parse(JSON.stringify(currentDatabase))
-  const platform = 'github.com'
 
-  // @TODO: End the action if there are no projects in scope?
+  let rawScores = []
 
-  const orgs = Object.keys(scope[platform])
-  core.debug(`Total Orgs/Users in scope: ${orgs.length}`)
+  if (localResultsPath) {
+    // Local results mode: read scores from a Scorecard JSON v2 file
+    const { readFile } = (__nccwpck_require__(7147).promises)
+    const content = await readFile(localResultsPath, 'utf8')
+    const results = JSON.parse(content)
+    rawScores = parseLocalResults(Array.isArray(results) ? results : [results])
+    core.debug(`Loaded ${rawScores.length} scores from local results file: ${localResultsPath}`)
+  } else {
+    // API mode: fetch scores from the public Scorecard API
+    const platform = 'github.com'
 
-  // Structure Projects
-  const projects = []
+    // @TODO: End the action if there are no projects in scope?
 
-  orgs.forEach((org) => {
-    const repos = scope[platform][org].included
-    repos.forEach((repo) => projects.push({ org, repo }))
-  })
+    const orgs = Object.keys(scope[platform])
+    core.debug(`Total Orgs/Users in scope: ${orgs.length}`)
 
-  core.debug(`Total Projects in scope: ${projects.length}`)
+    // Structure Projects
+    const projects = []
 
-  const chunks = chunkArray(projects, maxRequestInParallel)
-  core.debug(`Total chunks: ${chunks.length}`)
+    orgs.forEach((org) => {
+      const repos = scope[platform][org].included
+      repos.forEach((repo) => projects.push({ org, repo }))
+    })
 
-  const scores = []
+    core.debug(`Total Projects in scope: ${projects.length}`)
 
-  for (let index = 0; index < chunks.length; index++) {
-    const chunk = chunks[index]
-    core.debug(`Processing chunk ${index + 1}/${chunks.length}`)
+    const chunks = chunkArray(projects, maxRequestInParallel)
+    core.debug(`Total chunks: ${chunks.length}`)
 
-    const chunkScores = await Promise.all(chunk.map(async ({ org, repo }) => {
-      const { score, date, commit } = await getProjectScore({ platform, org, repo })
-      core.debug(`Got project score for ${platform}/${org}/${repo}: ${score} (${date})`)
+    for (let index = 0; index < chunks.length; index++) {
+      const chunk = chunks[index]
+      core.debug(`Processing chunk ${index + 1}/${chunks.length}`)
 
-      const storedScore = getScore({ database, platform, org, repo })
+      const chunkScores = await Promise.all(chunk.map(async ({ org, repo }) => {
+        const { score, date, commit } = await getProjectScore({ platform, org, repo })
+        core.debug(`Got project score for ${platform}/${org}/${repo}: ${score} (${date})`)
+        return { score, date, commit, platform, org, repo }
+      }))
 
-      const scoreData = { platform, org, repo, score, date, commit }
-      // If no stored score then record if score is different then:
-      if (!storedScore || storedScore.score !== score) {
-        saveScore({ database, platform, org, repo, score, date, commit })
-      }
-
-      // Add previous score and date if available to the report
-      if (storedScore) {
-        scoreData.prevScore = storedScore.score
-        scoreData.prevDate = storedScore.date
-        scoreData.prevCommit = storedScore.commit
-
-        if (storedScore.score !== score) {
-          scoreData.currentDiff = parseFloat((score - storedScore.score).toFixed(1))
-        }
-      }
-
-      return scoreData
-    }))
-
-    scores.push(...chunkScores)
+      rawScores.push(...chunkScores)
+    }
   }
+
+  // Common path: enrich scores with database history
+  const scores = rawScores.map(({ score, date, commit, platform, org, repo }) => {
+    const storedScore = getScore({ database, platform, org, repo })
+    const scoreData = { platform, org, repo, score, date, commit }
+
+    // If no stored score then record if score is different then:
+    if (!storedScore || storedScore.score !== score) {
+      saveScore({ database, platform, org, repo, score, date, commit })
+    }
+
+    // Add previous score and date if available to the report
+    if (storedScore) {
+      scoreData.prevScore = storedScore.score
+      scoreData.prevDate = storedScore.date
+      scoreData.prevCommit = storedScore.commit
+
+      if (storedScore.score !== score) {
+        scoreData.currentDiff = parseFloat((score - storedScore.score).toFixed(1))
+      }
+    }
+
+    return scoreData
+  })
 
   core.debug('All the scores are already collected')
 
@@ -49452,9 +49487,10 @@ async function run () {
   // Context
   const context = github.context
   // Inputs
-  const scopePath = core.getInput('scope', { required: true })
+  const scopePath = core.getInput('scope')
   const databasePath = core.getInput('database', { required: true })
   const reportPath = core.getInput('report', { required: true })
+  const localResultsPath = core.getInput('local-results-path')
   // Options
   const maxRequestInParallel = parseInt(core.getInput('max-request-in-parallel') || 10)
   const generateIssue = normalizeBoolean(core.getInput('generate-issue'))
@@ -49494,23 +49530,28 @@ async function run () {
   let scope = { 'github.com': {} }
   let originalReportContent = ''
 
-  // check if scope exists
-  core.info('Checking if scope file exists...')
-  const existScopeFile = existsSync(scopePath)
-  if (!existScopeFile && !discoveryEnabled) {
-    throw new Error('Scope file does not exist and discovery is not enabled')
-  }
+  // In local results mode, scope is discovered from the results file
+  if (!localResultsPath) {
+    // check if scope exists
+    core.info('Checking if scope file exists...')
+    const existScopeFile = existsSync(scopePath)
+    if (!existScopeFile && !discoveryEnabled) {
+      throw new Error('Scope file does not exist and discovery is not enabled')
+    }
 
-  // Use scope file if it exists
-  if (existScopeFile) {
-    core.debug('Scope file exists, using it...')
-    scope = await readFile(scopePath, 'utf8').then(content => JSON.parse(content))
-    validateScopeIntegrity(scope)
-  }
+    // Use scope file if it exists
+    if (existScopeFile) {
+      core.debug('Scope file exists, using it...')
+      scope = await readFile(scopePath, 'utf8').then(content => JSON.parse(content))
+      validateScopeIntegrity(scope)
+    }
 
-  if (discoveryEnabled) {
-    core.info(`Starting discovery for the organizations ${discoveryOrgs}...`)
-    scope = await generateScope({ octokit, orgs: discoveryOrgs, scope, maxRequestInParallel })
+    if (discoveryEnabled) {
+      core.info(`Starting discovery for the organizations ${discoveryOrgs}...`)
+      scope = await generateScope({ octokit, orgs: discoveryOrgs, scope, maxRequestInParallel })
+    }
+  } else {
+    core.info(`Using local results from: ${localResultsPath}`)
   }
 
   // Check if database exists and load it
@@ -49529,7 +49570,7 @@ async function run () {
 
   // PROCESS
   core.info('Generating scores...')
-  const { reportContent, issueContent, database: newDatabaseState } = await generateScores({ scope, database, maxRequestInParallel, reportTagsEnabled, renderBadge, reportTool })
+  const { reportContent, issueContent, database: newDatabaseState } = await generateScores({ scope, database, maxRequestInParallel, reportTagsEnabled, renderBadge, reportTool, localResultsPath })
 
   core.info('Checking database changes...')
   const hasChanges = isDifferent(database, newDatabaseState)
