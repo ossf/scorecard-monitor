@@ -99,12 +99,12 @@ const generateScope = async ({ octokit, orgs, scope, maxRequestInParallel }) => 
 }
 
 /**
- * Parse local Scorecard results (Scorecard JSON v2 format) into the
+ * Parse Scorecard results (Scorecard JSON v2 format) into the
  * internal score format used by scorecard-monitor.
  * @param {Array} results - Array of Scorecard JSON v2 result objects
  * @returns {Array} - Array of {score, date, commit, platform, org, repo}
  */
-const parseLocalResults = (results) => {
+const parseResults = (results) => {
   return results.map((x) => {
     const parts = x.repo.name.split('/')
     return {
@@ -118,19 +118,19 @@ const parseLocalResults = (results) => {
   })
 }
 
-const generateScores = async ({ scope, database: currentDatabase, maxRequestInParallel, reportTagsEnabled, renderBadge, reportTool, localResultsPath }) => {
+const generateScores = async ({ scope, database: currentDatabase, maxRequestInParallel, reportTagsEnabled, renderBadge, reportTool, resultsPath }) => {
   // @TODO: Improve deep clone logic
   const database = JSON.parse(JSON.stringify(currentDatabase))
 
   let rawScores = []
 
-  if (localResultsPath) {
-    // Local results mode: read scores from a Scorecard JSON v2 file
+  if (resultsPath) {
+    // Results file mode: read scores from a Scorecard JSON v2 file
     const { readFile } = require('fs').promises
-    const content = await readFile(localResultsPath, 'utf8')
+    const content = await readFile(resultsPath, 'utf8')
     const results = JSON.parse(content)
-    rawScores = parseLocalResults(Array.isArray(results) ? results : [results])
-    core.debug(`Loaded ${rawScores.length} scores from local results file: ${localResultsPath}`)
+    rawScores = parseResults(Array.isArray(results) ? results : [results])
+    core.debug(`Loaded ${rawScores.length} scores from results file: ${resultsPath}`)
   } else {
     // API mode: fetch scores from the public Scorecard API
     const platform = 'github.com'

@@ -74,7 +74,7 @@ async function run () {
   const scopePath = core.getInput('scope')
   const databasePath = core.getInput('database', { required: true })
   const reportPath = core.getInput('report', { required: true })
-  const localResultsPath = core.getInput('local-results-path')
+  const resultsPath = core.getInput('results-path')
   // Options
   const maxRequestInParallel = parseInt(core.getInput('max-request-in-parallel') || 10)
   const generateIssue = normalizeBoolean(core.getInput('generate-issue'))
@@ -115,7 +115,7 @@ async function run () {
   let originalReportContent = ''
 
   // In local results mode, scope is discovered from the results file
-  if (!localResultsPath) {
+  if (!resultsPath) {
     // check if scope exists
     core.info('Checking if scope file exists...')
     const existScopeFile = existsSync(scopePath)
@@ -135,7 +135,7 @@ async function run () {
       scope = await generateScope({ octokit, orgs: discoveryOrgs, scope, maxRequestInParallel })
     }
   } else {
-    core.info(`Using local results from: ${localResultsPath}`)
+    core.info(`Using results from file: ${resultsPath}`)
   }
 
   // Check if database exists and load it
@@ -154,7 +154,7 @@ async function run () {
 
   // PROCESS
   core.info('Generating scores...')
-  const { reportContent, issueContent, database: newDatabaseState } = await generateScores({ scope, database, maxRequestInParallel, reportTagsEnabled, renderBadge, reportTool, localResultsPath })
+  const { reportContent, issueContent, database: newDatabaseState } = await generateScores({ scope, database, maxRequestInParallel, reportTagsEnabled, renderBadge, reportTool, resultsPath })
 
   core.info('Checking database changes...')
   const hasChanges = isDifferent(database, newDatabaseState)

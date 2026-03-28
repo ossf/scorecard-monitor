@@ -63,13 +63,13 @@ inputs:
     description: 'Tool to be included as link in the report'
     required: false
     default: "scorecard-visualizer"
-  local-results-path:
+  results-path:
     description: >-
-      Path to a local Scorecard results JSON file. When provided, scores
-      are read from this file instead of the public Scorecard API. The file
-      should contain an array of Scorecard JSON v2 result objects (the
-      output of scorecard --format=json2). When set, the scope input is
-      not required.
+      Path to a Scorecard results JSON file. When provided, scores are
+      read from this file instead of the public Scorecard API. The file
+      should contain an array of Scorecard JSON v2 result objects (e.g.,
+      from scorecard --format=json2, scorecard --org, or Allstar).
+      When set, the scope input is not required.
     required: false
 
 outputs:

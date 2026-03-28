@@ -47267,12 +47267,12 @@ const generateScope = async ({ octokit, orgs, scope, maxRequestInParallel }) => 
 }
 
 /**
- * Parse local Scorecard results (Scorecard JSON v2 format) into the
+ * Parse Scorecard results (Scorecard JSON v2 format) into the
  * internal score format used by scorecard-monitor.
  * @param {Array} results - Array of Scorecard JSON v2 result objects
  * @returns {Array} - Array of {score, date, commit, platform, org, repo}
  */
-const parseLocalResults = (results) => {
+const parseResults = (results) => {
   return results.map((x) => {
     const parts = x.repo.name.split('/')
     return {
@@ -47286,19 +47286,19 @@ const parseLocalResults = (results) => {
   })
 }
 
-const generateScores = async ({ scope, database: currentDatabase, maxRequestInParallel, reportTagsEnabled, renderBadge, reportTool, localResultsPath }) => {
+const generateScores = async ({ scope, database: currentDatabase, maxRequestInParallel, reportTagsEnabled, renderBadge, reportTool, resultsPath }) => {
   // @TODO: Improve deep clone logic
   const database = JSON.parse(JSON.stringify(currentDatabase))
 
   let rawScores = []
 
-  if (localResultsPath) {
-    // Local results mode: read scores from a Scorecard JSON v2 file
+  if (resultsPath) {
+    // Results file mode: read scores from a Scorecard JSON v2 file
     const { readFile } = (__nccwpck_require__(7147).promises)
-    const content = await readFile(localResultsPath, 'utf8')
+    const content = await readFile(resultsPath, 'utf8')
     const results = JSON.parse(content)
-    rawScores = parseLocalResults(Array.isArray(results) ? results : [results])
-    core.debug(`Loaded ${rawScores.length} scores from local results file: ${localResultsPath}`)
+    rawScores = parseResults(Array.isArray(results) ? results : [results])
+    core.debug(`Loaded ${rawScores.length} scores from results file: ${resultsPath}`)
   } else {
     // API mode: fetch scores from the public Scorecard API
     const platform = 'github.com'
@@ -49490,7 +49490,7 @@ async function run () {
   const scopePath = core.getInput('scope')
   const databasePath = core.getInput('database', { required: true })
   const reportPath = core.getInput('report', { required: true })
-  const localResultsPath = core.getInput('local-results-path')
+  const resultsPath = core.getInput('results-path')
   // Options
   const maxRequestInParallel = parseInt(core.getInput('max-request-in-parallel') || 10)
   const generateIssue = normalizeBoolean(core.getInput('generate-issue'))
@@ -49531,7 +49531,7 @@ async function run () {
   let originalReportContent = ''
 
   // In local results mode, scope is discovered from the results file
-  if (!localResultsPath) {
+  if (!resultsPath) {
     // check if scope exists
     core.info('Checking if scope file exists...')
     const existScopeFile = existsSync(scopePath)
@@ -49551,7 +49551,7 @@ async function run () {
       scope = await generateScope({ octokit, orgs: discoveryOrgs, scope, maxRequestInParallel })
     }
   } else {
-    core.info(`Using local results from: ${localResultsPath}`)
+    core.info(`Using results from file: ${resultsPath}`)
   }
 
   // Check if database exists and load it
@@ -49570,7 +49570,7 @@ async function run () {
 
   // PROCESS
   core.info('Generating scores...')
-  const { reportContent, issueContent, database: newDatabaseState } = await generateScores({ scope, database, maxRequestInParallel, reportTagsEnabled, renderBadge, reportTool, localResultsPath })
+  const { reportContent, issueContent, database: newDatabaseState } = await generateScores({ scope, database, maxRequestInParallel, reportTagsEnabled, renderBadge, reportTool, resultsPath })
 
   core.info('Checking database changes...')
   const hasChanges = isDifferent(database, newDatabaseState)
