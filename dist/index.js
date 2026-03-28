@@ -49384,11 +49384,68 @@ const github = __nccwpck_require__(5438)
 const exec = __nccwpck_require__(1514)
 const { normalizeBoolean } = __nccwpck_require__(9214)
 const { existsSync } = __nccwpck_require__(7147)
-const { readFile, writeFile, stat } = (__nccwpck_require__(7147).promises)
+const { readFile, writeFile, stat, mkdir } = (__nccwpck_require__(7147).promises)
+const { dirname } = __nccwpck_require__(1017)
 const { isDifferent } = __nccwpck_require__(9497)
 const { updateOrCreateSegment } = __nccwpck_require__(7794)
 const { generateScores, generateScope } = __nccwpck_require__(4351)
 const { validateDatabaseIntegrity, validateScopeIntegrity } = __nccwpck_require__(1608)
+
+/**
+ * Ensure parent directory exists before writing a file
+ * @param {string} filePath - Path to the file
+ */
+async function ensureParentDir (filePath) {
+  const parentDir = dirname(filePath)
+  await mkdir(parentDir, { recursive: true })
+}
+
+/**
+ * Load and validate database from file, with robust bootstrap for empty/malformed files
+ * @param {string} databasePath - Path to the database file
+ * @returns {object} - The database object
+ */
+async function loadDatabase (databasePath) {
+  core.info('Checking if database exists...')
+  const existDatabaseFile = existsSync(databasePath)
+
+  if (!existDatabaseFile) {
+    core.info('Database does not exist, creating new database')
+    return { 'github.com': {} }
+  }
+
+  // Read the file content
+  const content = await readFile(databasePath, 'utf8')
+
+  // Handle empty or whitespace-only files
+  if (!content.trim()) {
+    core.info('Database file is empty, bootstrapping with fresh database')
+    return { 'github.com': {} }
+  }
+
+  // Parse JSON
+  let parsed
+  try {
+    parsed = JSON.parse(content)
+  } catch (error) {
+    throw new Error(`Database file contains invalid JSON: ${error.message}`)
+  }
+
+  // Validate it's an object
+  if (typeof parsed !== 'object' || parsed === null || Array.isArray(parsed)) {
+    throw new Error('Database file must be a JSON object')
+  }
+
+  // If it's an empty object or missing github.com, bootstrap it
+  if (!parsed['github.com']) {
+    core.info('Database missing github.com property, bootstrapping with fresh database')
+    return { 'github.com': {} }
+  }
+
+  // Validate the database structure
+  validateDatabaseIntegrity(parsed)
+  return parsed
+}
 
 async function run () {
   let octokit
@@ -49456,15 +49513,8 @@ async function run () {
     scope = await generateScope({ octokit, orgs: discoveryOrgs, scope, maxRequestInParallel })
   }
 
-  // Check if database exists
-  core.info('Checking if database exists...')
-  const existDatabaseFile = existsSync(databasePath)
-  if (existDatabaseFile) {
-    database = await readFile(databasePath, 'utf8').then(content => JSON.parse(content))
-    validateDatabaseIntegrity(database)
-  } else {
-    core.info('Database does not exist, creating new database')
-  }
+  // Check if database exists and load it
+  database = await loadDatabase(databasePath)
 
   // Check if report exists as the content will be used to update the report with the tags
   if (reportTagsEnabled) {
@@ -49491,7 +49541,9 @@ async function run () {
 
   // Save changes
   core.info('Saving changes to database and report')
+  await ensureParentDir(databasePath)
   await writeFile(databasePath, JSON.stringify(newDatabaseState, null, 2))
+  await ensureParentDir(reportPath)
   await writeFile(reportPath, reportTagsEnabled
     ? updateOrCreateSegment({
       original: originalReportContent,
@@ -49503,6 +49555,7 @@ async function run () {
 
   if (discoveryEnabled) {
     core.info('Saving changes to scope...')
+    await ensureParentDir(scopePath)
     await writeFile(scopePath, JSON.stringify(scope, null, 2))
   }
 
