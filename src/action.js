@@ -34,6 +34,11 @@ async function run () {
   const renderBadge = normalizeBoolean(core.getInput('render-badge'))
   const reportTool = core.getInput('report-tool') || 'scorecard-visualizer'
 
+  const rawPositiveThreshold = core.getInput('positive-threshold')
+  const positiveThreshold = rawPositiveThreshold === 'false' ? null : parseFloat(rawPositiveThreshold)
+  const rawNegativeThreshold = core.getInput('negative-threshold')
+  const negativeThreshold = rawNegativeThreshold === 'false' ? null : parseFloat(rawNegativeThreshold)
+
   const availableReportTools = ['scorecard-visualizer', 'deps.dev']
   if (!availableReportTools.includes(reportTool)) {
     throw new Error(`The report-tool is not valid, please use: ${availableReportTools.join(', ')}`)
@@ -98,7 +103,7 @@ async function run () {
 
   // PROCESS
   core.info('Generating scores...')
-  const { reportContent, issueContent, database: newDatabaseState } = await generateScores({ scope, database, maxRequestInParallel, reportTagsEnabled, renderBadge, reportTool })
+  const { reportContent, issueContent, database: newDatabaseState, scores } = await generateScores({ scope, database, maxRequestInParallel, reportTagsEnabled, renderBadge, reportTool, positiveThreshold, negativeThreshold })
 
   core.info('Checking database changes...')
   const hasChanges = isDifferent(database, newDatabaseState)
@@ -110,15 +115,22 @@ async function run () {
 
   // Save changes
   core.info('Saving changes to database and report')
-  await writeFile(databasePath, JSON.stringify(newDatabaseState, null, 2))
-  await writeFile(reportPath, reportTagsEnabled
-    ? updateOrCreateSegment({
-      original: originalReportContent,
-      replacementSegment: reportContent,
-      startTag,
-      endTag
-    })
-    : reportContent)
+  const scoreChanges = scores.filter(score => score.currentDiff !== undefined)
+
+  if (scoreChanges.length) {
+    await writeFile(databasePath, JSON.stringify(newDatabaseState, null, 2))
+  }
+
+  if (reportContent) {
+    await writeFile(reportPath, reportTagsEnabled
+      ? updateOrCreateSegment({
+        original: originalReportContent,
+        replacementSegment: reportContent,
+        startTag,
+        endTag
+      })
+      : reportContent)
+  }
 
   if (discoveryEnabled) {
     core.info('Saving changes to scope...')

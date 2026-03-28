@@ -132,6 +132,8 @@ jobs:
 - `report-end-tag`: Defines the closing tag, default `<!-- OPENSSF-SCORECARD-MONITOR:END -->`
 - `render-badge`: Defines if the OpenSSF Scorecard badge must be rendered in the reporter to only show the score
 - `report-tool`: Defines the reporting review tool in place: `scorecard-visualizer` [Example](https://ossf.github.io/scorecard-visualizer/#/projects/github.com/nodejs/node) or `deps.dev` [Example](https://deps.dev/project/github/nodejs%2Fnode), by default `scorecard-visualizer`
+- `positive-threshold`: Defines the positive threshold to consider a score change as positive, by default is `1`. If you want to disable this feature set it to `false`
+- `negative-threshold`: Defines the negative threshold to consider a score change as negative, by default is `1`. If you want to disable this feature set it to `false`
 
 ### Outputs
 

@@ -63,6 +63,14 @@ inputs:
     description: 'Tool to be included as link in the report'
     required: false
     default: "scorecard-visualizer"
+  positive-threshold:
+    description: 'Threshold to consider a score as positive'
+    required: false
+    default: "1"
+  negative-threshold:
+    description: 'Threshold to consider a score as negative'
+    required: false
+    default: "1"
   
 outputs:
   scores:
