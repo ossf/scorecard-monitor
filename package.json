@@ -40,7 +40,7 @@
   "homepage": "https://github.com/ossf/scorecard-monitor",
   "dependencies": {
     "@actions/core": "3.0.1",
-    "@actions/exec": "1.1.1",
+    "@actions/exec": "3.0.0",
     "@actions/github": "8.0.1",
     "@ulisesgascon/array-to-chunks": "2.0.0",
     "@ulisesgascon/is-different": "2.0.0",
