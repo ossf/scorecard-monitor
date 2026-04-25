@@ -10,13 +10,13 @@ updates:
     schedule:
       interval: "weekly"
     groups:
-      actions:
-        patterns:
-          - "@actions/*"
       npm:
         patterns:
           - "*"
         exclude-patterns:
+          - "@actions/*"
+      actions:
+        patterns:
           - "@actions/*"
   - package-ecosystem: "github-actions"
     directory: "/"
@@ -29,9 +29,7 @@ updates:
         exclude-patterns:
           - "actions/*"
           - "github/*"
-      actions:
-        patterns:
-          - "actions/*"
       github-owned:
         patterns:
+          - "actions/*"
           - "github/*"
