@@ -112,6 +112,33 @@ jobs:
           discovery-orgs: 'UlisesGascon,nodejs'
 ```
 
+### With a results file
+
+If you have a Scorecard results file (e.g., from `scorecard --org --format=json2` or from [Allstar](https://github.com/ossf/allstar)'s `-results-file` flag), you can feed it directly into scorecard-monitor without querying the public API:
+
+```yml
+name: "OpenSSF Scoring"
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  security-scoring:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: OpenSSF Scorecard Monitor
+        uses: ossf/scorecard-monitor@v2.0.0-beta8
+        with:
+          results-path: reporting/results.json
+          database: reporting/database.json
+          report: reporting/openssf-scorecard-report.md
+          auto-commit: true
+          auto-push: true
+```
+
 ### Options
 
 - `scope`: Defines the path to the file where the scope is defined
@@ -132,6 +159,7 @@ jobs:
 - `report-end-tag`: Defines the closing tag, default `<!-- OPENSSF-SCORECARD-MONITOR:END -->`
 - `render-badge`: Defines if the OpenSSF Scorecard badge must be rendered in the reporter to only show the score
 - `report-tool`: Defines the reporting review tool in place: `scorecard-visualizer` [Example](https://ossf.github.io/scorecard-visualizer/#/projects/github.com/nodejs/node) or `deps.dev` [Example](https://deps.dev/project/github/nodejs%2Fnode), by default `scorecard-visualizer`
+- `results-path`: Path to a Scorecard results JSON file. When provided, scores are read from this file instead of the public Scorecard API. The file should contain an array of Scorecard JSON v2 result objects (e.g., from `scorecard --format=json2`, `scorecard --org`, or [Allstar](https://github.com/ossf/allstar)). When set, the `scope` input is not required.
 
 ### Outputs
 
