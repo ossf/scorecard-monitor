@@ -71,9 +71,10 @@ async function run () {
   // Context
   const context = github.context
   // Inputs
-  const scopePath = core.getInput('scope', { required: true })
+  const scopePath = core.getInput('scope')
   const databasePath = core.getInput('database', { required: true })
   const reportPath = core.getInput('report', { required: true })
+  const resultsPath = core.getInput('results-path')
   // Options
   const maxRequestInParallel = parseInt(core.getInput('max-request-in-parallel') || 10)
   const generateIssue = normalizeBoolean(core.getInput('generate-issue'))
@@ -113,23 +114,28 @@ async function run () {
   let scope = { 'github.com': {} }
   let originalReportContent = ''
 
-  // check if scope exists
-  core.info('Checking if scope file exists...')
-  const existScopeFile = existsSync(scopePath)
-  if (!existScopeFile && !discoveryEnabled) {
-    throw new Error('Scope file does not exist and discovery is not enabled')
-  }
+  // In local results mode, scope is discovered from the results file
+  if (!resultsPath) {
+    // check if scope exists
+    core.info('Checking if scope file exists...')
+    const existScopeFile = existsSync(scopePath)
+    if (!existScopeFile && !discoveryEnabled) {
+      throw new Error('Scope file does not exist and discovery is not enabled')
+    }
 
-  // Use scope file if it exists
-  if (existScopeFile) {
-    core.debug('Scope file exists, using it...')
-    scope = await readFile(scopePath, 'utf8').then(content => JSON.parse(content))
-    validateScopeIntegrity(scope)
-  }
+    // Use scope file if it exists
+    if (existScopeFile) {
+      core.debug('Scope file exists, using it...')
+      scope = await readFile(scopePath, 'utf8').then(content => JSON.parse(content))
+      validateScopeIntegrity(scope)
+    }
 
-  if (discoveryEnabled) {
-    core.info(`Starting discovery for the organizations ${discoveryOrgs}...`)
-    scope = await generateScope({ octokit, orgs: discoveryOrgs, scope, maxRequestInParallel })
+    if (discoveryEnabled) {
+      core.info(`Starting discovery for the organizations ${discoveryOrgs}...`)
+      scope = await generateScope({ octokit, orgs: discoveryOrgs, scope, maxRequestInParallel })
+    }
+  } else {
+    core.info(`Using results from file: ${resultsPath}`)
   }
 
   // Check if database exists and load it
@@ -148,7 +154,7 @@ async function run () {
 
   // PROCESS
   core.info('Generating scores...')
-  const { reportContent, issueContent, database: newDatabaseState } = await generateScores({ scope, database, maxRequestInParallel, reportTagsEnabled, renderBadge, reportTool })
+  const { reportContent, issueContent, database: newDatabaseState } = await generateScores({ scope, database, maxRequestInParallel, reportTagsEnabled, renderBadge, reportTool, resultsPath })
 
   core.info('Checking database changes...')
   const hasChanges = isDifferent(database, newDatabaseState)
