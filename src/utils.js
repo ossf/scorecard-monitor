@@ -1,5 +1,5 @@
 const got = require('got')
-const core = require('@actions/core')
+const { loadCore } = require('./core-loader')
 const ejs = require('ejs')
 const { readFile } = require('fs').promises
 const { join } = require('path')
@@ -20,6 +20,7 @@ const validateAgainstSchema = (schema, name) => (data) => {
 }
 
 const getProjectScore = async ({ platform, org, repo }) => {
+  const core = await loadCore()
   core.debug(`Getting project score for ${platform}/${org}/${repo}`)
   const response = await got(`https://api.securityscorecards.dev/projects/${platform}/${org}/${repo}`)
   const { score, date, repo: { commit } = {} } = JSON.parse(response.body)
@@ -53,6 +54,7 @@ const generateReportUrl = reportTool => (org, repo, commit, prevCommit) => {
 }
 
 const generateReportContent = async ({ scores, reportTagsEnabled, renderBadge, reportTool }) => {
+  const core = await loadCore()
   core.debug('Generating report content')
   const template = await readFile(join(process.cwd(), 'templates/report.ejs'), 'utf8')
   const getReportUrl = generateReportUrl(reportTool)
@@ -60,6 +62,7 @@ const generateReportContent = async ({ scores, reportTagsEnabled, renderBadge, r
 }
 
 const generateIssueContent = async ({ scores, renderBadge, reportTool }) => {
+  const core = await loadCore()
   core.debug('Generating issue content')
   const scoresInScope = scores.filter(({ currentDiff }) => currentDiff)
   if (!scoresInScope.length) {

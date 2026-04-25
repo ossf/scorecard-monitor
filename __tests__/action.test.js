@@ -2,18 +2,6 @@ const { writeFile, mkdir, rm } = require('fs').promises
 const { join } = require('path')
 const { existsSync } = require('fs')
 
-// Mock @actions/core before requiring action
-const mockCore = {
-  info: jest.fn(),
-  debug: jest.fn(),
-  getInput: jest.fn()
-}
-jest.mock('@actions/core', () => mockCore)
-
-// We need to test the loadDatabase function from action.js
-// Since it's not exported, we'll need to test it indirectly or extract it
-// For now, let's create a test helper that mirrors the loadDatabase logic
-
 const { validateDatabaseIntegrity } = require('../src/utils')
 
 /**

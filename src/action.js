@@ -1,4 +1,4 @@
-const core = require('@actions/core')
+const { loadCore } = require('./core-loader')
 const github = require('@actions/github')
 const exec = require('@actions/exec')
 const { normalizeBoolean } = require('@ulisesgascon/normalize-boolean')
@@ -25,6 +25,7 @@ async function ensureParentDir (filePath) {
  * @returns {object} - The database object
  */
 async function loadDatabase (databasePath) {
+  const core = await loadCore()
   core.info('Checking if database exists...')
   const existDatabaseFile = existsSync(databasePath)
 
@@ -67,6 +68,7 @@ async function loadDatabase (databasePath) {
 }
 
 async function run () {
+  const core = await loadCore()
   let octokit
   // Context
   const context = github.context

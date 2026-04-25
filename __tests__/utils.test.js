@@ -1,3 +1,10 @@
+jest.mock('../src/core-loader', () => ({
+  loadCore: jest.fn().mockResolvedValue({
+    debug: jest.fn(),
+    info: jest.fn()
+  })
+}))
+
 const { validateDatabaseIntegrity, validateScopeIntegrity, generateReportContent } = require('../src/utils')
 const { database, scope, scores } = require('../__fixtures__')
 

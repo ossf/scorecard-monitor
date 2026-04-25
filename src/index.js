@@ -1,8 +1,9 @@
-const core = require('@actions/core')
+const { loadCore } = require('./core-loader')
 const { getProjectScore, generateIssueContent, generateReportContent, getScore, saveScore } = require('./utils')
 const { chunkArray } = require('@ulisesgascon/array-to-chunks')
 
 const generateScope = async ({ octokit, orgs, scope, maxRequestInParallel }) => {
+  const core = await loadCore()
   const platform = 'github.com'
   const newScope = {}
   newScope[platform] = { }
@@ -119,6 +120,7 @@ const parseResults = (results) => {
 }
 
 const generateScores = async ({ scope, database: currentDatabase, maxRequestInParallel, reportTagsEnabled, renderBadge, reportTool, resultsPath }) => {
+  const core = await loadCore()
   // @TODO: Improve deep clone logic
   const database = JSON.parse(JSON.stringify(currentDatabase))
 
