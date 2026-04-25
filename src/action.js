@@ -1,6 +1,6 @@
 const { loadCore } = require('./core-loader')
-const github = require('@actions/github')
-const exec = require('@actions/exec')
+const { loadGithub } = require('./github-loader')
+const { loadExec } = require('./exec-loader')
 const { normalizeBoolean } = require('@ulisesgascon/normalize-boolean')
 const { existsSync } = require('fs')
 const { readFile, writeFile, stat, mkdir } = require('fs').promises
@@ -69,6 +69,8 @@ async function loadDatabase (databasePath) {
 
 async function run () {
   const core = await loadCore()
+  const github = await loadGithub()
+  const exec = await loadExec()
   let octokit
   // Context
   const context = github.context
