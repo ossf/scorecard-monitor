@@ -1,16 +1,19 @@
-const got = require('got')
-const core = require('@actions/core')
-const ejs = require('ejs')
-const { readFile } = require('fs').promises
-const { join } = require('path')
-const { softAssign } = require('@ulisesgascon/soft-assign-deep-property')
+import got from 'got'
+import * as core from '@actions/core'
+import ejs from 'ejs'
+import { readFile } from 'fs/promises'
+import { join } from 'path'
+import { softAssign } from '@ulisesgascon/soft-assign-deep-property'
+import { createRequire } from 'module'
+import Ajv from 'ajv'
+import ajvFormats from 'ajv-formats'
+
+const require = createRequire(import.meta.url)
 const databaseSchema = require('../schemas/database.json')
 const scopeSchema = require('../schemas/scope.json')
 
-const Ajv = require('ajv')
-const addFormats = require('ajv-formats').default
 const ajv = new Ajv()
-addFormats(ajv)
+ajvFormats(ajv)
 
 const validateAgainstSchema = (schema, name) => (data) => {
   const valid = ajv.validate(schema, data)
@@ -70,9 +73,12 @@ const generateIssueContent = async ({ scores, renderBadge, reportTool }) => {
   return ejs.render(template, { scores: scoresInScope, renderBadge, getReportUrl })
 }
 
-module.exports = {
-  validateDatabaseIntegrity: validateAgainstSchema(databaseSchema, 'database'),
-  validateScopeIntegrity: validateAgainstSchema(scopeSchema, 'scope'),
+const validateDatabaseIntegrity = validateAgainstSchema(databaseSchema, 'database')
+const validateScopeIntegrity = validateAgainstSchema(scopeSchema, 'scope')
+
+export {
+  validateDatabaseIntegrity,
+  validateScopeIntegrity,
   getProjectScore,
   saveScore,
   getScore,

@@ -1,6 +1,7 @@
-const core = require('@actions/core')
-const { getProjectScore, generateIssueContent, generateReportContent, getScore, saveScore } = require('./utils')
-const { chunkArray } = require('@ulisesgascon/array-to-chunks')
+import * as core from '@actions/core'
+import { getProjectScore, generateIssueContent, generateReportContent, getScore, saveScore } from './utils.js'
+import { chunkArray } from '@ulisesgascon/array-to-chunks'
+import { readFile } from 'fs/promises'
 
 const generateScope = async ({ octokit, orgs, scope, maxRequestInParallel }) => {
   const platform = 'github.com'
@@ -126,7 +127,6 @@ const generateScores = async ({ scope, database: currentDatabase, maxRequestInPa
 
   if (resultsPath) {
     // Results file mode: read scores from a Scorecard JSON v2 file
-    const { readFile } = require('fs').promises
     const content = await readFile(resultsPath, 'utf8')
     const results = JSON.parse(content)
     rawScores = parseResults(Array.isArray(results) ? results : [results])
@@ -202,7 +202,7 @@ const generateScores = async ({ scope, database: currentDatabase, maxRequestInPa
   return { reportContent, issueContent, database }
 }
 
-module.exports = {
+export {
   generateScope,
   generateScores
 }

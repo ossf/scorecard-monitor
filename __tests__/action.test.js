@@ -1,29 +1,13 @@
-const { writeFile, mkdir, rm } = require('fs').promises
-const { join } = require('path')
-const { existsSync } = require('fs')
-
-// Mock @actions/core before requiring action
-const mockCore = {
-  info: jest.fn(),
-  debug: jest.fn(),
-  getInput: jest.fn()
-}
-jest.mock('@actions/core', () => mockCore)
-
-// We need to test the loadDatabase function from action.js
-// Since it's not exported, we'll need to test it indirectly or extract it
-// For now, let's create a test helper that mirrors the loadDatabase logic
-
-const { validateDatabaseIntegrity } = require('../src/utils')
+import { writeFile, mkdir, rm, readFile } from 'fs/promises'
+import { join, dirname } from 'path'
+import { existsSync } from 'fs'
+import { validateDatabaseIntegrity } from '../src/utils.js'
 
 /**
  * Test helper that mirrors the loadDatabase function from action.js
  * This ensures our tests validate the actual implementation logic
  */
 async function loadDatabaseForTest (databasePath) {
-  const { existsSync } = require('fs')
-  const { readFile } = require('fs').promises
-
   if (!existsSync(databasePath)) {
     return { 'github.com': {} }
   }
@@ -197,9 +181,6 @@ describe('ensureParentDir', () => {
   })
 
   it('should create parent directory when it does not exist', async () => {
-    const { mkdir } = require('fs').promises
-    const { dirname } = require('path')
-
     const filePath = join(testDir, 'nested', 'path', 'file.json')
     const parentDir = dirname(filePath)
 
@@ -214,9 +195,6 @@ describe('ensureParentDir', () => {
   })
 
   it('should handle deeply nested paths', async () => {
-    const { mkdir } = require('fs').promises
-    const { dirname } = require('path')
-
     const filePath = join(testDir, 'a', 'b', 'c', 'd', 'e', 'file.json')
     const parentDir = dirname(filePath)
 
@@ -226,9 +204,6 @@ describe('ensureParentDir', () => {
   })
 
   it('should not fail if parent directory already exists', async () => {
-    const { mkdir } = require('fs').promises
-    const { dirname } = require('path')
-
     const filePath = join(testDir, 'existing', 'file.json')
     const parentDir = dirname(filePath)
 

@@ -1,5 +1,5 @@
-const { validateDatabaseIntegrity, validateScopeIntegrity, generateReportContent } = require('../src/utils')
-const { database, scope, scores } = require('../__fixtures__')
+import { validateDatabaseIntegrity, validateScopeIntegrity, generateReportContent } from '../src/utils.js'
+import { database, scope, scores } from '../__fixtures__/index.js'
 
 describe('Utils', () => {
   describe('validateDatabaseIntegrity', () => {

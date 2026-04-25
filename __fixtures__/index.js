@@ -85,7 +85,7 @@ const scores = [
   }
 ]
 
-module.exports = {
+export {
   database,
   scope,
   scores
