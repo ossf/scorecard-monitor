@@ -1,4 +1,4 @@
-const got = require('got')
+const { loadGot } = require('./got-loader')
 const { loadCore } = require('./core-loader')
 const ejs = require('ejs')
 const { readFile } = require('fs').promises
@@ -22,6 +22,7 @@ const validateAgainstSchema = (schema, name) => (data) => {
 const getProjectScore = async ({ platform, org, repo }) => {
   const core = await loadCore()
   core.debug(`Getting project score for ${platform}/${org}/${repo}`)
+  const got = await loadGot()
   const response = await got(`https://api.securityscorecards.dev/projects/${platform}/${org}/${repo}`)
   const { score, date, repo: { commit } = {} } = JSON.parse(response.body)
   core.debug(`Got project score for ${platform}/${org}/${repo}: ${score} (${date})`)

@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`Utils generateReportContent Should render template with deps.dev as renderTool 1`] = `
 "# OpenSSF Scorecard Report
