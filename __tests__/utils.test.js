@@ -1,5 +1,12 @@
-import { validateDatabaseIntegrity, validateScopeIntegrity, generateReportContent } from '../src/utils.js'
-import { database, scope, scores } from '../__fixtures__/index.js'
+jest.mock('../src/core-loader', () => ({
+  loadCore: jest.fn().mockResolvedValue({
+    debug: jest.fn(),
+    info: jest.fn()
+  })
+}))
+
+const { validateDatabaseIntegrity, validateScopeIntegrity, generateReportContent } = require('../src/utils')
+const { database, scope, scores } = require('../__fixtures__')
 
 describe('Utils', () => {
   describe('validateDatabaseIntegrity', () => {

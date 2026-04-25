@@ -1,13 +1,17 @@
-import { writeFile, mkdir, rm, readFile } from 'fs/promises'
-import { join, dirname } from 'path'
-import { existsSync } from 'fs'
-import { validateDatabaseIntegrity } from '../src/utils.js'
+const { writeFile, mkdir, rm } = require('fs').promises
+const { join } = require('path')
+const { existsSync } = require('fs')
+
+const { validateDatabaseIntegrity } = require('../src/utils')
 
 /**
  * Test helper that mirrors the loadDatabase function from action.js
  * This ensures our tests validate the actual implementation logic
  */
 async function loadDatabaseForTest (databasePath) {
+  const { existsSync } = require('fs')
+  const { readFile } = require('fs').promises
+
   if (!existsSync(databasePath)) {
     return { 'github.com': {} }
   }
@@ -181,6 +185,9 @@ describe('ensureParentDir', () => {
   })
 
   it('should create parent directory when it does not exist', async () => {
+    const { mkdir } = require('fs').promises
+    const { dirname } = require('path')
+
     const filePath = join(testDir, 'nested', 'path', 'file.json')
     const parentDir = dirname(filePath)
 
@@ -195,6 +202,9 @@ describe('ensureParentDir', () => {
   })
 
   it('should handle deeply nested paths', async () => {
+    const { mkdir } = require('fs').promises
+    const { dirname } = require('path')
+
     const filePath = join(testDir, 'a', 'b', 'c', 'd', 'e', 'file.json')
     const parentDir = dirname(filePath)
 
@@ -204,6 +214,9 @@ describe('ensureParentDir', () => {
   })
 
   it('should not fail if parent directory already exists', async () => {
+    const { mkdir } = require('fs').promises
+    const { dirname } = require('path')
+
     const filePath = join(testDir, 'existing', 'file.json')
     const parentDir = dirname(filePath)
 

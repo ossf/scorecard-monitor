@@ -1,14 +1,11 @@
-import { defaults } from 'jest-config'
+const { defaults } = require('jest-config')
 
-export default {
+module.exports = {
   testPathIgnorePatterns: [
     ...defaults.testPathIgnorePatterns
   ],
   testEnvironment: 'node',
   collectCoverageFrom: [
     'src/**/*.js'
-  ],
-  moduleNameMapper: {
-    '^@ulisesgascon/(.*)$': '<rootDir>/node_modules/@ulisesgascon/$1/dist/cjs/index.js'
-  }
+  ]
 }

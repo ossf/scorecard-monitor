@@ -1,19 +1,16 @@
-import got from 'got'
-import * as core from '@actions/core'
-import ejs from 'ejs'
-import { readFile } from 'fs/promises'
-import { join } from 'path'
-import { softAssign } from '@ulisesgascon/soft-assign-deep-property'
-import { createRequire } from 'module'
-import Ajv from 'ajv'
-import ajvFormats from 'ajv-formats'
-
-const require = createRequire(import.meta.url)
+const got = require('got')
+const { loadCore } = require('./core-loader')
+const ejs = require('ejs')
+const { readFile } = require('fs').promises
+const { join } = require('path')
+const { softAssign } = require('@ulisesgascon/soft-assign-deep-property')
 const databaseSchema = require('../schemas/database.json')
 const scopeSchema = require('../schemas/scope.json')
 
+const Ajv = require('ajv')
+const addFormats = require('ajv-formats').default
 const ajv = new Ajv()
-ajvFormats(ajv)
+addFormats(ajv)
 
 const validateAgainstSchema = (schema, name) => (data) => {
   const valid = ajv.validate(schema, data)
@@ -23,6 +20,7 @@ const validateAgainstSchema = (schema, name) => (data) => {
 }
 
 const getProjectScore = async ({ platform, org, repo }) => {
+  const core = await loadCore()
   core.debug(`Getting project score for ${platform}/${org}/${repo}`)
   const response = await got(`https://api.securityscorecards.dev/projects/${platform}/${org}/${repo}`)
   const { score, date, repo: { commit } = {} } = JSON.parse(response.body)
@@ -56,6 +54,7 @@ const generateReportUrl = reportTool => (org, repo, commit, prevCommit) => {
 }
 
 const generateReportContent = async ({ scores, reportTagsEnabled, renderBadge, reportTool }) => {
+  const core = await loadCore()
   core.debug('Generating report content')
   const template = await readFile(join(process.cwd(), 'templates/report.ejs'), 'utf8')
   const getReportUrl = generateReportUrl(reportTool)
@@ -63,6 +62,7 @@ const generateReportContent = async ({ scores, reportTagsEnabled, renderBadge, r
 }
 
 const generateIssueContent = async ({ scores, renderBadge, reportTool }) => {
+  const core = await loadCore()
   core.debug('Generating issue content')
   const scoresInScope = scores.filter(({ currentDiff }) => currentDiff)
   if (!scoresInScope.length) {
@@ -73,12 +73,9 @@ const generateIssueContent = async ({ scores, renderBadge, reportTool }) => {
   return ejs.render(template, { scores: scoresInScope, renderBadge, getReportUrl })
 }
 
-const validateDatabaseIntegrity = validateAgainstSchema(databaseSchema, 'database')
-const validateScopeIntegrity = validateAgainstSchema(scopeSchema, 'scope')
-
-export {
-  validateDatabaseIntegrity,
-  validateScopeIntegrity,
+module.exports = {
+  validateDatabaseIntegrity: validateAgainstSchema(databaseSchema, 'database'),
+  validateScopeIntegrity: validateAgainstSchema(scopeSchema, 'scope'),
   getProjectScore,
   saveScore,
   getScore,

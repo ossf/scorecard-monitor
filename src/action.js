@@ -1,14 +1,14 @@
-import * as core from '@actions/core'
-import github from '@actions/github'
-import exec from '@actions/exec'
-import { normalizeBoolean } from '@ulisesgascon/normalize-boolean'
-import { existsSync } from 'fs'
-import { readFile, writeFile, stat, mkdir } from 'fs/promises'
-import { dirname } from 'path'
-import { isDifferent } from '@ulisesgascon/is-different'
-import { updateOrCreateSegment } from '@ulisesgascon/text-tags-manager'
-import { generateScores, generateScope } from './'
-import { validateDatabaseIntegrity, validateScopeIntegrity } from './utils.js'
+const { loadCore } = require('./core-loader')
+const github = require('@actions/github')
+const exec = require('@actions/exec')
+const { normalizeBoolean } = require('@ulisesgascon/normalize-boolean')
+const { existsSync } = require('fs')
+const { readFile, writeFile, stat, mkdir } = require('fs').promises
+const { dirname } = require('path')
+const { isDifferent } = require('@ulisesgascon/is-different')
+const { updateOrCreateSegment } = require('@ulisesgascon/text-tags-manager')
+const { generateScores, generateScope } = require('./')
+const { validateDatabaseIntegrity, validateScopeIntegrity } = require('./utils')
 
 /**
  * Ensure parent directory exists before writing a file
@@ -25,6 +25,7 @@ async function ensureParentDir (filePath) {
  * @returns {object} - The database object
  */
 async function loadDatabase (databasePath) {
+  const core = await loadCore()
   core.info('Checking if database exists...')
   const existDatabaseFile = existsSync(databasePath)
 
@@ -67,6 +68,7 @@ async function loadDatabase (databasePath) {
 }
 
 async function run () {
+  const core = await loadCore()
   let octokit
   // Context
   const context = github.context
