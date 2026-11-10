@@ -4,10 +4,10 @@
         "github.com": {
             "type": "object",
             "patternProperties": {
-                "^[a-zA-Z0-9-_.]+/[a-zA-Z0-9-_.]+$": {
+                "^[a-zA-Z0-9-_.]+$": {
                     "type": "object",
                     "patternProperties": {
-                        "^[a-zA-Z0-9-_.]+/[a-zA-Z0-9-_.]+$": {
+                        "^[a-zA-Z0-9-_.]+$": {
                             "type": "object",
                             "properties": {
                                 "previous": {
@@ -22,7 +22,14 @@
                                             },
                                             "date": {
                                                 "type": "string",
-                                                "format": "date-time"
+                                                "anyOf": [
+                                                    {
+                                                        "format": "date"
+                                                    },
+                                                    {
+                                                        "format": "date-time"
+                                                    }
+                                                ]
                                             },
                                             "commit": {
                                                 "type": "string",
@@ -49,7 +56,14 @@
                                         },
                                         "date": {
                                             "type": "string",
-                                            "format": "date-time"
+                                            "anyOf": [
+                                                {
+                                                    "format": "date"
+                                                },
+                                                {
+                                                    "format": "date-time"
+                                                }
+                                            ]
                                         },
                                         "commit": {
                                             "type": "string",

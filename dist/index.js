@@ -9147,7 +9147,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$schema":"http://json-schema.org/dra
 /***/ ((module) => {
 
 "use strict";
-module.exports = /*#__PURE__*/JSON.parse('{"type":"object","properties":{"github.com":{"type":"object","patternProperties":{"^[a-zA-Z0-9-_.]+/[a-zA-Z0-9-_.]+$":{"type":"object","patternProperties":{"^[a-zA-Z0-9-_.]+/[a-zA-Z0-9-_.]+$":{"type":"object","properties":{"previous":{"type":"array","items":{"type":"object","properties":{"score":{"type":"number","minimum":0,"maximum":10},"date":{"type":"string","format":"date-time"},"commit":{"type":"string","pattern":"^[a-f0-9]{40}$"}},"additionalProperties":false,"required":["score","date","commit"]},"minItems":0,"default":[]},"current":{"type":"object","properties":{"score":{"type":"number","minimum":0,"maximum":10},"date":{"type":"string","format":"date-time"},"commit":{"type":"string","pattern":"^[a-f0-9]{40}$"}},"additionalProperties":false,"required":["score","date","commit"]}},"additionalProperties":false,"required":["previous","current"]}}}}}},"additionalProperties":false,"required":["github.com"]}');
+module.exports = /*#__PURE__*/JSON.parse('{"type":"object","properties":{"github.com":{"type":"object","patternProperties":{"^[a-zA-Z0-9-_.]+$":{"type":"object","patternProperties":{"^[a-zA-Z0-9-_.]+$":{"type":"object","properties":{"previous":{"type":"array","items":{"type":"object","properties":{"score":{"type":"number","minimum":0,"maximum":10},"date":{"type":"string","anyOf":[{"format":"date"},{"format":"date-time"}]},"commit":{"type":"string","pattern":"^[a-f0-9]{40}$"}},"additionalProperties":false,"required":["score","date","commit"]},"minItems":0,"default":[]},"current":{"type":"object","properties":{"score":{"type":"number","minimum":0,"maximum":10},"date":{"type":"string","anyOf":[{"format":"date"},{"format":"date-time"}]},"commit":{"type":"string","pattern":"^[a-f0-9]{40}$"}},"additionalProperties":false,"required":["score","date","commit"]}},"additionalProperties":false,"required":["previous","current"]}}}}}},"additionalProperties":false,"required":["github.com"]}');
 
 /***/ }),
 
@@ -9155,7 +9155,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"type":"object","properties":{"github
 /***/ ((module) => {
 
 "use strict";
-module.exports = /*#__PURE__*/JSON.parse('{"type":"object","properties":{"github.com":{"type":"object","patternProperties":{"^[a-zA-Z0-9-_.]+/[a-zA-Z0-9-_.]+$":{"type":"object","properties":{"included":{"type":"array","items":{"type":"string"},"minItems":0,"default":[]},"excluded":{"type":"array","items":{"type":"string"},"minItems":0,"default":[]}},"additionalProperties":false,"required":["included","excluded"]}}}},"additionalProperties":false,"required":["github.com"]}');
+module.exports = /*#__PURE__*/JSON.parse('{"type":"object","properties":{"github.com":{"type":"object","patternProperties":{"^[a-zA-Z0-9-_.]+$":{"type":"object","properties":{"included":{"type":"array","items":{"type":"string"},"minItems":0,"default":[]},"excluded":{"type":"array","items":{"type":"string"},"minItems":0,"default":[]}},"additionalProperties":false,"required":["included","excluded"]}}}},"additionalProperties":false,"required":["github.com"]}');
 
 /***/ })
 
